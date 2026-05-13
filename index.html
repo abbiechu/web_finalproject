@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EcoPulse — SDG 12 責任消費與生產</title>
+  <link rel="stylesheet" href="css/base.css" />
+  <style>
+    /* ============================================
+       Branch: feature/home  (朱家締)
+       File:   index.html
+       ============================================ */
+
+    /* Hero */
+    .hero {
+      min-height: calc(100vh - var(--nav-h));
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(160deg, #EAF3E6 0%, var(--clr-bg) 60%);
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 60% at 70% 40%, rgba(90,154,90,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 600px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: #DFF0DF;
+      color: var(--clr-primary);
+      border: 1px solid rgba(58,107,58,0.2);
+      border-radius: var(--radius-xl);
+      padding: 0.3rem 0.9rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: var(--sp-lg);
+      animation: fadeUp 0.5s ease forwards;
+    }
+
+    .hero h1 {
+      margin-bottom: var(--sp-md);
+      animation: fadeUp 0.6s 0.1s ease both;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--clr-primary);
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--clr-muted);
+      max-width: 480px;
+      margin-bottom: var(--sp-xl);
+      animation: fadeUp 0.6s 0.2s ease both;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: var(--sp-md);
+      flex-wrap: wrap;
+      animation: fadeUp 0.6s 0.3s ease both;
+    }
+
+    /* Floating stats */
+    .hero-stats {
+      position: absolute;
+      right: 5%;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-md);
+      animation: fadeUp 0.8s 0.4s ease both;
+    }
+
+    .stat-card {
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-md);
+      padding: var(--sp-md) var(--sp-lg);
+      box-shadow: var(--shadow-md);
+      text-align: center;
+      min-width: 160px;
+    }
+
+    .stat-number {
+      font-family: var(--ff-display);
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--clr-primary);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.78rem;
+      color: var(--clr-muted);
+      margin-top: 4px;
+    }
+
+    /* Scroll indicator */
+    .scroll-hint {
+      position: absolute;
+      bottom: var(--sp-xl);
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      color: var(--clr-muted);
+      font-size: 0.78rem;
+      animation: fadeUp 1s 0.8s ease both;
+    }
+
+    .scroll-arrow {
+      width: 24px; height: 24px;
+      border-right: 2px solid var(--clr-muted);
+      border-bottom: 2px solid var(--clr-muted);
+      transform: rotate(45deg);
+      animation: bounce 1.5s ease infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: rotate(45deg) translateY(0); }
+      50%       { transform: rotate(45deg) translateY(6px); }
+    }
+
+    /* About SDG Section */
+    .sdg-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-xl);
+      align-items: center;
+    }
+
+    .sdg-text h2 { margin-bottom: var(--sp-md); }
+    .sdg-text p  { color: var(--clr-muted); margin-bottom: var(--sp-md); }
+
+    .sdg-goals {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-sm);
+    }
+
+    .sdg-goal-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--sp-md);
+      padding: var(--sp-md);
+      background: var(--clr-surface);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--clr-border);
+    }
+
+    .sdg-icon {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      width: 44px; height: 44px;
+      display: flex; align-items: center; justify-content: center;
+      background: #DFF0DF;
+      border-radius: var(--radius-sm);
+    }
+
+    .sdg-goal-item strong { display: block; margin-bottom: 2px; font-size: 0.92rem; }
+    .sdg-goal-item span   { font-size: 0.83rem; color: var(--clr-muted); }
+
+    /* Site features */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: var(--sp-lg);
+    }
+
+    .feature-card {
+      text-align: center;
+      padding: var(--sp-xl) var(--sp-lg);
+    }
+
+    .feature-icon {
+      font-size: 2.2rem;
+      margin-bottom: var(--sp-md);
+      display: block;
+    }
+
+    .feature-card h3 { font-size: 1.05rem; margin-bottom: var(--sp-sm); }
+    .feature-card p  { font-size: 0.87rem; color: var(--clr-muted); }
+
+    /* CTA strip */
+    .cta-strip {
+      background: var(--clr-primary);
+      border-radius: var(--radius-xl);
+      padding: var(--sp-2xl) var(--sp-xl);
+      text-align: center;
+      color: #fff;
+    }
+
+    .cta-strip h2 { color: #fff; margin-bottom: var(--sp-md); }
+    .cta-strip p  { color: rgba(255,255,255,0.75); margin-bottom: var(--sp-xl); }
+
+    /* Footer */
+    .footer {
+      background: var(--clr-dark);
+      color: rgba(255,255,255,0.6);
+      padding: var(--sp-xl) 0;
+      text-align: center;
+      font-size: 0.85rem;
+    }
+
+    .footer a { color: rgba(255,255,255,0.8); }
+    .footer a:hover { color: #fff; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .hero-stats { display: none; }
+    }
+
+    @media (max-width: 640px) {
+      .sdg-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <script src="js/navbar.js"></script>
+  <script src="css/base.css" defer></script>
+
+  <!-- Navbar injected by JS -->
+
+  <!-- ===== HERO ===== -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-badge">🌱 SDG 12 · 責任消費與生產</div>
+        <h1>讓消費習慣<br />成為<em>地球的解方</em></h1>
+        <p>EcoPulse 透過數據視覺化與互動測驗，幫助你了解自身消費行為對環境的影響，並提供切實可行的改善建議。</p>
+        <div class="hero-actions">
+          <a href="pages/quiz.html" class="btn btn-primary">🧪 開始環保測驗</a>
+          <a href="pages/issues.html" class="btn btn-outline">瞭解問題 →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating stats -->
+    <div class="hero-stats">
+      <div class="stat-card">
+        <div class="stat-number">1/3</div>
+        <div class="stat-label">全球食物生產遭到浪費</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">400萬</div>
+        <div class="stat-label">公噸塑膠每年流入海洋</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">SDG<br/>12</div>
+        <div class="stat-label">永續發展目標</div>
+      </div>
+    </div>
+
+    <div class="scroll-hint">
+      <span>向下瀏覽</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </section>
+
+  <!-- ===== ABOUT SDG 12 ===== -->
+  <section class="section" style="background: var(--clr-surface);">
+    <div class="container">
+      <div class="sdg-grid">
+        <div class="sdg-text fade-up">
+          <span class="badge badge-green" style="margin-bottom:var(--sp-md)">關於 SDG 12</span>
+          <h2>什麼是責任消費<br/>與生產？</h2>
+          <p>SDG 12 是聯合國 17 項永續發展目標之一，核心在於改變我們生產與消費的方式——使用更少資源、製造更少廢棄物、讓物品的全生命週期都更永續。</p>
+          <p>現代社會面臨的問題包括：過度消費、快時尚、電子垃圾、塑膠污染與食物浪費。唯有每個人從日常小事改變，才能形成集體影響力。</p>
+          <a href="pages/about.html" class="btn btn-outline" style="margin-top:var(--sp-md)">認識我們的計畫 →</a>
+        </div>
+
+        <div class="sdg-goals fade-up">
+          <div class="sdg-goal-item">
+            <div class="sdg-icon">♻️</div>
+            <div>
+              <strong>資源循環</strong>
+              <span>到 2030 年大幅減少廢棄物，推動循環經濟模式</span>
+            </div>
+          </div>
+          <div class="sdg-goal-item">
+            <div class="sdg-icon">🌾</div>
+            <div>
+              <strong>減少食物浪費</strong>
+              <span>全球零售與消費端的食物浪費減半</span>
+            </div>
+          </div>
+          <div class="sdg-goal-item">
+            <div class="sdg-icon">🏭</div>
+            <div>
+              <strong>永續生產</strong>
+              <span>企業採用永續實踐，揭露永續發展資訊</span>
+            </div>
+          </div>
+          <div class="sdg-goal-item">
+            <div class="sdg-icon">📚</div>
+            <div>
+              <strong>消費者教育</strong>
+              <span>提升大眾永續發展意識，促成行為改變</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SITE FEATURES ===== -->
+  <section class="section">
+    <div class="container">
+      <div style="text-align:center; margin-bottom:var(--sp-2xl)">
+        <h2 class="section-title">網站功能一覽</h2>
+        <p class="section-subtitle" style="margin: 0 auto">四個互動功能，帶你全方位了解責任消費與生產</p>
+      </div>
+      <div class="features-grid">
+        <div class="card feature-card">
+          <span class="feature-icon">🏠</span>
+          <h3>首頁介紹</h3>
+          <p>快速了解 SDG 12 核心概念與本站宗旨</p>
+        </div>
+        <a href="pages/about.html" class="card feature-card" style="display:block">
+          <span class="feature-icon">🗺️</span>
+          <h3>關於我們</h3>
+          <p>互動心智圖，探索 EcoPulse 的背景與核心價值</p>
+        </a>
+        <a href="pages/issues.html" class="card feature-card" style="display:block">
+          <span class="feature-icon">⚠️</span>
+          <h3>問題與解方</h3>
+          <p>翻牌卡片互動，深入瞭解六大環境問題與對策</p>
+        </a>
+        <a href="pages/quiz.html" class="card feature-card" style="display:block">
+          <span class="feature-icon">📊</span>
+          <h3>環保測驗</h3>
+          <p>20 題專業測驗，量化你的環保指數並給出個人化建議</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CTA ===== -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-strip">
+        <h2>準備好測測你的環保指數了嗎？</h2>
+        <p>只需 5 分鐘，回答 20 道日常生活問題，取得你的專屬環保雷達圖與改善建議。</p>
+        <a href="pages/quiz.html" class="btn" style="background:#fff; color:var(--clr-primary); font-weight:700">
+          立即開始測驗 →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container">
+      <p>🌿 EcoPulse &nbsp;|&nbsp; SDG 12 責任消費與生產 &nbsp;|&nbsp; 資管二B &nbsp;·&nbsp; 祝善煦 · 朱家締 · 羅乃慈</p>
+      <p style="margin-top:0.4rem; font-size:0.78rem">
+        資料來源：
+        <a href="https://sdgs.un.org/goals/goal12" target="_blank">UN SDGs</a> ·
+        <a href="https://www.epa.gov.tw" target="_blank">行政院環保署</a> ·
+        <a href="https://www.greenpeace.org" target="_blank">Greenpeace</a> ·
+        <a href="https://www.worldbank.org" target="_blank">World Bank</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    // 初始化導覽列 (root = true)
+    Navbar.init('home', true);
+
+    // Intersection Observer for fade-up
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.style.animation = 'fadeUp 0.6s ease forwards';
+          e.target.style.opacity = '1';
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>

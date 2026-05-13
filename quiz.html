@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>環保測驗 — EcoPulse</title>
+  <link rel="stylesheet" href="../css/base.css" />
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    /* ============================================
+       Branch: feature/quiz  (祝善煦)
+       File:   pages/quiz.html
+       ============================================ */
+
+    /* --- Intro Panel --- */
+    #introPanel {
+      min-height: calc(100vh - var(--nav-h));
+      display: flex;
+      align-items: center;
+    }
+
+    .intro-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-2xl);
+      align-items: center;
+    }
+
+    .intro-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--sp-sm);
+      margin: var(--sp-lg) 0;
+    }
+
+    .category-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0.4rem 0.9rem;
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--clr-border);
+      background: var(--clr-surface);
+      font-size: 0.83rem;
+      font-weight: 500;
+    }
+
+    .tier-list { display: flex; flex-direction: column; gap: var(--sp-md); }
+
+    .tier-item {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-md);
+      padding: var(--sp-md);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--clr-border);
+      background: var(--clr-surface);
+    }
+
+    .tier-icon { font-size: 1.5rem; width: 40px; text-align: center; }
+    .tier-item strong { display: block; font-size: 0.9rem; }
+    .tier-item span   { font-size: 0.8rem; color: var(--clr-muted); }
+
+    /* --- Quiz Panel --- */
+    #quizPanel { display: none; }
+
+    .quiz-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: var(--sp-xl);
+      align-items: start;
+    }
+
+    /* Progress sidebar */
+    .quiz-sidebar {
+      position: sticky;
+      top: calc(var(--nav-h) + var(--sp-lg));
+    }
+
+    .progress-card {
+      background: var(--clr-surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--clr-border);
+      padding: var(--sp-xl);
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--clr-muted);
+      margin-bottom: var(--sp-sm);
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: var(--clr-border);
+      border-radius: 4px;
+      margin-bottom: var(--sp-lg);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--clr-primary), var(--clr-primary-lt));
+      border-radius: 4px;
+      transition: width 0.5s ease;
+      width: 0%;
+    }
+
+    .category-progress { display: flex; flex-direction: column; gap: var(--sp-sm); }
+
+    .cat-progress-item { font-size: 0.83rem; }
+
+    .cat-progress-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 3px;
+      color: var(--clr-muted);
+    }
+
+    .cat-progress-bar {
+      height: 4px;
+      background: var(--clr-border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .cat-progress-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.4s ease;
+    }
+
+    /* Question card */
+    .question-card {
+      background: var(--clr-surface);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--clr-border);
+      padding: var(--sp-2xl);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .question-header {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-sm);
+      margin-bottom: var(--sp-xl);
+    }
+
+    .question-cat-badge {
+      padding: 0.25rem 0.7rem;
+      border-radius: var(--radius-xl);
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: #DFF0DF;
+      color: var(--clr-primary);
+    }
+
+    .question-num {
+      font-size: 0.8rem;
+      color: var(--clr-muted);
+    }
+
+    .question-text {
+      font-family: var(--ff-display);
+      font-size: 1.25rem;
+      color: var(--clr-dark);
+      margin-bottom: var(--sp-xl);
+      line-height: 1.4;
+    }
+
+    /* Options */
+    .options-list { display: flex; flex-direction: column; gap: var(--sp-md); }
+
+    .option-btn {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-md);
+      padding: var(--sp-md) var(--sp-lg);
+      border-radius: var(--radius-md);
+      border: 2px solid var(--clr-border);
+      background: var(--clr-surface);
+      text-align: left;
+      cursor: pointer;
+      transition: all var(--t-fast);
+      font-family: var(--ff-body);
+      font-size: 0.95rem;
+      color: var(--clr-text);
+      width: 100%;
+    }
+
+    .option-btn:hover {
+      border-color: var(--clr-primary);
+      background: #EAF3E6;
+      transform: translateX(4px);
+    }
+
+    .option-btn.selected {
+      border-color: var(--clr-primary);
+      background: #EAF3E6;
+    }
+
+    .option-letter {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--clr-border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      transition: background var(--t-fast), color var(--t-fast);
+    }
+
+    .option-btn.selected .option-letter,
+    .option-btn:hover .option-letter {
+      background: var(--clr-primary);
+      color: #fff;
+    }
+
+    /* Navigation */
+    .quiz-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: var(--sp-xl);
+    }
+
+    /* --- Result Panel --- */
+    #resultPanel { display: none; }
+
+    .result-header {
+      text-align: center;
+      padding: var(--sp-3xl) 0 var(--sp-2xl);
+    }
+
+    .tier-badge-large {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--sp-sm);
+      padding: var(--sp-xl) var(--sp-2xl);
+      border-radius: var(--radius-xl);
+      margin-bottom: var(--sp-lg);
+      color: #fff;
+    }
+
+    .tier-badge-large .tier-emoji { font-size: 3.5rem; }
+    .tier-badge-large .tier-name  { font-family: var(--ff-display); font-size: 1.8rem; }
+    .tier-badge-large .tier-score { font-size: 1rem; opacity: 0.85; }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-xl);
+      align-items: start;
+    }
+
+    .radar-wrap {
+      background: var(--clr-surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--clr-border);
+      padding: var(--sp-xl);
+    }
+
+    .radar-wrap h3 {
+      font-size: 1rem;
+      margin-bottom: var(--sp-md);
+      text-align: center;
+    }
+
+    .diagnosis-card {
+      background: var(--clr-surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--clr-border);
+      padding: var(--sp-xl);
+    }
+
+    .diagnosis-card h3 {
+      font-size: 1rem;
+      margin-bottom: var(--sp-lg);
+      display: flex;
+      align-items: center;
+      gap: var(--sp-sm);
+    }
+
+    .alert-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--sp-md);
+      padding: var(--sp-md);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--sp-md);
+    }
+
+    .alert-item.warn { background: #FFF3CD; border-left: 3px solid var(--clr-accent); }
+    .alert-item.tip  { background: #DFF0DF; border-left: 3px solid var(--clr-primary); }
+
+    .alert-item strong { display: block; font-size: 0.87rem; margin-bottom: 3px; }
+    .alert-item p      { font-size: 0.83rem; color: var(--clr-muted); }
+
+    .breakdown-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-md);
+      margin-top: var(--sp-xl);
+    }
+
+    .breakdown-card {
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-md);
+      padding: var(--sp-lg);
+      text-align: center;
+    }
+
+    .breakdown-score {
+      font-family: var(--ff-display);
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--clr-primary);
+    }
+
+    .breakdown-label { font-size: 0.8rem; color: var(--clr-muted); margin-top: 4px; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .intro-grid  { grid-template-columns: 1fr; }
+      .quiz-layout { grid-template-columns: 1fr; }
+      .quiz-sidebar { position: static; }
+      .result-grid { grid-template-columns: 1fr; }
+      .breakdown-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 480px) {
+      .breakdown-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <script src="../js/navbar.js"></script>
+
+  <!-- ===== INTRO PANEL ===== -->
+  <section class="section" id="introPanel">
+    <div class="container">
+      <div class="intro-grid">
+        <div>
+          <span class="badge badge-green" style="margin-bottom:var(--sp-md)">環保測驗</span>
+          <h1>測測你的<br/>環保指數</h1>
+          <p style="color:var(--clr-muted); margin:var(--sp-md) 0; font-size:1.05rem">
+            針對「責任消費與生產 SDG 12」設計的 20 題互動測驗。<br/>
+            完成後獲得你的環保雷達圖與深度個人化建議。
+          </p>
+
+          <div class="intro-badges">
+            <span class="category-badge">🥗 綠色飲食 × 5</span>
+            <span class="category-badge">🛍️ 明智購物 × 5</span>
+            <span class="category-badge">♻️ 物品再生 × 5</span>
+            <span class="category-badge">⚡ 節能減碳 × 5</span>
+          </div>
+
+          <button class="btn btn-primary" onclick="startQuiz()" style="font-size:1rem; padding:0.9rem 2rem">
+            🚀 開始測驗
+          </button>
+        </div>
+
+        <div class="tier-list">
+          <div class="tier-item">
+            <div class="tier-icon">🏆</div>
+            <div>
+              <strong>90+　金色永續守護者</strong>
+              <span>引領永續生活的標竿</span>
+            </div>
+          </div>
+          <div class="tier-item">
+            <div class="tier-icon">🥈</div>
+            <div>
+              <strong>70–89　銀色綠色實踐家</strong>
+              <span>持續踐行永續理念</span>
+            </div>
+          </div>
+          <div class="tier-item">
+            <div class="tier-icon">🥉</div>
+            <div>
+              <strong>50–69　銅色環保潛力股</strong>
+              <span>已掌握基本概念，還有提升空間</span>
+            </div>
+          </div>
+          <div class="tier-item">
+            <div class="tier-icon">🌱</div>
+            <div>
+              <strong>&lt; 50　地球觀察員</strong>
+              <span>從最簡單的減碳開始踏上旅程</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== QUIZ PANEL ===== -->
+  <section class="section" id="quizPanel">
+    <div class="container">
+      <div class="quiz-layout">
+
+        <!-- Sidebar -->
+        <aside class="quiz-sidebar">
+          <div class="progress-card">
+            <div class="progress-label">
+              <span>總進度</span>
+              <span id="progressText">0 / 20</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <div class="category-progress" id="catProgress">
+              <!-- injected by JS -->
+            </div>
+          </div>
+        </aside>
+
+        <!-- Question -->
+        <main>
+          <div class="question-card" id="questionCard">
+            <div class="question-header">
+              <span class="question-cat-badge" id="qCatBadge"></span>
+              <span class="question-num" id="qNum"></span>
+            </div>
+            <div class="question-text" id="qText"></div>
+            <div class="options-list" id="optionsList"></div>
+            <div class="quiz-nav">
+              <button class="btn btn-outline" id="prevBtn" onclick="prevQuestion()">← 上一題</button>
+              <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">下一題 →</button>
+            </div>
+          </div>
+        </main>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== RESULT PANEL ===== -->
+  <section id="resultPanel">
+    <div class="result-header">
+      <div class="container">
+        <div class="tier-badge-large" id="tierBadge">
+          <span class="tier-emoji" id="tierEmoji">🏆</span>
+          <span class="tier-name"  id="tierName"></span>
+          <span class="tier-score" id="tierScore"></span>
+        </div>
+        <p id="tierDesc" style="color:var(--clr-muted); max-width:500px; margin:0 auto"></p>
+      </div>
+    </div>
+
+    <div class="container" style="padding-bottom: var(--sp-3xl)">
+      <div class="result-grid">
+        <!-- Radar -->
+        <div class="radar-wrap">
+          <h3>📊 環保行為雷達圖</h3>
+          <canvas id="radarChart" height="300"></canvas>
+        </div>
+
+        <!-- Diagnosis -->
+        <div class="diagnosis-card">
+          <h3>🔍 深度行為診斷</h3>
+          <div id="diagnosisContent"></div>
+          <button class="btn btn-outline" onclick="resetQuiz()" style="margin-top:var(--sp-lg); width:100%; justify-content:center">
+            重新檢測習慣
+          </button>
+        </div>
+      </div>
+
+      <!-- Breakdown -->
+      <h2 class="section-title" style="margin-top:var(--sp-2xl); margin-bottom:var(--sp-lg)">各類別得分</h2>
+      <div class="breakdown-grid" id="breakdownGrid"></div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="background:var(--clr-dark);color:rgba(255,255,255,0.6);padding:var(--sp-xl) 0;text-align:center;font-size:0.85rem">
+    <div class="container">
+      <p>🌿 EcoPulse &nbsp;|&nbsp; 環保測驗由 祝善煦 負責製作</p>
+    </div>
+  </footer>
+
+  <script>
+    Navbar.init('quiz');
+
+    /* ================================================
+       QUIZ DATA — 20 題，4 大類 × 5 題
+       每題：question, options[], scores[]
+       scores 陣列對應各選項的分數 (0-5)
+       ================================================ */
+    const QUESTIONS = [
+      // ── 綠色飲食 (green) ──────────────────────────
+      {
+        cat: 'green', catLabel: '🥗 綠色飲食',
+        question: '用餐時，你是否習慣主動要求「減少食量」以避免剩食？',
+        options: ['總是如此，幾乎不剩食', '大多時候會注意', '偶爾會，但常常還是剩下', '從不考慮這件事'],
+        scores: [5, 3, 1, 0],
+      },
+      {
+        cat: 'green', catLabel: '🥗 綠色飲食',
+        question: '你是否會優先購買「在地生產」的當季食材？',
+        options: ['幾乎每次都選在地食材', '有意識地選擇，但不是每次', '偶爾，主要看價格', '不太考慮產地'],
+        scores: [5, 3, 1, 0],
+      },
+      {
+        cat: 'green', catLabel: '🥗 綠色飲食',
+        question: '你的日常飲食中，植物性食物（蔬果豆類）佔比大約？',
+        options: ['超過 70%', '50–70%', '30–50%', '不到 30%'],
+        scores: [5, 3, 1, 0],
+      },
+      {
+        cat: 'green', catLabel: '🥗 綠色飲食',
+        question: '買食材時，你是否會考慮減少外包裝（例如選散裝、自備容器）？',
+        options: ['每次都這樣做', '常常如此', '偶爾', '幾乎不會'],
+        scores: [5, 4, 2, 0],
+      },
+      {
+        cat: 'green', catLabel: '🥗 綠色飲食',
+        question: '面對冰箱即將過期的食材，你通常如何處理？',
+        options: ['優先使用，設計料理消耗掉', '盡量用，但還是會丟一些', '直接丟棄，再買新的', '通常沒有注意保存期限'],
+        scores: [5, 3, 1, 0],
+      },
+
+      // ── 明智購物 (shopping) ───────────────────────
+      {
+        cat: 'shopping', catLabel: '🛍️ 明智購物',
+        question: '衝動想買東西時，你通常會？',
+        options: ['等待 24–48 小時再決定', '猶豫一會兒後再買', '當下直接購買', '滑到廣告就立刻下單'],
+        scores: [5, 3, 1, 0],
+      },
+      {
+        cat: 'shopping', catLabel: '🛍️ 明智購物',
+        question: '你有多常購買自己其實不太需要的衣物或配件？',
+        options: ['幾乎不會，購物很克制', '一年幾次', '每個月都有', '幾乎每週都買'],
+        scores: [5, 3, 1, 0],
+      },
+      {
+        cat: 'shopping', catLabel: '🛍️ 明智購物',
+        question: '購物時，你是否會特別查看產品的環保認證或永續標章？',
+        options: ['每次都查', '常常查', '偶爾查', '從不查'],
+        scores: [5, 3, 1, 0],
+      },
+      {
+        cat: 'shopping', catLabel: '🛍️ 明智購物',
+        question: '你是否有嘗試過二手購物（二手衣、二手書、網路轉賣平台等）？',
+        options: ['是主要的購物方式', '定期嘗試', '偶爾', '幾乎從未'],
+        scores: [5, 4, 2, 0],
+      },
+      {
+        cat: 'shopping', catLabel: '🛍️ 明智購物',
+        question: '外出購物時，你是否自備購物袋？',
+        options: ['每次都帶', '大多時候帶', '偶爾忘記帶', '幾乎都使用超市塑膠袋'],
+        scores: [5, 3, 1, 0],
+      },
+
+      // ── 物品再生 (recycle) ────────────────────────
+      {
+        cat: 'recycle', catLabel: '♻️ 物品再生',
+        question: '家中電器壞了，你的第一反應是？',
+        options: ['先嘗試維修', '看維修費再決定', '直接購買新品', '丟掉後才想要不要修'],
+        scores: [5, 3, 1, 0],
+      },
+      {
+        cat: 'recycle', catLabel: '♻️ 物品再生',
+        question: '你是否有做到資源回收分類（紙類、塑膠、金屬、玻璃分別回收）？',
+        options: ['做得很仔細，每樣都分', '大部分有分，偶爾混裝', '只有分可回收與一般垃圾', '沒有習慣做分類'],
+        scores: [5, 3, 1, 0],
+      },
+      {
+        cat: 'recycle', catLabel: '♻️ 物品再生',
+        question: '你如何處理不再需要的衣物或家具？',
+        options: ['捐贈、二手販售或以物易物', '給親友再利用', '整包丟垃圾', '堆在家裡不處理'],
+        scores: [5, 4, 0, 1],
+      },
+      {
+        cat: 'recycle', catLabel: '♻️ 物品再生',
+        question: '你是否定期將廢電池、舊手機送至合格回收點？',
+        options: ['每次都這樣做', '大部分時候', '偶爾', '通常直接丟一般垃圾'],
+        scores: [5, 3, 1, 0],
+      },
+      {
+        cat: 'recycle', catLabel: '♻️ 物品再生',
+        question: '你是否有使用過「物品租借」服務代替購買？',
+        options: ['常常使用', '有試過幾次', '聽過但沒試', '完全沒考慮過'],
+        scores: [5, 3, 1, 0],
+      },
+
+      // ── 節能減碳 (energy) ─────────────────────────
+      {
+        cat: 'energy', catLabel: '⚡ 節能減碳',
+        question: '離開房間時，你有多常關燈？',
+        options: ['每次都關', '大多數時候', '偶爾', '幾乎不管'],
+        scores: [5, 3, 1, 0],
+      },
+      {
+        cat: 'energy', catLabel: '⚡ 節能減碳',
+        question: '你冷氣的設定溫度通常是？',
+        options: ['26°C 以上', '24–25°C', '22–23°C', '20°C 以下或整天開著'],
+        scores: [5, 3, 1, 0],
+      },
+      {
+        cat: 'energy', catLabel: '⚡ 節能減碳',
+        question: '通勤方式你主要使用？',
+        options: ['步行、腳踏車或大眾運輸', '共乘或電動車', '自己開油電車', '自己開汽油車'],
+        scores: [5, 4, 2, 0],
+      },
+      {
+        cat: 'energy', catLabel: '⚡ 節能減碳',
+        question: '你是否有注意並減少家中電器的「待機電耗」（幽靈電力）？',
+        options: ['有，定期拔插頭或使用智慧插座', '偶爾會注意', '知道但沒有做', '不清楚這個概念'],
+        scores: [5, 3, 1, 0],
+      },
+      {
+        cat: 'energy', catLabel: '⚡ 節能減碳',
+        question: '你是否會清理電子信箱垃圾或雲端儲存，以降低數位碳排放？',
+        options: ['定期整理，有這個意識', '偶爾整理', '從來沒想過', '不知道數位行為有碳足跡'],
+        scores: [5, 2, 1, 0],
+      },
+    ];
+
+    /* ================================================
+       CATEGORIES CONFIG
+       ================================================ */
+    const CATS = {
+      green:    { label: '綠色飲食', color: '#5A9A5A', emoji: '🥗' },
+      shopping: { label: '明智購物', color: '#D4A843', emoji: '🛍️' },
+      recycle:  { label: '物品再生', color: '#3A7A8A', emoji: '♻️' },
+      energy:   { label: '節能減碳', color: '#C0392B', emoji: '⚡' },
+    };
+
+    /* ================================================
+       TIERS
+       ================================================ */
+    const TIERS = [
+      { min: 90,  emoji: '🏆', name: '金色永續守護者',   color: '#DAA520', desc: '你是永續生活的標竿！地球因為有你而更美好，請繼續引領身邊的人加入。' },
+      { min: 70,  emoji: '🥈', name: '銀色綠色實踐家',   color: '#708090', desc: '很棒的環保意識！你正穩穩地朝向零廢棄生活邁進，繼續保持！' },
+      { min: 50,  emoji: '🥉', name: '銅色環保潛力股',   color: '#CD7F32', desc: '你已掌握基本概念，只要在較薄弱的面向多加強，就能大幅提升。' },
+      { min: 0,   emoji: '🌱', name: '地球觀察員',       color: '#3A6B3A', desc: '現在開始永遠不晚！從最簡單的減碳開始，每一步都算數。' },
+    ];
+
+    /* ================================================
+       STATE
+       ================================================ */
+    let current = 0;
+    let answers = new Array(20).fill(null); // stores selected option index
+
+    /* ================================================
+       NAVIGATION
+       ================================================ */
+    function startQuiz() {
+      document.getElementById('introPanel').style.display = 'none';
+      document.getElementById('quizPanel').style.display  = 'block';
+      buildSidebar();
+      renderQuestion();
+    }
+
+    function prevQuestion() {
+      if (current > 0) { current--; renderQuestion(); }
+    }
+
+    function nextQuestion() {
+      if (answers[current] === null) {
+        alert('請先選擇一個答案！');
+        return;
+      }
+      if (current < QUESTIONS.length - 1) {
+        current++;
+        renderQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    /* ================================================
+       RENDER QUESTION
+       ================================================ */
+    function renderQuestion() {
+      const q = QUESTIONS[current];
+      const cat = CATS[q.cat];
+
+      document.getElementById('qCatBadge').textContent = q.catLabel;
+      document.getElementById('qNum').textContent = `第 ${current + 1} 題，共 20 題`;
+      document.getElementById('qText').textContent = q.question;
+
+      // Options
+      const list = document.getElementById('optionsList');
+      list.innerHTML = q.options.map((opt, i) => `
+        <button
+          class="option-btn ${answers[current] === i ? 'selected' : ''}"
+          onclick="selectOption(${i})"
+        >
+          <span class="option-letter">${String.fromCharCode(65+i)}</span>
+          <span>${opt}</span>
+        </button>
+      `).join('');
+
+      // Progress
+      const done = answers.filter(a => a !== null).length;
+      document.getElementById('progressText').textContent = `${done} / 20`;
+      document.getElementById('progressFill').style.width = `${(done / 20) * 100}%`;
+
+      // Category progress
+      updateCatProgress();
+
+      // Nav buttons
+      document.getElementById('prevBtn').disabled = current === 0;
+      document.getElementById('nextBtn').textContent =
+        current === QUESTIONS.length - 1 ? '查看結果 🎉' : '下一題 →';
+    }
+
+    function selectOption(i) {
+      answers[current] = i;
+      renderQuestion();
+    }
+
+    /* ================================================
+       SIDEBAR
+       ================================================ */
+    function buildSidebar() {
+      const div = document.getElementById('catProgress');
+      div.innerHTML = Object.entries(CATS).map(([key, cat]) => `
+        <div class="cat-progress-item">
+          <div class="cat-progress-label">
+            <span>${cat.emoji} ${cat.label}</span>
+            <span id="catCount-${key}">0/5</span>
+          </div>
+          <div class="cat-progress-bar">
+            <div class="cat-progress-fill" id="catBar-${key}" style="background:${cat.color}; width:0%"></div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function updateCatProgress() {
+      Object.keys(CATS).forEach(key => {
+        const catQs = QUESTIONS.map((q, i) => ({ q, i })).filter(x => x.q.cat === key);
+        const done  = catQs.filter(x => answers[x.i] !== null).length;
+        const pct   = (done / catQs.length) * 100;
+
+        const countEl = document.getElementById(`catCount-${key}`);
+        const barEl   = document.getElementById(`catBar-${key}`);
+        if (countEl) countEl.textContent = `${done}/5`;
+        if (barEl)   barEl.style.width   = `${pct}%`;
+      });
+    }
+
+    /* ================================================
+       CALCULATE SCORES
+       ================================================ */
+    function calcScores() {
+      const catScores = {};
+      Object.keys(CATS).forEach(key => { catScores[key] = 0; });
+
+      QUESTIONS.forEach((q, i) => {
+        if (answers[i] !== null) {
+          catScores[q.cat] += q.scores[answers[i]];
+        }
+      });
+
+      // Each category max = 25 (5 questions × 5 points)
+      // Normalise to 0–100
+      const catPct = {};
+      Object.keys(catScores).forEach(key => {
+        catPct[key] = Math.round((catScores[key] / 25) * 100);
+      });
+
+      const total = Math.round(Object.values(catPct).reduce((a,b)=>a+b,0) / 4);
+      return { catScores, catPct, total };
+    }
+
+    /* ================================================
+       SHOW RESULT
+       ================================================ */
+    function showResult() {
+      document.getElementById('quizPanel').style.display  = 'none';
+      document.getElementById('resultPanel').style.display = 'block';
+
+      const { catPct, total } = calcScores();
+
+      // Tier
+      const tier = TIERS.find(t => total >= t.min);
+      document.getElementById('tierBadge').style.background = tier.color;
+      document.getElementById('tierEmoji').textContent = tier.emoji;
+      document.getElementById('tierName').textContent  = tier.name;
+      document.getElementById('tierScore').textContent = `最終評分：${total} / 100`;
+      document.getElementById('tierDesc').textContent  = tier.desc;
+
+      // Radar chart
+      drawRadar(catPct);
+
+      // Breakdown
+      drawBreakdown(catPct);
+
+      // Diagnosis
+      drawDiagnosis(catPct);
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* ================================================
+       RADAR CHART
+       ================================================ */
+    function drawRadar(catPct) {
+      const ctx = document.getElementById('radarChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: Object.values(CATS).map(c => c.label),
+          datasets: [{
+            label: '你的環保指數',
+            data: Object.keys(CATS).map(k => catPct[k]),
+            backgroundColor: 'rgba(58,107,58,0.2)',
+            borderColor: '#3A6B3A',
+            borderWidth: 2,
+            pointBackgroundColor: '#3A6B3A',
+            pointRadius: 5,
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            r: {
+              beginAtZero: true,
+              max: 100,
+              ticks: {
+                stepSize: 25,
+                font: { size: 11 },
+                color: '#7A7A6A',
+              },
+              pointLabels: {
+                font: { size: 13, family: "'DM Sans', sans-serif" },
+                color: '#3D3D2E',
+              },
+              grid:  { color: 'rgba(0,0,0,0.08)' },
+              angleLines: { color: 'rgba(0,0,0,0.08)' },
+            }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: ctx => ` ${ctx.raw} / 100 分`
+              }
+            }
+          }
+        }
+      });
+    }
+
+    /* ================================================
+       BREAKDOWN CARDS
+       ================================================ */
+    function drawBreakdown(catPct) {
+      document.getElementById('breakdownGrid').innerHTML =
+        Object.entries(CATS).map(([key, cat]) => `
+          <div class="breakdown-card">
+            <div style="font-size:1.8rem">${cat.emoji}</div>
+            <div class="breakdown-score" style="color:${cat.color}">${catPct[key]}</div>
+            <div class="breakdown-label">${cat.label}</div>
+            <div style="margin-top:var(--sp-sm); height:6px; background:var(--clr-border); border-radius:3px; overflow:hidden">
+              <div style="height:100%; width:${catPct[key]}%; background:${cat.color}; border-radius:3px; transition:width 1s ease"></div>
+            </div>
+          </div>
+        `).join('');
+    }
+
+    /* ================================================
+       DIAGNOSIS — find weakest category & tip
+       ================================================ */
+    const TIPS = {
+      green: {
+        title: '行動雷達警示：綠色飲食',
+        tip: '嘗試每週安排 2 天素食日，或購物時選擇在地當季蔬果，可有效降低你的飲食碳足跡。',
+      },
+      shopping: {
+        title: '行動雷達警示：明智購物',
+        tip: '購物衝動可能是你的挑戰。建議實行「24 小時冷靜期」，買東西前先問自己：這是需要還是想要？',
+      },
+      recycle: {
+        title: '行動雷達警示：物品再生',
+        tip: '你較少嘗試「次拋換新」。試著找家附近的修理店，或是將二手物捐給需要的單位，延長物品生命週期。',
+      },
+      energy: {
+        title: '行動雷達警示：節能減碳',
+        tip: '組部隊在能源上有提升空間。除了節能源樹，清理電子垃圾箱也是一種現代人的數位減碳法。',
+      },
+    };
+
+    function drawDiagnosis(catPct) {
+      // Find weakest
+      const weakKey = Object.keys(catPct).reduce((a, b) => catPct[a] < catPct[b] ? a : b);
+      const tip = TIPS[weakKey];
+      const cat = CATS[weakKey];
+
+      document.getElementById('diagnosisContent').innerHTML = `
+        <div class="alert-item warn">
+          <div>
+            <strong>⚠️ ${tip.title}</strong>
+            <p>${tip.tip}</p>
+          </div>
+        </div>
+        <div class="alert-item tip">
+          <div>
+            <strong>✅ 你的最強項：${CATS[Object.keys(catPct).reduce((a,b) => catPct[a] > catPct[b] ? a : b)].emoji} ${CATS[Object.keys(catPct).reduce((a,b) => catPct[a] > catPct[b] ? a : b)].label}</strong>
+            <p>保持現有的好習慣，並嘗試把這個面向的成功模式複製到其他生活領域。</p>
+          </div>
+        </div>
+      `;
+    }
+
+    /* ================================================
+       RESET
+       ================================================ */
+    function resetQuiz() {
+      current = 0;
+      answers = new Array(20).fill(null);
+
+      document.getElementById('resultPanel').style.display = 'none';
+      document.getElementById('introPanel').style.display  = 'flex';
+
+      // Destroy chart (prevent duplicate canvas warning)
+      Chart.helpers.each(Chart.instances, chart => chart.destroy());
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>

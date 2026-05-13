@@ -1,0 +1,188 @@
+/* ============================================
+   EcoPulse - Base Styles & CSS Variables
+   Branch: main (shared across all branches)
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+/* --- Design Tokens --- */
+:root {
+  /* Colors */
+  --clr-bg:          #F5F2EA;
+  --clr-surface:     #FDFAF3;
+  --clr-primary:     #3A6B3A;
+  --clr-primary-lt:  #5A9A5A;
+  --clr-accent:      #D4A843;
+  --clr-dark:        #2C3E2C;
+  --clr-text:        #3D3D2E;
+  --clr-muted:       #7A7A6A;
+  --clr-border:      #D6D0C0;
+  --clr-danger:      #C0392B;
+  --clr-issue:       #8B4513;
+
+  /* Gold tier */
+  --clr-gold:        #DAA520;
+  --clr-silver:      #708090;
+  --clr-bronze:      #CD7F32;
+  --clr-green-tier:  #3A6B3A;
+
+  /* Typography */
+  --ff-display: 'Playfair Display', Georgia, serif;
+  --ff-body:    'DM Sans', sans-serif;
+
+  /* Spacing */
+  --sp-xs:  0.25rem;
+  --sp-sm:  0.5rem;
+  --sp-md:  1rem;
+  --sp-lg:  1.5rem;
+  --sp-xl:  2rem;
+  --sp-2xl: 3rem;
+  --sp-3xl: 4rem;
+
+  /* Border radius */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 32px;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.10);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,0.14);
+
+  /* Transitions */
+  --t-fast:   150ms ease;
+  --t-normal: 280ms ease;
+  --t-slow:   500ms ease;
+
+  /* Layout */
+  --max-w: 1100px;
+  --nav-h: 64px;
+}
+
+/* --- Reset --- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  font-family: var(--ff-body);
+  background: var(--clr-bg);
+  color: var(--clr-text);
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+img { max-width: 100%; display: block; }
+a  { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+button { cursor: pointer; border: none; background: none; font-family: inherit; }
+
+/* --- Typography Scale --- */
+h1, h2, h3, h4 { font-family: var(--ff-display); line-height: 1.2; color: var(--clr-dark); }
+h1 { font-size: clamp(2rem, 5vw, 3.5rem); }
+h2 { font-size: clamp(1.5rem, 3vw, 2.4rem); }
+h3 { font-size: clamp(1.1rem, 2vw, 1.5rem); }
+h4 { font-size: 1.1rem; }
+p  { color: var(--clr-text); }
+
+/* --- Layout Utilities --- */
+.container {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 var(--sp-xl);
+}
+
+.section {
+  padding: var(--sp-3xl) 0;
+}
+
+.section-title {
+  font-family: var(--ff-display);
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  color: var(--clr-dark);
+  margin-bottom: var(--sp-sm);
+}
+
+.section-subtitle {
+  color: var(--clr-muted);
+  font-size: 1rem;
+  margin-bottom: var(--sp-2xl);
+  max-width: 560px;
+}
+
+/* --- Buttons --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-sm);
+  padding: 0.65rem 1.4rem;
+  border-radius: var(--radius-xl);
+  font-family: var(--ff-body);
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: transform var(--t-fast), box-shadow var(--t-fast), background var(--t-fast);
+}
+
+.btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.btn:active { transform: translateY(0); }
+
+.btn-primary {
+  background: var(--clr-primary);
+  color: #fff;
+}
+.btn-primary:hover { background: var(--clr-primary-lt); }
+
+.btn-outline {
+  background: transparent;
+  color: var(--clr-primary);
+  border: 2px solid var(--clr-primary);
+}
+.btn-outline:hover { background: var(--clr-primary); color: #fff; }
+
+.btn-accent {
+  background: var(--clr-accent);
+  color: var(--clr-dark);
+}
+
+/* --- Card --- */
+.card {
+  background: var(--clr-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--clr-border);
+  box-shadow: var(--shadow-sm);
+  padding: var(--sp-xl);
+  transition: box-shadow var(--t-normal), transform var(--t-normal);
+}
+.card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
+
+/* --- Tag / Badge --- */
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-xl);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.badge-green  { background: #DFF0DF; color: var(--clr-primary); }
+.badge-amber  { background: #FFF3CD; color: #8a6700; }
+.badge-brown  { background: #F5E6D3; color: var(--clr-issue); }
+
+/* --- Fade-in animation --- */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.fade-up {
+  opacity: 0;
+  animation: fadeUp 0.6s ease forwards;
+}
+
+/* --- Responsive helpers --- */
+@media (max-width: 768px) {
+  .container { padding: 0 var(--sp-lg); }
+  .section   { padding: var(--sp-2xl) 0; }
+}

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>關於我們 — EcoPulse</title>
+  <link rel="stylesheet" href="../css/base.css" />
+  <style>
+    /* ============================================
+       Branch: feature/about  (朱家締)
+       File:   pages/about.html
+       ============================================ */
+
+    /* --- Mind Map Section --- */
+    .mindmap-section {
+      background: var(--clr-surface);
+    }
+
+    .mindmap-wrap {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--sp-2xl);
+    }
+
+    /* Central node */
+    .mindmap-center {
+      flex-shrink: 0;
+      width: 180px; height: 180px;
+      border-radius: 50%;
+      background: var(--clr-primary);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--ff-display);
+      font-size: 1.1rem;
+      text-align: center;
+      box-shadow: var(--shadow-lg);
+      margin-top: 60px;
+      position: relative;
+    }
+
+    .mindmap-center span { font-size: 0.75rem; opacity: 0.8; margin-top: 4px; }
+
+    /* Node grid */
+    .mindmap-nodes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-md);
+      flex: 1;
+    }
+
+    .mind-node {
+      background: var(--clr-surface);
+      border: 2px solid var(--clr-border);
+      border-radius: var(--radius-md);
+      padding: var(--sp-lg);
+      cursor: pointer;
+      transition: border-color var(--t-normal), box-shadow var(--t-normal), transform var(--t-normal);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mind-node:hover,
+    .mind-node.open {
+      border-color: var(--clr-primary);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-3px);
+    }
+
+    .mind-node-header {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-sm);
+      margin-bottom: var(--sp-sm);
+    }
+
+    .mind-node-icon {
+      font-size: 1.4rem;
+      width: 40px; height: 40px;
+      background: #DFF0DF;
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .mind-node h3 { font-size: 1rem; margin: 0; }
+
+    .mind-node-body {
+      font-size: 0.87rem;
+      color: var(--clr-muted);
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height var(--t-slow), opacity var(--t-slow);
+      opacity: 0;
+    }
+
+    .mind-node.open .mind-node-body {
+      max-height: 200px;
+      opacity: 1;
+    }
+
+    .mind-node-toggle {
+      position: absolute;
+      top: var(--sp-md);
+      right: var(--sp-md);
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: var(--clr-primary);
+      color: #fff;
+      font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform var(--t-normal);
+      line-height: 1;
+    }
+
+    .mind-node.open .mind-node-toggle { transform: rotate(45deg); }
+
+    /* --- Team Section --- */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--sp-xl);
+    }
+
+    .team-card {
+      text-align: center;
+      padding: var(--sp-2xl) var(--sp-lg);
+    }
+
+    .avatar {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--clr-primary-lt), var(--clr-accent));
+      margin: 0 auto var(--sp-md);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem;
+      color: #fff;
+    }
+
+    .team-card h3 { font-size: 1.05rem; margin-bottom: 4px; }
+    .team-card .role {
+      font-size: 0.82rem;
+      color: var(--clr-primary);
+      font-weight: 600;
+      margin-bottom: var(--sp-sm);
+    }
+    .team-card p { font-size: 0.85rem; color: var(--clr-muted); }
+
+    /* --- Values Section --- */
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--sp-lg);
+    }
+
+    .value-card {
+      border-top: 4px solid var(--clr-primary);
+    }
+
+    .value-card .num {
+      font-family: var(--ff-display);
+      font-size: 2.5rem;
+      color: var(--clr-border);
+      line-height: 1;
+      margin-bottom: var(--sp-sm);
+    }
+
+    .value-card h3 { margin-bottom: var(--sp-sm); font-size: 1.05rem; }
+    .value-card p  { font-size: 0.87rem; color: var(--clr-muted); }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .mindmap-wrap  { flex-direction: column; align-items: center; }
+      .mindmap-center { margin-top: 0; }
+      .team-grid     { grid-template-columns: 1fr; }
+      .values-grid   { grid-template-columns: 1fr; }
+      .mindmap-nodes { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <script src="../js/navbar.js"></script>
+
+  <!-- ===== PAGE HERO ===== -->
+  <section class="section" style="background:linear-gradient(160deg,#EAF3E6 0%,var(--clr-bg) 70%); padding-bottom:var(--sp-xl)">
+    <div class="container">
+      <span class="badge badge-green" style="margin-bottom:var(--sp-md)">關於我們</span>
+      <h1 style="max-width:520px">EcoPulse 的<br/>理念與故事</h1>
+      <p style="max-width:480px; color:var(--clr-muted); margin-top:var(--sp-md); font-size:1.05rem">
+        我們是三位資管系學生，希望用科技讓永續消費的概念變得具體、可量化、可行動。
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== MIND MAP ===== -->
+  <section class="section mindmap-section">
+    <div class="container">
+      <h2 class="section-title">互動心智圖</h2>
+      <p class="section-subtitle">點擊各節點展開詳細說明</p>
+
+      <div class="mindmap-wrap">
+        <div class="mindmap-center">
+          <span style="font-size:2rem">🌿</span>
+          ECO<br/>PULSE
+          <span>關於我們</span>
+        </div>
+
+        <div class="mindmap-nodes">
+          <!-- Node 1 -->
+          <div class="mind-node" onclick="toggleNode(this)">
+            <div class="mind-node-toggle">+</div>
+            <div class="mind-node-header">
+              <div class="mind-node-icon">🌱</div>
+              <h3>核心背景</h3>
+            </div>
+            <div class="mind-node-body">
+              全球每年產生約 20 億噸固體廢棄物，其中超過 30% 未妥善處理。SDG 12 強調必須從根源改變生產與消費模式，EcoPulse 的誕生正是回應這個迫切需求。
+            </div>
+          </div>
+
+          <!-- Node 2 -->
+          <div class="mind-node" onclick="toggleNode(this)">
+            <div class="mind-node-toggle">+</div>
+            <div class="mind-node-header">
+              <div class="mind-node-icon">💡</div>
+              <h3>網站特色</h3>
+            </div>
+            <div class="mind-node-body">
+              提供環保雷達圖與個人化建議；結合互動任務讓減碳行動變得好玩又簡單。不同於靜態介紹，我們強調使用者參與與即時回饋。
+            </div>
+          </div>
+
+          <!-- Node 3 -->
+          <div class="mind-node" onclick="toggleNode(this)">
+            <div class="mind-node-toggle">+</div>
+            <div class="mind-node-header">
+              <div class="mind-node-icon">⚠️</div>
+              <h3>問題意識</h3>
+            </div>
+            <div class="mind-node-body">
+              現代消費社會存在三大核心問題：過度消費導致資源耗竭、塑膠污染危害生態、食物浪費加劇碳排放。這些問題彼此連動，需要系統性的行為改變。
+            </div>
+          </div>
+
+          <!-- Node 4 -->
+          <div class="mind-node" onclick="toggleNode(this)">
+            <div class="mind-node-toggle">+</div>
+            <div class="mind-node-header">
+              <div class="mind-node-icon">🎯</div>
+              <h3>團隊目標</h3>
+            </div>
+            <div class="mind-node-body">
+              讓每位訪客在 5 分鐘內清楚自己的消費足跡，並帶走至少 1 個可立即實踐的改善行動。讓資訊可量化、建議可執行、改變可持續。
+            </div>
+          </div>
+
+          <!-- Node 5 -->
+          <div class="mind-node" onclick="toggleNode(this)">
+            <div class="mind-node-toggle">+</div>
+            <div class="mind-node-header">
+              <div class="mind-node-icon">💎</div>
+              <h3>核心價值</h3>
+            </div>
+            <div class="mind-node-body">
+              透明（資料來源公開可查）、互動（不是說教，而是對話）、行動導向（每個建議都能在本週實踐）。
+            </div>
+          </div>
+
+          <!-- Node 6 -->
+          <div class="mind-node" onclick="toggleNode(this)">
+            <div class="mind-node-toggle">+</div>
+            <div class="mind-node-header">
+              <div class="mind-node-icon">🌍</div>
+              <h3>我們的理念</h3>
+            </div>
+            <div class="mind-node-body">
+              環保不是犧牲生活品質，而是更聰明地消費。每一個有意識的選擇，都是給地球的一份禮物。數據讓改變可見，可見讓改變發生。
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TEAM ===== -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">團隊成員</h2>
+      <p class="section-subtitle">資訊管理學系二年級 B 班</p>
+
+      <div class="team-grid">
+        <div class="card team-card">
+          <div class="avatar">🧑‍💻</div>
+          <h3>朱家締</h3>
+          <div class="role">學號 113403532</div>
+          <p class="role" style="color:var(--clr-accent); margin-bottom:var(--sp-sm)">首頁 & 關於我們</p>
+          <p>負責整體網站架構設計、首頁視覺規劃，以及關於我們的互動心智圖實作。</p>
+        </div>
+
+        <div class="card team-card">
+          <div class="avatar" style="background:linear-gradient(135deg,#8B4513,#D4A843)">🌿</div>
+          <h3>羅乃慈</h3>
+          <div class="role">學號 113403533</div>
+          <p class="role" style="color:var(--clr-accent); margin-bottom:var(--sp-sm)">問題區 & 翻牌卡片</p>
+          <p>負責六大環境問題的內容研究、翻牌卡片互動設計，以及解決方案展示介面。</p>
+        </div>
+
+        <div class="card team-card">
+          <div class="avatar" style="background:linear-gradient(135deg,#2C6B6B,#3A9A9A)">📊</div>
+          <h3>祝善煦</h3>
+          <div class="role">學號 113403042</div>
+          <p class="role" style="color:var(--clr-accent); margin-bottom:var(--sp-sm)">環保測驗系統</p>
+          <p>負責 20 題環保測驗設計、計分邏輯、雷達圖視覺化，以及個人化建議演算法。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== VALUES ===== -->
+  <section class="section" style="background: var(--clr-surface)">
+    <div class="container">
+      <h2 class="section-title">設計原則</h2>
+      <p class="section-subtitle">讓複雜的環境資訊變得簡單、直覺、可行動</p>
+
+      <div class="values-grid">
+        <div class="card value-card">
+          <div class="num">01</div>
+          <h3>資訊分層</h3>
+          <p>核心概念優先呈現，細節依需求展開。避免資訊過載，讓使用者自主決定深度。</p>
+        </div>
+        <div class="card value-card">
+          <div class="num">02</div>
+          <h3>互動回饋</h3>
+          <p>每個操作都有即時視覺回應。翻牌、測驗、雷達圖——讓學習成為體驗而非閱讀。</p>
+        </div>
+        <div class="card value-card">
+          <div class="num">03</div>
+          <h3>行動導向</h3>
+          <p>不只告訴你「有問題」，更提供具體的本週可實踐行動，讓改變從今天開始。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer" style="background:var(--clr-dark); color:rgba(255,255,255,0.6); padding:var(--sp-xl) 0; text-align:center; font-size:0.85rem">
+    <div class="container">
+      <p>🌿 EcoPulse &nbsp;|&nbsp; 資管二B &nbsp;·&nbsp; 祝善煦 · 朱家締 · 羅乃慈</p>
+    </div>
+  </footer>
+
+  <script>
+    Navbar.init('about');
+
+    function toggleNode(el) {
+      el.classList.toggle('open');
+    }
+
+    // Animate nodes on scroll
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          e.target.style.animation = `fadeUp 0.5s ${i * 0.08}s ease forwards`;
+          e.target.style.opacity = '1';
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.mind-node, .team-card, .value-card').forEach(el => {
+      el.style.opacity = '0';
+      obs.observe(el);
+    });
+  </script>
+</body>
+</html>

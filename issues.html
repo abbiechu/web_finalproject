@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>問題區 — EcoPulse</title>
+  <link rel="stylesheet" href="../css/base.css" />
+  <style>
+    /* ============================================
+       Branch: feature/issues  (羅乃慈)
+       File:   pages/issues.html
+       ============================================ */
+
+    /* --- Filter Bar --- */
+    .filter-bar {
+      display: flex;
+      gap: var(--sp-sm);
+      flex-wrap: wrap;
+      margin-bottom: var(--sp-2xl);
+    }
+
+    .filter-btn {
+      padding: 0.4rem 1rem;
+      border-radius: var(--radius-xl);
+      border: 2px solid var(--clr-border);
+      background: transparent;
+      color: var(--clr-muted);
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all var(--t-fast);
+      cursor: pointer;
+      font-family: var(--ff-body);
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+      border-color: var(--clr-primary);
+      background: var(--clr-primary);
+      color: #fff;
+    }
+
+    /* --- Flip Card Grid --- */
+    .issues-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: var(--sp-xl);
+    }
+
+    /* Perspective wrapper */
+    .flip-wrap {
+      perspective: 1000px;
+      height: 280px;
+    }
+
+    .flip-inner {
+      position: relative;
+      width: 100%; height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+    }
+
+    .flip-wrap:hover .flip-inner,
+    .flip-wrap.flipped .flip-inner {
+      transform: rotateY(180deg);
+    }
+
+    /* Card faces */
+    .flip-front, .flip-back {
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius-lg);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      padding: var(--sp-xl);
+      border: 1px solid var(--clr-border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .flip-front {
+      background: var(--clr-surface);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .flip-back {
+      background: var(--clr-primary);
+      color: #fff;
+      transform: rotateY(180deg);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* Front content */
+    .issue-icon {
+      font-size: 2.8rem;
+      margin-bottom: var(--sp-sm);
+    }
+
+    .issue-title {
+      font-family: var(--ff-display);
+      font-size: 1.3rem;
+      color: var(--clr-dark);
+      margin-bottom: var(--sp-sm);
+    }
+
+    .issue-stat {
+      font-size: 0.83rem;
+      color: var(--clr-muted);
+      padding: var(--sp-sm) var(--sp-md);
+      background: #F0F0E8;
+      border-radius: var(--radius-sm);
+    }
+
+    .issue-stat strong { color: var(--clr-issue); }
+
+    .flip-hint {
+      font-size: 0.75rem;
+      color: var(--clr-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Back content */
+    .flip-back h3 {
+      color: #fff;
+      font-size: 1.05rem;
+      margin-bottom: var(--sp-sm);
+    }
+
+    .solution-list {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .solution-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--sp-sm);
+      margin-bottom: var(--sp-sm);
+      font-size: 0.87rem;
+      color: rgba(255,255,255,0.9);
+    }
+
+    .solution-item::before {
+      content: '✓';
+      color: var(--clr-accent);
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .solution-action {
+      padding: var(--sp-sm) var(--sp-md);
+      background: rgba(255,255,255,0.15);
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.8);
+    }
+
+    /* --- Modal --- */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+      padding: var(--sp-lg);
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal-box {
+      background: var(--clr-surface);
+      border-radius: var(--radius-xl);
+      max-width: 560px;
+      width: 100%;
+      padding: var(--sp-2xl);
+      position: relative;
+      box-shadow: var(--shadow-lg);
+      animation: fadeUp 0.3s ease;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: var(--sp-lg);
+      right: var(--sp-lg);
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--clr-border);
+      color: var(--clr-muted);
+      font-size: 1.1rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: background var(--t-fast);
+    }
+
+    .modal-close:hover { background: var(--clr-primary); color: #fff; }
+
+    .modal-icon { font-size: 2.5rem; margin-bottom: var(--sp-md); }
+    .modal-box h2 { margin-bottom: var(--sp-sm); }
+    .modal-box .stat-block {
+      background: #F0F0E8;
+      border-radius: var(--radius-md);
+      padding: var(--sp-md);
+      margin-bottom: var(--sp-lg);
+      font-size: 0.9rem;
+    }
+
+    .modal-solutions h4 {
+      font-family: var(--ff-body);
+      font-weight: 600;
+      color: var(--clr-primary);
+      margin-bottom: var(--sp-sm);
+      font-size: 0.9rem;
+    }
+
+    .modal-solutions ul { display: flex; flex-direction: column; gap: var(--sp-sm); }
+
+    .modal-solutions li {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--sp-sm);
+      font-size: 0.9rem;
+      color: var(--clr-text);
+    }
+
+    .modal-solutions li::before {
+      content: '→';
+      color: var(--clr-primary);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .flip-wrap { height: 240px; }
+      .issues-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <script src="../js/navbar.js"></script>
+
+  <!-- Page hero -->
+  <section class="section" style="background:linear-gradient(160deg,#EAF3E6 0%,var(--clr-bg) 70%); padding-bottom:var(--sp-xl)">
+    <div class="container">
+      <span class="badge badge-brown" style="margin-bottom:var(--sp-md)">問題區</span>
+      <h1>六大環境問題<br/>你了解幾個？</h1>
+      <p style="max-width:480px; color:var(--clr-muted); margin-top:var(--sp-md); font-size:1.05rem">
+        Hover 或點擊卡片翻面，看見問題背後的解決方案。點擊「深入了解」取得更多資訊。
+      </p>
+    </div>
+  </section>
+
+  <!-- Main -->
+  <section class="section">
+    <div class="container">
+      <!-- Filter -->
+      <div class="filter-bar" id="filterBar">
+        <button class="filter-btn active" data-filter="all">全部</button>
+        <button class="filter-btn" data-filter="consumption">消費</button>
+        <button class="filter-btn" data-filter="pollution">污染</button>
+        <button class="filter-btn" data-filter="waste">廢棄物</button>
+        <button class="filter-btn" data-filter="energy">能源</button>
+      </div>
+
+      <!-- Cards -->
+      <div class="issues-grid" id="issuesGrid"></div>
+    </div>
+  </section>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal" onclick="closeModal(event)">
+    <div class="modal-box" id="modalBox">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div class="modal-icon" id="mIcon"></div>
+      <h2 id="mTitle"></h2>
+      <div class="stat-block" id="mStat"></div>
+      <div class="modal-solutions">
+        <h4>解決方案</h4>
+        <ul id="mSolutions"></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer style="background:var(--clr-dark);color:rgba(255,255,255,0.6);padding:var(--sp-xl) 0;text-align:center;font-size:0.85rem">
+    <div class="container">
+      <p>🌿 EcoPulse &nbsp;|&nbsp; 問題區由 羅乃慈 負責製作</p>
+    </div>
+  </footer>
+
+  <script>
+    Navbar.init('issues');
+
+    /* ================================================
+       DATA — 六大環境問題
+       ================================================ */
+    const ISSUES = [
+      {
+        id: 1, tag: 'consumption',
+        icon: '🛒', title: '過度消費',
+        stat: '全球物質消費量在過去 50 年間<strong>增加逾 3 倍</strong>，資源耗竭速度遠超地球再生能力。',
+        summary: '衝動購物、一次性用品、快時尚——便利的代價正由地球承擔。',
+        solutions: [
+          '購物前等待 24 小時冷靜期，確認是「需要」而非「想要」',
+          '選擇二手商品或租借代替購買，延長物品生命週期',
+          '支持在地、永續品牌，以消費行為投票給你想要的世界',
+          '實踐「斷捨離」，定期整理家中物品並捐贈出去',
+        ],
+        action: '本週行動：記錄 7 天所有購物，找出 1 項可避免的衝動消費',
+      },
+      {
+        id: 2, tag: 'pollution',
+        icon: '🧴', title: '塑膠污染',
+        stat: '每年約 <strong>800 萬噸塑膠</strong>流入海洋，全球僅 <strong>9%</strong> 的塑膠曾被回收。',
+        summary: '一個塑膠瓶需要 450 年才能分解，而我們每分鐘售出超過百萬個。',
+        solutions: [
+          '自備購物袋、水瓶、餐具，拒絕一次性塑膠',
+          '選購無塑包裝或玻璃、不鏽鋼材質產品',
+          '參與社區淨灘或垃圾撿拾活動',
+          '向常購買的品牌反映，要求減少過度包裝',
+        ],
+        action: '本週行動：列出家中 5 樣一次性塑膠，找到可替代的永續選項',
+      },
+      {
+        id: 3, tag: 'waste',
+        icon: '🍱', title: '食物浪費',
+        stat: '全球食物生產有 <strong>1/3 遭到浪費</strong>，相當於每年 13 億噸，足以養活全球 8.5 億飢餓人口。',
+        summary: '從農場到餐桌，食物在每個環節都面臨損失，而消費者端的浪費尤為嚴重。',
+        solutions: [
+          '購物前確認冰箱庫存，制定一週菜單，減少衝動採購',
+          '了解食品標示差異：「最佳賞味期」≠「到期不能吃」',
+          '學習食物保存技巧，利用剩食製作新料理',
+          '使用 Too Good To Go 等 App 購買即將過期的特價食品',
+        ],
+        action: '本週行動：記錄一週內丟棄的食物，找出最常浪費的品項',
+      },
+      {
+        id: 4, tag: 'consumption',
+        icon: '👕', title: '快時尚衝擊',
+        stat: '時尚產業排放全球 <strong>10%</strong> 的碳排，每年生產的衣物有 <strong>85%</strong> 最終進入垃圾掩埋場。',
+        summary: '「買了一季就不穿」的快時尚模式，每年消耗大量水資源與有毒染料。',
+        solutions: [
+          '購衣前問自己：「我會穿超過 30 次嗎？」',
+          '選擇品質好的經典款式，優於追逐每季新潮',
+          '嘗試二手衣店、換衣活動或衣物租借平台',
+          '學習基礎縫補技能，讓心愛衣物壽命更長',
+        ],
+        action: '本週行動：整理衣櫃，將半年未穿的衣物捐出或出售',
+      },
+      {
+        id: 5, tag: 'waste',
+        icon: '💻', title: '電子垃圾',
+        stat: '全球每年產生約 <strong>5,360 萬噸</strong>電子廢棄物，是成長最快速的廢棄物類別，僅 <strong>17.4%</strong> 被正式回收。',
+        summary: '廢棄電子設備含有鉛、汞、鎘等有毒物質，不當處理會嚴重污染土壤與地下水。',
+        solutions: [
+          '電器壞了先尋求維修，而非立即購買新品',
+          '購買新電器時，選擇具有完善回收計畫的品牌',
+          '將舊手機、電池、電器送至合格的電子廢棄物回收點',
+          '選購通過 EPEAT 或 Energy Star 認證的電子產品',
+        ],
+        action: '本週行動：清查家中不再使用的電子產品，送至合格回收點',
+      },
+      {
+        id: 6, tag: 'energy',
+        icon: '⚡', title: '能源浪費',
+        stat: '建築物能耗占全球 <strong>40%</strong> 的能源消耗，其中大量為不必要的浪費（待機電耗、低效設備）。',
+        summary: '隨手關燈、拔插頭看似小事，但台灣家庭平均有 10% 電費來自「幽靈電力」。',
+        solutions: [
+          '使用智慧插座或定時器，消除待機幽靈電耗',
+          '將白熾燈泡全面換成 LED，省電 80%',
+          '調整冷氣溫度至 26-28°C，每升高 1°C 省電 6%',
+          '選購節能標章家電，長期省電又省錢',
+        ],
+        action: '本週行動：睡前巡視家中，拔掉所有非必要插頭',
+      },
+    ];
+
+    /* ================================================
+       RENDER CARDS
+       ================================================ */
+    function renderCards(filter = 'all') {
+      const grid = document.getElementById('issuesGrid');
+      const filtered = filter === 'all' ? ISSUES : ISSUES.filter(i => i.tag === filter);
+
+      grid.innerHTML = filtered.map(issue => `
+        <div class="flip-wrap" data-id="${issue.id}">
+          <div class="flip-inner">
+            <!-- Front -->
+            <div class="flip-front">
+              <div>
+                <div class="issue-icon">${issue.icon}</div>
+                <div class="issue-title">${issue.title}</div>
+                <p style="font-size:0.87rem;color:var(--clr-muted);margin-bottom:var(--sp-md)">${issue.summary}</p>
+                <div class="issue-stat">${issue.stat}</div>
+              </div>
+              <div class="flip-hint">↩ Hover 翻面看解方</div>
+            </div>
+            <!-- Back -->
+            <div class="flip-back">
+              <div>
+                <h3>✅ 解決方案</h3>
+                <div class="solution-list">
+                  ${issue.solutions.slice(0,3).map(s => `<div class="solution-item">${s}</div>`).join('')}
+                </div>
+              </div>
+              <div>
+                <div class="solution-action">🎯 ${issue.action}</div>
+                <button
+                  onclick="openModal(${issue.id}); event.stopPropagation();"
+                  class="btn btn-accent"
+                  style="margin-top:var(--sp-sm);width:100%;justify-content:center;font-size:0.82rem"
+                >深入了解 →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      // Click to flip on mobile
+      grid.querySelectorAll('.flip-wrap').forEach(el => {
+        el.addEventListener('click', () => el.classList.toggle('flipped'));
+      });
+    }
+
+    /* ================================================
+       MODAL
+       ================================================ */
+    function openModal(id) {
+      const issue = ISSUES.find(i => i.id === id);
+      if (!issue) return;
+
+      document.getElementById('mIcon').textContent   = issue.icon;
+      document.getElementById('mTitle').textContent  = issue.title;
+      document.getElementById('mStat').innerHTML     = issue.stat;
+      document.getElementById('mSolutions').innerHTML =
+        issue.solutions.map(s => `<li>${s}</li>`).join('');
+
+      document.getElementById('modal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(e) {
+      if (e && e.target !== document.getElementById('modal') && !e.target.classList.contains('modal-close')) return;
+      document.getElementById('modal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    /* ================================================
+       FILTER
+       ================================================ */
+    document.getElementById('filterBar').addEventListener('click', e => {
+      const btn = e.target.closest('.filter-btn');
+      if (!btn) return;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderCards(btn.dataset.filter);
+    });
+
+    // Init
+    renderCards();
+  </script>
+</body>
+</html>
