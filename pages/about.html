@@ -330,6 +330,10 @@
   /* ── 6 節點角度 ── */
   const ANGLES = [-90, -30, 30, 90, 150, 210];
   const RADIUS = 210;
+  
+  // 寫死卡片在 CSS 裡設定的真實寬高，徹底避開瀏覽器抓不到邊界的 bug
+  const CARD_W = 136;
+  const CARD_H = 90; 
 
   function positionNodes() {
     const wrap = document.getElementById('mmWrap');
@@ -344,9 +348,10 @@
       const ny   = cy + RADIUS * Math.sin(rad);
       const node = document.getElementById('n' + i);
       
-      node.style.left = nx + 'px';
-      node.style.top  = ny + 'px';
-      node.style.transform = 'translate(-50%, -50%)';
+      // 改用正確的絕對座標定位（左上角起算），這樣隨時都能用 style 屬性精確讀取
+      node.style.left = (nx - CARD_W / 2) + 'px';
+      node.style.top  = (ny - CARD_H / 2) + 'px';
+      node.style.transform = 'none'; // 取消 transform 避免干擾
     });
 
     drawLines(cx, cy);
@@ -358,8 +363,8 @@
 
     for (let i = 0; i < 6; i++) {
       const node = document.getElementById('n' + i);
-      const nx = parseFloat(node.style.left);
-      const ny = parseFloat(node.style.top);
+      const nx = parseFloat(node.style.left) + CARD_W / 2;
+      const ny = parseFloat(node.style.top) + CARD_H / 2;
 
       const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
       line.setAttribute('x1', cx);   line.setAttribute('y1', cy);
@@ -372,13 +377,13 @@
     }
   }
 
-  /* ── Tooltip 精確邊界定位 ── */
+  /* ── Tooltip 100% 穩定的絕對座標推移 ── */
   const tooltip = document.getElementById('mmTooltip');
-  const GAP = 20;  // 彈出視窗與卡片卡片之間的絕對安全空隙
+  const GAP = 25;  // 加大間距，確保絕對在卡片外圍
 
   document.querySelectorAll('.mm-node').forEach((node, i) => {
     node.addEventListener('mouseenter', () => {
-      // 1. 寫入內文
+      // 1. 填入內容
       document.getElementById('ttTitle').textContent = NODE_DATA[i].title;
       document.getElementById('ttBody').textContent  = NODE_DATA[i].body;
       
@@ -388,69 +393,61 @@
       void tooltip.offsetHeight; 
 
       const wrap = document.getElementById('mmWrap');
-      const wr = wrap.getBoundingClientRect();
-      const nodeR = node.getBoundingClientRect();
-      
       const ttW = tooltip.offsetWidth;
       const ttH = tooltip.offsetHeight;
 
-      // 計算卡片相對於容器容器 (#mmWrap) 的邊界座標
-      const nodeLeft   = nodeR.left - wr.left;
-      const nodeTop    = nodeR.top - wr.top;
-      const nodeRight  = nodeR.right - wr.left;
-      const nodeBottom = nodeR.bottom - wr.top;
-      const nodeWidth  = nodeR.width;
-      const nodeHeight = nodeR.height;
+      // 核心改動：直接從 style 抓取絕對精確的座標數字，再也不怕網頁加載延遲
+      const nodeLeft = parseFloat(node.style.left);
+      const nodeTop  = parseFloat(node.style.top);
 
       let left, top;
       let startTransform = '';
 
-      // 3. 依據角度精確計算「絕對不重疊」的外部座標
+      // 3. 依據角度百分之百強制定位方向
       const currentAngle = ANGLES[i];
 
       if (currentAngle === -90) {
-        // 【核心背景】從卡片頂端（nodeTop）再往上扣掉 Tooltip 高度與間距，絕對在上方外側
-        left = nodeLeft + (nodeWidth - ttW) / 2;
+        // 【核心背景】強制定格在卡片上方：卡片頂部再減去 Tooltip 高度與間距
+        left = nodeLeft + (CARD_W - ttW) / 2;
         top = nodeTop - ttH - GAP;
         startTransform = 'translateY(-15px)';
       } 
       else if (currentAngle === 90) {
-        // 【團隊目標】從卡片底部（nodeBottom）往下加間距，絕對在下方外側
-        left = nodeLeft + (nodeWidth - ttW) / 2;
-        top = nodeBottom + GAP;
+        // 【團隊目標】強制定格在卡片下方：卡片底部（nodeTop + CARD_H）再加上間距
+        left = nodeLeft + (CARD_W - ttW) / 2;
+        top = nodeTop + CARD_H + GAP;
         startTransform = 'translateY(15px)';
       } 
       else if (currentAngle === -30 || currentAngle === 30) {
-        // 【網頁特色、問題意識】右側外側
-        left = nodeRight + GAP;
-        top = nodeTop + (nodeHeight - ttH) / 2;
+        // 【網頁特色、問題意識】右側外圍
+        left = nodeLeft + CARD_W + GAP;
+        top = nodeTop + (CARD_H - ttH) / 2;
         startTransform = 'translateX(15px)';
       } 
       else {
-        // 【核心價值、我們的理念】左側外側
+        // 【核心價值、我們的理念】左側外圍
         left = nodeLeft - ttW - GAP;
-        top = nodeTop + (nodeHeight - ttH) / 2;
+        top = nodeTop + (CARD_H - ttH) / 2;
         startTransform = 'translateX(-15px)';
       }
 
-      // 視窗邊界防護
-      left = Math.max(8, Math.min(left, wr.width - ttW - 8));
-      top = Math.max(8, Math.min(top, wr.height - ttH - 8));
+      // 畫布邊緣保護
+      left = Math.max(10, Math.min(left, wrap.offsetWidth - ttW - 10));
+      top = Math.max(10, Math.min(top, wrap.offsetHeight - ttH - 10));
 
-      // 4. 寫入樣式
+      // 4. 套用位置與滑入動畫
       tooltip.style.left = left + 'px';
       tooltip.style.top = top + 'px';
       tooltip.style.transform = startTransform;
 
-      // 5. 觸發滑入動畫
       requestAnimationFrame(() => {
-        tooltip.style.transition = 'opacity 0.2s ease-out, transform 0.2s ease-out';
+        tooltip.style.transition = 'opacity 0.18s ease-out, transform 0.18s ease-out';
         tooltip.classList.add('show');
         tooltip.style.transform = 'translate(0, 0)';
       });
     });
 
-    // 滑鼠移走立刻不顯示
+    // 滑鼠移開，瞬間隱藏
     node.addEventListener('mouseleave', () => {
       tooltip.classList.remove('show');
       tooltip.style.transition = 'none';
