@@ -97,21 +97,29 @@
 
     /* Tooltip：用 data-dir 控制出現方向 */
     .mm-tooltip {
-      position: absolute;
-      width: 210px;
-      background: var(--clr-surface);
-      border: 1.5px solid var(--clr-primary);
-      border-radius: var(--radius-md);
-      padding: var(--sp-md) var(--sp-lg);
-      box-shadow: var(--shadow-md);
-      z-index: 40;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.18s ease, transform 0.18s ease;
+  position: absolute;
+  width: 230px;
+  background: var(--clr-surface);
+  border: 1.5px solid var(--clr-primary);
+  border-radius: var(--radius-md);
+  padding: var(--sp-md) var(--sp-lg);
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+
+  z-index: 50;
+
+  pointer-events: none;
+  opacity: 0;
+
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
     }
 
-    /* 初始偏移（由 JS 在顯示前設定 transform） */
-    .mm-tooltip.show { opacity: 1; }
+/* 顯示時 */
+    .mm-tooltip.show {
+      opacity: 1;
+    }
 
     .mm-tooltip .tt-title {
       font-family: var(--ff-display);
@@ -435,14 +443,19 @@
         tooltip.style.top     = top  + 'px';
         tooltip.style.display = 'block';
         // 讓 transition 生效
-        requestAnimationFrame(() => tooltip.classList.add('show'));
-      });
+        tooltip.classList.remove('show');
+
+        requestAnimationFrame(() => {
+          tooltip.classList.add('show');
+        });
 
       node.addEventListener('mouseleave', () => {
-        tooltip.classList.remove('show');
-        setTimeout(() => { tooltip.style.display = 'none'; }, 180);
-      });
-    });
+          tooltip.classList.remove('show');
+
+          setTimeout(() => {
+            tooltip.style.display = 'none';
+          }, 250);
+        });
 
     /* ── Scroll 動畫：只對 .anim-title ── */
     const titleObserver = new IntersectionObserver(entries => {
