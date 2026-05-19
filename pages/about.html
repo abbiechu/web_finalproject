@@ -314,171 +314,165 @@
     </div>
   </footer>
 
-  <script>
-    Navbar.init('about');
+<script>
+  Navbar.init('about');
 
-    /* ── 節點資料 ── */
-    const NODE_DATA = [
-      { title: '核心背景', body: '全球每年產生約 20 億噸固體廢棄物，超過 30% 未妥善處理。SDG 12 強調必須從根源改變生產與消費模式，EcoPulse 因此誕生。' },
-      { title: '網站特色', body: '提供環保雷達圖與個人化建議；結合互動翻牌與測驗，讓減碳行動變得好玩又可衡量，不同於靜態介紹網站。' },
-      { title: '問題意識', body: '過度消費、塑膠污染、食物浪費——三大問題彼此連動，需要系統性的日常行為改變才能有效應對。' },
-      { title: '團隊目標', body: '讓每位訪客在 5 分鐘內清楚自己的消費足跡，並帶走至少 1 個本週可實踐的改善行動。' },
-      { title: '核心價值', body: '透明（資料公開可查）、互動（對話而非說教）、行動導向（每個建議本週就能實踐）。' },
-      { title: '我們的理念', body: '環保不是犧牲生活品質，而是更聰明地消費。每個有意識的選擇，都是給地球的一份禮物。' },
-    ];
+  /* ── 節點資料 ── */
+  const NODE_DATA = [
+    { title: '核心背景', body: '全球每年產生約 20 億噸固體廢棄物，超過 30% 未妥善處理。SDG 12 強調必須從根源改變生產與消費模式，EcoPulse 因此誕生。' },
+    { title: '網站特色', body: '提供環保雷達圖與個人化建議；結合互動翻牌與測驗，讓減碳行動變得好玩又可衡量，不同於靜態介紹網站。' },
+    { title: '問題意識', body: '過度消費、塑膠污染、食物浪費——三大問題彼此連動，需要系統性的日常行為改變才能有效應對。' },
+    { title: '團隊目標', body: '讓每位訪客在 5 分鐘內清楚自己的消費足跡，並帶走至少 1 個本週可實踐的改善行動。' },
+    { title: '核心價值', body: '透明（資料公開可查）、互動（對話而非說教）、行動導向（每個建議本週就能實踐）。' },
+    { title: '我們的理念', body: '環保不是犧牲生活品質，而是更聰明地消費。每個有意識的選擇，都是給地球的一份禮物。' },
+  ];
 
-    /* ── 6 節點角度 ── */
-    const ANGLES = [-90, -30, 30, 90, 150, 210];
-    const RADIUS = 210;
+  /* ── 6 節點角度 ── */
+  const ANGLES = [-90, -30, 30, 90, 150, 210];
+  const RADIUS = 210;
 
-    function positionNodes() {
+  function positionNodes() {
+    const wrap = document.getElementById('mmWrap');
+    const W = wrap.offsetWidth;
+    const H = wrap.offsetHeight;
+    const cx = W / 2;
+    const cy = H / 2;
+
+    ANGLES.forEach((deg, i) => {
+      const rad  = (deg * Math.PI) / 180;
+      const nx   = cx + RADIUS * Math.cos(rad);
+      const ny   = cy + RADIUS * Math.sin(rad);
+      const node = document.getElementById('n' + i);
+      
+      node.style.left = nx + 'px';
+      node.style.top  = ny + 'px';
+      node.style.transform = 'translate(-50%, -50%)';
+    });
+
+    drawLines(cx, cy);
+  }
+
+  function drawLines(cx, cy) {
+    const svg  = document.getElementById('mmSvg');
+    svg.innerHTML = '';
+
+    for (let i = 0; i < 6; i++) {
+      const node = document.getElementById('n' + i);
+      const nx = parseFloat(node.style.left);
+      const ny = parseFloat(node.style.top);
+
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', cx);   line.setAttribute('y1', cy);
+      line.setAttribute('x2', nx);   line.setAttribute('y2', ny);
+      line.setAttribute('stroke', '#3A6B3A');
+      line.setAttribute('stroke-width', '1.5');
+      line.setAttribute('stroke-opacity', '0.4');
+      line.setAttribute('stroke-dasharray', '6 4');
+      svg.appendChild(line);
+    }
+  }
+
+  /* ── Tooltip 精確角度定位與即時開關 ── */
+  const tooltip = document.getElementById('mmTooltip');
+  const GAP = 15;  // 確保絕對不重疊的安全間距
+
+  document.querySelectorAll('.mm-node').forEach((node, i) => {
+    node.addEventListener('mouseenter', () => {
+      // 1. 填入資料並立刻顯現，讓瀏覽器渲染出高度
+      document.getElementById('ttTitle').textContent = NODE_DATA[i].title;
+      document.getElementById('ttBody').textContent  = NODE_DATA[i].body;
+      
+      tooltip.style.display = 'block';
+      tooltip.style.transition = 'none'; // 先關閉動畫，避免計算不準
+      
+      // 強制瀏覽器重繪排版 (Reflow)，保證 offsetHeight 取到最新且真實的數值
+      void tooltip.offsetHeight; 
+
       const wrap = document.getElementById('mmWrap');
-      const W = wrap.offsetWidth;
-      const H = wrap.offsetHeight;
-      const cx = W / 2;
-      const cy = H / 2;
+      const wr = wrap.getBoundingClientRect();
+      const nodeR = node.getBoundingClientRect();
+      
+      const ttW = tooltip.offsetWidth;
+      const ttH = tooltip.offsetHeight;
 
-      ANGLES.forEach((deg, i) => {
-        const rad  = (deg * Math.PI) / 180;
-        const nx   = cx + RADIUS * Math.cos(rad);
-        const ny   = cy + RADIUS * Math.sin(rad);
-        const node = document.getElementById('n' + i);
-        
-        // 使用 transform 置中，定位更精準且不易受寬高變動影響
-        node.style.left = nx + 'px';
-        node.style.top  = ny + 'px';
-        node.style.transform = 'translate(-50%, -50%)';
-      });
+      // 節點相對於 wrap 的座標
+      const nodeLeft = nodeR.left - wr.left;
+      const nodeTop = nodeR.top - wr.top;
+      const nodeWidth = nodeR.width;
+      const nodeHeight = nodeR.height;
 
-      drawLines(cx, cy);
-    }
+      let left, top;
+      let startTransform = '';
 
-    function drawLines(cx, cy) {
-      const svg  = document.getElementById('mmSvg');
-      svg.innerHTML = '';
+      // 2. 核心改動：直接依據角度（Index）死定彈出方向，不再用坐標盲猜
+      const currentAngle = ANGLES[i];
 
-      for (let i = 0; i < 6; i++) {
-        const node = document.getElementById('n' + i);
-        // 直接讀取樣式設定的相對座標值
-        const nx = parseFloat(node.style.left);
-        const ny = parseFloat(node.style.top);
-
-        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', cx);   line.setAttribute('y1', cy);
-        line.setAttribute('x2', nx);   line.setAttribute('y2', ny);
-        line.setAttribute('stroke', '#3A6B3A');
-        line.setAttribute('stroke-width', '1.5');
-        line.setAttribute('stroke-opacity', '0.4');
-        line.setAttribute('stroke-dasharray', '6 4');
-        svg.appendChild(line);
+      if (currentAngle === -90) {
+        // 【正上方節點 n0】 絕對出現在正上方外側
+        left = nodeLeft + (nodeWidth - ttW) / 2;
+        top = nodeTop - ttH - GAP;
+        startTransform = 'translateY(-12px)';
+      } 
+      else if (currentAngle === 90) {
+        // 【正下方節點 n3】 絕對出現在正下方外側
+        left = nodeLeft + (nodeWidth - ttW) / 2;
+        top = nodeTop + nodeHeight + GAP;
+        startTransform = 'translateY(12px)';
+      } 
+      else if (currentAngle === -30 || currentAngle === 30) {
+        // 【右方側節點 n1, n2】 絕對出現在右側外
+        left = nodeLeft + nodeWidth + GAP;
+        top = nodeTop + (nodeHeight - ttH) / 2;
+        startTransform = 'translateX(12px)';
+      } 
+      else {
+        // 【左方側節點 n4, n5】 絕對出現在左側外
+        left = nodeLeft - ttW - GAP;
+        top = nodeTop + (nodeHeight - ttH) / 2;
+        startTransform = 'translateX(-12px)';
       }
-    }
 
-    /* ── Tooltip 精確定位與即時顯示隱藏 ── */
-    const tooltip = document.getElementById('mmTooltip');
-    const GAP = 14;  // 節點與彈出視窗的精確安全間距
+      // 邊界安全保護
+      left = Math.max(6, Math.min(left, wr.width - ttW - 6));
+      top = Math.max(6, Math.min(top, wr.height - ttH - 6));
 
-    document.querySelectorAll('.mm-node').forEach((node, i) => {
-      node.addEventListener('mouseenter', () => {
-        // 1. 填入資料
-        document.getElementById('ttTitle').textContent = NODE_DATA[i].title;
-        document.getElementById('ttBody').textContent  = NODE_DATA[i].body;
+      // 3. 帶入定位
+      tooltip.style.left = left + 'px';
+      tooltip.style.top = top + 'px';
+      tooltip.style.transform = startTransform;
 
-        const wrap = document.getElementById('mmWrap');
-        const wr = wrap.getBoundingClientRect();
-        
-        // 2. 先將 display 設為 block，以便 JS 能抓取到實際渲染後的真實寬高 (offsetHeight/offsetWidth)
-        tooltip.style.display = 'block';
-        
-        const nodeR = node.getBoundingClientRect();
-        const ttW = tooltip.offsetWidth;
-        const ttH = tooltip.offsetHeight;
-
-        // 計算節點相對於 wrap 的當前精確位置
-        const nodeLeft = nodeR.left - wr.left;
-        const nodeTop = nodeR.top - wr.top;
-        const nodeWidth = nodeR.width;
-        const nodeHeight = nodeR.height;
-
-        // 節點中心點相對畫布中心的偏移量，用來判斷它在心智圖的哪個方位
-        const nodeCx = nodeLeft + nodeWidth / 2;
-        const nodeCy = nodeTop + nodeHeight / 2;
-        const wCx = wr.width / 2;
-        const wCy = wr.height / 2;
-        const dx = nodeCx - wCx; 
-        const dy = nodeCy - wCy; 
-
-        let left, top;
-        let startTransform = ''; // 進入動畫的起點偏移
-
-        // 3. 根據主要方位判斷，把 Tooltip 完美推到節點「外側」，絕不重疊標題
-        if (Math.abs(dx) >= Math.abs(dy)) {
-          // ── 左右方位 ──
-          top = nodeTop + (nodeHeight - ttH) / 2; // 垂直與節點對齊
-          if (dx > 0) {
-            // 在右邊：Tooltip 出現在節點的右側外
-            left = nodeLeft + nodeWidth + GAP;
-            startTransform = 'translateX(10px)'; // 從右方滑入
-          } else {
-            // 在左邊：Tooltip 出現在節點的左側外
-            left = nodeLeft - ttW - GAP;
-            startTransform = 'translateX(-10px)'; // 從左方滑入
-          }
-        } else {
-          // ── 上下方位 ──
-          left = nodeLeft + (nodeWidth - ttW) / 2; // 水平與節點置中對齊
-          if (dy > 0) {
-            // 在下方：Tooltip 出現在節點的下方外
-            top = nodeTop + nodeHeight + GAP;
-            startTransform = 'translateY(10px)'; // 從下方滑入
-          } else {
-            // 在上方：Tooltip 出現在節點的上方外（正上方 n0 會完美從上面出現）
-            top = nodeTop - ttH - GAP;
-            startTransform = 'translateY(-10px)'; // 從上方滑入
-          }
-        }
-
-        // 邊界保護：確保不超出畫布邊緣
-        left = Math.max(8, Math.min(left, wr.width - ttW - 8));
-        top = Math.max(8, Math.min(top, wr.height - ttH - 8));
-
-        // 4. 套用位置與動畫起點
-        tooltip.style.left = left + 'px';
-        tooltip.style.top = top + 'px';
-        tooltip.style.transform = startTransform;
-
-        // 5. 觸發漸顯與滑入動畫
-        requestAnimationFrame(() => {
-          tooltip.style.transition = 'opacity 0.15s ease-out, transform 0.15s ease-out';
-          tooltip.classList.add('show');
-          tooltip.style.transform = 'translate(0, 0)'; // 回歸定位點
-        });
-      });
-
-      // 滑鼠移走立刻消失，不拖泥帶水
-      node.addEventListener('mouseleave', () => {
-        tooltip.classList.remove('show');
-        tooltip.style.transition = 'none'; // 移開時清除 transition，達到即時消失的效果
-        tooltip.style.display = 'none';
+      // 4. 動態啟用過渡，優雅滑入
+      requestAnimationFrame(() => {
+        tooltip.style.transition = 'opacity 0.15s ease-out, transform 0.15s ease-out';
+        tooltip.classList.add('show');
+        tooltip.style.transform = 'translate(0, 0)';
       });
     });
 
-    /* ── Scroll 動畫 ── */
-    const titleObserver = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          titleObserver.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.2 });
+    // 移開滑鼠立即隱藏，絕不拖泥帶水
+    node.addEventListener('mouseleave', () => {
+      tooltip.classList.remove('show');
+      tooltip.style.transition = 'none';
+      tooltip.style.display = 'none';
+    });
+  });
 
-    document.querySelectorAll('.anim-title').forEach(el => titleObserver.observe(el));
+  /* ── Scroll 動畫 ── */
+  const titleObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        titleObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
 
-    /* ── Init ── */
-    window.addEventListener('load',   positionNodes);
-    window.addEventListener('resize', positionNodes);
-    setTimeout(positionNodes, 80);
-  </script>
+  document.querySelectorAll('.anim-title').forEach(el => titleObserver.observe(el));
+
+  /* ── Init ── */
+  window.addEventListener('load',   positionNodes);
+  window.addEventListener('resize', positionNodes);
+  setTimeout(positionNodes, 80);
+</script>
 </body>
 </html>
