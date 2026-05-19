@@ -372,20 +372,19 @@
     }
   }
 
-  /* ── Tooltip 精確角度定位與即時開關 ── */
+  /* ── Tooltip 精確邊界定位 ── */
   const tooltip = document.getElementById('mmTooltip');
-  const GAP = 15;  // 確保絕對不重疊的安全間距
+  const GAP = 20;  // 彈出視窗與卡片卡片之間的絕對安全空隙
 
   document.querySelectorAll('.mm-node').forEach((node, i) => {
     node.addEventListener('mouseenter', () => {
-      // 1. 填入資料並立刻顯現，讓瀏覽器渲染出高度
+      // 1. 寫入內文
       document.getElementById('ttTitle').textContent = NODE_DATA[i].title;
       document.getElementById('ttBody').textContent  = NODE_DATA[i].body;
       
+      // 2. 顯示並強制重新計算高度
       tooltip.style.display = 'block';
-      tooltip.style.transition = 'none'; // 先關閉動畫，避免計算不準
-      
-      // 強制瀏覽器重繪排版 (Reflow)，保證 offsetHeight 取到最新且真實的數值
+      tooltip.style.transition = 'none'; 
       void tooltip.offsetHeight; 
 
       const wrap = document.getElementById('mmWrap');
@@ -395,61 +394,63 @@
       const ttW = tooltip.offsetWidth;
       const ttH = tooltip.offsetHeight;
 
-      // 節點相對於 wrap 的座標
-      const nodeLeft = nodeR.left - wr.left;
-      const nodeTop = nodeR.top - wr.top;
-      const nodeWidth = nodeR.width;
+      // 計算卡片相對於容器容器 (#mmWrap) 的邊界座標
+      const nodeLeft   = nodeR.left - wr.left;
+      const nodeTop    = nodeR.top - wr.top;
+      const nodeRight  = nodeR.right - wr.left;
+      const nodeBottom = nodeR.bottom - wr.top;
+      const nodeWidth  = nodeR.width;
       const nodeHeight = nodeR.height;
 
       let left, top;
       let startTransform = '';
 
-      // 2. 核心改動：直接依據角度（Index）死定彈出方向，不再用坐標盲猜
+      // 3. 依據角度精確計算「絕對不重疊」的外部座標
       const currentAngle = ANGLES[i];
 
       if (currentAngle === -90) {
-        // 【正上方節點 n0】 絕對出現在正上方外側
+        // 【核心背景】從卡片頂端（nodeTop）再往上扣掉 Tooltip 高度與間距，絕對在上方外側
         left = nodeLeft + (nodeWidth - ttW) / 2;
         top = nodeTop - ttH - GAP;
-        startTransform = 'translateY(-12px)';
+        startTransform = 'translateY(-15px)';
       } 
       else if (currentAngle === 90) {
-        // 【正下方節點 n3】 絕對出現在正下方外側
+        // 【團隊目標】從卡片底部（nodeBottom）往下加間距，絕對在下方外側
         left = nodeLeft + (nodeWidth - ttW) / 2;
-        top = nodeTop + nodeHeight + GAP;
-        startTransform = 'translateY(12px)';
+        top = nodeBottom + GAP;
+        startTransform = 'translateY(15px)';
       } 
       else if (currentAngle === -30 || currentAngle === 30) {
-        // 【右方側節點 n1, n2】 絕對出現在右側外
-        left = nodeLeft + nodeWidth + GAP;
+        // 【網頁特色、問題意識】右側外側
+        left = nodeRight + GAP;
         top = nodeTop + (nodeHeight - ttH) / 2;
-        startTransform = 'translateX(12px)';
+        startTransform = 'translateX(15px)';
       } 
       else {
-        // 【左方側節點 n4, n5】 絕對出現在左側外
+        // 【核心價值、我們的理念】左側外側
         left = nodeLeft - ttW - GAP;
         top = nodeTop + (nodeHeight - ttH) / 2;
-        startTransform = 'translateX(-12px)';
+        startTransform = 'translateX(-15px)';
       }
 
-      // 邊界安全保護
-      left = Math.max(6, Math.min(left, wr.width - ttW - 6));
-      top = Math.max(6, Math.min(top, wr.height - ttH - 6));
+      // 視窗邊界防護
+      left = Math.max(8, Math.min(left, wr.width - ttW - 8));
+      top = Math.max(8, Math.min(top, wr.height - ttH - 8));
 
-      // 3. 帶入定位
+      // 4. 寫入樣式
       tooltip.style.left = left + 'px';
       tooltip.style.top = top + 'px';
       tooltip.style.transform = startTransform;
 
-      // 4. 動態啟用過渡，優雅滑入
+      // 5. 觸發滑入動畫
       requestAnimationFrame(() => {
-        tooltip.style.transition = 'opacity 0.15s ease-out, transform 0.15s ease-out';
+        tooltip.style.transition = 'opacity 0.2s ease-out, transform 0.2s ease-out';
         tooltip.classList.add('show');
         tooltip.style.transform = 'translate(0, 0)';
       });
     });
 
-    // 移開滑鼠立即隱藏，絕不拖泥帶水
+    // 滑鼠移走立刻不顯示
     node.addEventListener('mouseleave', () => {
       tooltip.classList.remove('show');
       tooltip.style.transition = 'none';
