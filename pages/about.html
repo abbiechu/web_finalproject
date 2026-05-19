@@ -10,7 +10,6 @@
        Branch: feature/about  (朱家締)
        ============================================ */
 
-    /* ── 標題動畫基礎 ── */
     .anim-title {
       opacity: 0;
       transform: translateY(28px);
@@ -21,13 +20,11 @@
       transform: translateY(0);
     }
 
-    /* ── Page Hero ── */
     .page-hero {
       background: linear-gradient(160deg, #EAF3E6 0%, var(--clr-bg) 70%);
       padding: var(--sp-2xl) 0 var(--sp-xl);
     }
 
-    /* ── Mind Map ── */
     .mindmap-section { background: var(--clr-surface); }
 
     .mm-wrap {
@@ -35,6 +32,7 @@
       width: 100%;
       height: 580px;
       user-select: none;
+      overflow: visible;
     }
 
     .mm-svg {
@@ -75,6 +73,8 @@
     .mm-node {
       position: absolute;
       width: 136px;
+      height: 90px;
+      box-sizing: border-box;
       background: var(--clr-surface);
       border: 1.5px solid var(--clr-border);
       border-radius: var(--radius-md);
@@ -95,23 +95,25 @@
     .mm-node .n-title { font-size: 0.88rem; font-weight: 600; color: var(--clr-dark); }
     .mm-node .n-hint  { font-size: 0.75rem; color: var(--clr-muted); margin-top: 2px; }
 
-    /* Tooltip：用 data-dir 控制出現方向 */
     .mm-tooltip {
       position: absolute;
-      width: 210px;
+      width: 230px;
       background: var(--clr-surface);
       border: 1.5px solid var(--clr-primary);
       border-radius: var(--radius-md);
       padding: var(--sp-md) var(--sp-lg);
-      box-shadow: var(--shadow-md);
-      z-index: 40;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      z-index: 50;
       pointer-events: none;
       opacity: 0;
-      transition: opacity 0.18s ease, transform 0.18s ease;
+      display: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
     }
 
-    /* 初始偏移（由 JS 在顯示前設定 transform） */
-    .mm-tooltip.show { opacity: 1; }
+    .mm-tooltip.show {
+      opacity: 1;
+      transform: translate(0, 0);
+    }
 
     .mm-tooltip .tt-title {
       font-family: var(--ff-display);
@@ -126,7 +128,6 @@
       line-height: 1.6;
     }
 
-    /* ── Team ── */
     .team-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -153,7 +154,6 @@
     }
     .team-card p { font-size: 0.85rem; color: var(--clr-muted); }
 
-    /* ── Values ── */
     .values-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -183,7 +183,7 @@
 
     @media (max-width: 768px) {
       .mm-wrap     { height: 500px; }
-      .mm-node     { width: 108px; padding: var(--sp-sm); }
+      .mm-node     { width: 108px; height: 90px; padding: var(--sp-sm); }
       .team-grid   { grid-template-columns: 1fr; }
       .values-grid { grid-template-columns: 1fr; }
     }
@@ -192,7 +192,6 @@
 <body>
   <script src="../js/navbar.js"></script>
 
-  <!-- PAGE HERO -->
   <section class="page-hero">
     <div class="container">
       <span class="badge badge-green" style="margin-bottom:var(--sp-md)">關於我們</span>
@@ -203,7 +202,6 @@
     </div>
   </section>
 
-  <!-- MIND MAP -->
   <section class="section mindmap-section">
     <div class="container">
       <h2 class="section-title anim-title">互動心智圖</h2>
@@ -248,16 +246,14 @@
           <div class="n-hint">更聰明地消費</div>
         </div>
 
-        <!-- Tooltip 放在 mm-wrap 內 -->
         <div class="mm-tooltip" id="mmTooltip">
           <div class="tt-title" id="ttTitle"></div>
-          <div class="tt-body"  id="ttBody"></div>
+          <div class="tt-body" id="ttBody"></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- TEAM -->
   <section class="section">
     <div class="container">
       <h2 class="section-title anim-title">團隊成員</h2>
@@ -285,7 +281,6 @@
     </div>
   </section>
 
-  <!-- VALUES -->
   <section class="section" style="background:var(--clr-surface)">
     <div class="container">
       <h2 class="section-title anim-title">設計原則</h2>
@@ -319,7 +314,6 @@
   <script>
     Navbar.init('about');
 
-    /* ── 節點資料 ── */
     const NODE_DATA = [
       { title: '核心背景', body: '全球每年產生約 20 億噸固體廢棄物，超過 30% 未妥善處理。SDG 12 強調必須從根源改變生產與消費模式，EcoPulse 因此誕生。' },
       { title: '網站特色', body: '提供環保雷達圖與個人化建議；結合互動翻牌與測驗，讓減碳行動變得好玩又可衡量，不同於靜態介紹網站。' },
@@ -329,7 +323,6 @@
       { title: '我們的理念', body: '環保不是犧牲生活品質，而是更聰明地消費。每個有意識的選擇，都是給地球的一份禮物。' },
     ];
 
-    /* ── 6 節點角度，從正上方順時針 ── */
     const ANGLES = [-90, -30, 30, 90, 150, 210];
     const RADIUS = 210;
     const NODE_W = 136;
@@ -363,12 +356,14 @@
         const node = document.getElementById('n' + i);
         const nr   = node.getBoundingClientRect();
         const wr   = wrap.getBoundingClientRect();
-        const nx   = nr.left - wr.left + nr.width  / 2;
-        const ny   = nr.top  - wr.top  + nr.height / 2;
+        const nx   = nr.left - wr.left + nr.width / 2;
+        const ny   = nr.top - wr.top + nr.height / 2;
 
         const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', cx);   line.setAttribute('y1', cy);
-        line.setAttribute('x2', nx);   line.setAttribute('y2', ny);
+        line.setAttribute('x1', cx);
+        line.setAttribute('y1', cy);
+        line.setAttribute('x2', nx);
+        line.setAttribute('y2', ny);
         line.setAttribute('stroke', '#3A6B3A');
         line.setAttribute('stroke-width', '1.5');
         line.setAttribute('stroke-opacity', '0.4');
@@ -377,11 +372,10 @@
       }
     }
 
-    /* ── Tooltip：依節點相對中心的方向決定出現位置 ── */
     const tooltip = document.getElementById('mmTooltip');
-    const TT_W = 215;
-    const TT_H = 130; // 預估高度
-    const GAP  = 10;  // 節點與 tooltip 的間距
+    const TT_W = 230;
+    const TT_H = 140;
+    const GAP  = 14;
 
     document.querySelectorAll('.mm-node').forEach((node, i) => {
       node.addEventListener('mouseenter', () => {
@@ -389,75 +383,77 @@
         document.getElementById('ttBody').textContent  = NODE_DATA[i].body;
 
         const wrap = document.getElementById('mmWrap');
-        const wr   = wrap.getBoundingClientRect();
-        const nr   = node.getBoundingClientRect();
+        const wr = wrap.getBoundingClientRect();
+        const nr = node.getBoundingClientRect();
 
-        // 節點中心相對 wrap 中心的偏移
-        const nodeCx = nr.left - wr.left + nr.width  / 2;
-        const nodeCy = nr.top  - wr.top  + nr.height / 2;
-        const wCx    = wr.width  / 2;
-        const wCy    = wr.height / 2;
-        const dx     = nodeCx - wCx; // 正 = 右，負 = 左
-        const dy     = nodeCy - wCy; // 正 = 下，負 = 上
+        const nodeCx = nr.left - wr.left + nr.width / 2;
+        const nodeCy = nr.top - wr.top + nr.height / 2;
+        const wCx = wr.width / 2;
+        const wCy = wr.height / 2;
 
-        let left, top;
+        const dx = nodeCx - wCx;
+        const dy = nodeCy - wCy;
 
-        // 判斷「主要方向」：水平偏移 > 垂直偏移 → 左右；否則 → 上下
+        let left;
+        let top;
+
+        tooltip.classList.remove('show');
+
         if (Math.abs(dx) >= Math.abs(dy)) {
-          // 左 or 右
           if (dx > 0) {
-            // 節點在右側 → tooltip 出現在節點右邊
             left = nr.left - wr.left + nr.width + GAP;
+            tooltip.style.transform = 'translateX(-10px)';
           } else {
-            // 節點在左側 → tooltip 出現在節點左邊
             left = nr.left - wr.left - TT_W - GAP;
+            tooltip.style.transform = 'translateX(10px)';
           }
-          // 垂直置中對齊節點
+
           top = nr.top - wr.top + (nr.height - TT_H) / 2;
         } else {
-          // 上 or 下
           if (dy > 0) {
-            // 節點在下方 → tooltip 出現在節點下方
             top = nr.top - wr.top + nr.height + GAP;
+            tooltip.style.transform = 'translateY(-10px)';
           } else {
-            // 節點在上方 → tooltip 出現在節點上方
             top = nr.top - wr.top - TT_H - GAP;
+            tooltip.style.transform = 'translateY(10px)';
           }
-          // 水平置中對齊節點
+
           left = nr.left - wr.left + (nr.width - TT_W) / 2;
         }
 
-        // 邊界保護：不超出 wrap
-        left = Math.max(4, Math.min(left, wr.width  - TT_W - 4));
-        top  = Math.max(4, Math.min(top,  wr.height - TT_H - 4));
+        left = Math.max(4, Math.min(left, wr.width - TT_W - 4));
+        top = Math.max(4, Math.min(top, wr.height - TT_H - 4));
 
-        tooltip.style.left    = left + 'px';
-        tooltip.style.top     = top  + 'px';
+        tooltip.style.left = left + 'px';
+        tooltip.style.top = top + 'px';
         tooltip.style.display = 'block';
-        // 讓 transition 生效
-        requestAnimationFrame(() => tooltip.classList.add('show'));
+
+        requestAnimationFrame(() => {
+          tooltip.classList.add('show');
+        });
       });
 
       node.addEventListener('mouseleave', () => {
         tooltip.classList.remove('show');
-        setTimeout(() => { tooltip.style.display = 'none'; }, 180);
+
+        setTimeout(() => {
+          tooltip.style.display = 'none';
+        }, 250);
       });
     });
 
-    /* ── Scroll 動畫：只對 .anim-title ── */
     const titleObserver = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('visible');
-          titleObserver.unobserve(entry.target); // 只播一次
+          titleObserver.unobserve(entry.target);
         }
       });
     }, { threshold: 0.2 });
 
     document.querySelectorAll('.anim-title').forEach(el => titleObserver.observe(el));
 
-    /* ── Init ── */
-    window.addEventListener('load',   positionNodes);
+    window.addEventListener('load', positionNodes);
     window.addEventListener('resize', positionNodes);
     setTimeout(positionNodes, 80);
   </script>
