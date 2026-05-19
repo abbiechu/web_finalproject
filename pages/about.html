@@ -10,6 +10,7 @@
        Branch: feature/about  (朱家締)
        ============================================ */
 
+    /* ── 標題動畫基礎 ── */
     .anim-title {
       opacity: 0;
       transform: translateY(28px);
@@ -20,11 +21,13 @@
       transform: translateY(0);
     }
 
+    /* ── Page Hero ── */
     .page-hero {
       background: linear-gradient(160deg, #EAF3E6 0%, var(--clr-bg) 70%);
       padding: var(--sp-2xl) 0 var(--sp-xl);
     }
 
+    /* ── Mind Map ── */
     .mindmap-section { background: var(--clr-surface); }
 
     .mm-wrap {
@@ -32,7 +35,6 @@
       width: 100%;
       height: 580px;
       user-select: none;
-      overflow: visible;
     }
 
     .mm-svg {
@@ -73,8 +75,6 @@
     .mm-node {
       position: absolute;
       width: 136px;
-      height: 90px;
-      box-sizing: border-box;
       background: var(--clr-surface);
       border: 1.5px solid var(--clr-border);
       border-radius: var(--radius-md);
@@ -95,24 +95,25 @@
     .mm-node .n-title { font-size: 0.88rem; font-weight: 600; color: var(--clr-dark); }
     .mm-node .n-hint  { font-size: 0.75rem; color: var(--clr-muted); margin-top: 2px; }
 
+    /* Tooltip 彈出外觀優化 */
     .mm-tooltip {
       position: absolute;
-      width: 230px;
+      width: 210px;
       background: var(--clr-surface);
       border: 1.5px solid var(--clr-primary);
       border-radius: var(--radius-md);
       padding: var(--sp-md) var(--sp-lg);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-      z-index: 50;
+      box-shadow: var(--shadow-lg);
+      z-index: 40;
       pointer-events: none;
+      display: none; /* 初始完全不顯示與佔位 */
       opacity: 0;
-      display: none;
-      transition: opacity 0.25s ease, transform 0.25s ease;
+      transition: opacity 0.15s ease-out, transform 0.15s ease-out;
     }
 
+    /* 顯示狀態 */
     .mm-tooltip.show {
       opacity: 1;
-      transform: translate(0, 0);
     }
 
     .mm-tooltip .tt-title {
@@ -128,6 +129,7 @@
       line-height: 1.6;
     }
 
+    /* ── Team ── */
     .team-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -154,6 +156,7 @@
     }
     .team-card p { font-size: 0.85rem; color: var(--clr-muted); }
 
+    /* ── Values ── */
     .values-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -183,7 +186,7 @@
 
     @media (max-width: 768px) {
       .mm-wrap     { height: 500px; }
-      .mm-node     { width: 108px; height: 90px; padding: var(--sp-sm); }
+      .mm-node     { width: 108px; padding: var(--sp-sm); }
       .team-grid   { grid-template-columns: 1fr; }
       .values-grid { grid-template-columns: 1fr; }
     }
@@ -248,7 +251,7 @@
 
         <div class="mm-tooltip" id="mmTooltip">
           <div class="tt-title" id="ttTitle"></div>
-          <div class="tt-body" id="ttBody"></div>
+          <div class="tt-body"  id="ttBody"></div>
         </div>
       </div>
     </div>
@@ -314,6 +317,7 @@
   <script>
     Navbar.init('about');
 
+    /* ── 節點資料 ── */
     const NODE_DATA = [
       { title: '核心背景', body: '全球每年產生約 20 億噸固體廢棄物，超過 30% 未妥善處理。SDG 12 強調必須從根源改變生產與消費模式，EcoPulse 因此誕生。' },
       { title: '網站特色', body: '提供環保雷達圖與個人化建議；結合互動翻牌與測驗，讓減碳行動變得好玩又可衡量，不同於靜態介紹網站。' },
@@ -323,10 +327,9 @@
       { title: '我們的理念', body: '環保不是犧牲生活品質，而是更聰明地消費。每個有意識的選擇，都是給地球的一份禮物。' },
     ];
 
+    /* ── 6 節點角度 ── */
     const ANGLES = [-90, -30, 30, 90, 150, 210];
     const RADIUS = 210;
-    const NODE_W = 136;
-    const NODE_H = 90;
 
     function positionNodes() {
       const wrap = document.getElementById('mmWrap');
@@ -340,8 +343,11 @@
         const nx   = cx + RADIUS * Math.cos(rad);
         const ny   = cy + RADIUS * Math.sin(rad);
         const node = document.getElementById('n' + i);
-        node.style.left = (nx - NODE_W / 2) + 'px';
-        node.style.top  = (ny - NODE_H / 2) + 'px';
+        
+        // 使用 transform 置中，定位更精準且不易受寬高變動影響
+        node.style.left = nx + 'px';
+        node.style.top  = ny + 'px';
+        node.style.transform = 'translate(-50%, -50%)';
       });
 
       drawLines(cx, cy);
@@ -349,21 +355,17 @@
 
     function drawLines(cx, cy) {
       const svg  = document.getElementById('mmSvg');
-      const wrap = document.getElementById('mmWrap');
       svg.innerHTML = '';
 
       for (let i = 0; i < 6; i++) {
         const node = document.getElementById('n' + i);
-        const nr   = node.getBoundingClientRect();
-        const wr   = wrap.getBoundingClientRect();
-        const nx   = nr.left - wr.left + nr.width / 2;
-        const ny   = nr.top - wr.top + nr.height / 2;
+        // 直接讀取樣式設定的相對座標值
+        const nx = parseFloat(node.style.left);
+        const ny = parseFloat(node.style.top);
 
         const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', cx);
-        line.setAttribute('y1', cy);
-        line.setAttribute('x2', nx);
-        line.setAttribute('y2', ny);
+        line.setAttribute('x1', cx);   line.setAttribute('y1', cy);
+        line.setAttribute('x2', nx);   line.setAttribute('y2', ny);
         line.setAttribute('stroke', '#3A6B3A');
         line.setAttribute('stroke-width', '1.5');
         line.setAttribute('stroke-opacity', '0.4');
@@ -372,76 +374,96 @@
       }
     }
 
+    /* ── Tooltip 精確定位與即時顯示隱藏 ── */
     const tooltip = document.getElementById('mmTooltip');
-    const TT_W = 230;
-    const TT_H = 140;
-    const GAP  = 14;
+    const GAP = 14;  // 節點與彈出視窗的精確安全間距
 
     document.querySelectorAll('.mm-node').forEach((node, i) => {
       node.addEventListener('mouseenter', () => {
+        // 1. 填入資料
         document.getElementById('ttTitle').textContent = NODE_DATA[i].title;
         document.getElementById('ttBody').textContent  = NODE_DATA[i].body;
 
         const wrap = document.getElementById('mmWrap');
         const wr = wrap.getBoundingClientRect();
-        const nr = node.getBoundingClientRect();
+        
+        // 2. 先將 display 設為 block，以便 JS 能抓取到實際渲染後的真實寬高 (offsetHeight/offsetWidth)
+        tooltip.style.display = 'block';
+        
+        const nodeR = node.getBoundingClientRect();
+        const ttW = tooltip.offsetWidth;
+        const ttH = tooltip.offsetHeight;
 
-        const nodeCx = nr.left - wr.left + nr.width / 2;
-        const nodeCy = nr.top - wr.top + nr.height / 2;
+        // 計算節點相對於 wrap 的當前精確位置
+        const nodeLeft = nodeR.left - wr.left;
+        const nodeTop = nodeR.top - wr.top;
+        const nodeWidth = nodeR.width;
+        const nodeHeight = nodeR.height;
+
+        // 節點中心點相對畫布中心的偏移量，用來判斷它在心智圖的哪個方位
+        const nodeCx = nodeLeft + nodeWidth / 2;
+        const nodeCy = nodeTop + nodeHeight / 2;
         const wCx = wr.width / 2;
         const wCy = wr.height / 2;
+        const dx = nodeCx - wCx; 
+        const dy = nodeCy - wCy; 
 
-        const dx = nodeCx - wCx;
-        const dy = nodeCy - wCy;
+        let left, top;
+        let startTransform = ''; // 進入動畫的起點偏移
 
-        let left;
-        let top;
-
-        tooltip.classList.remove('show');
-
+        // 3. 根據主要方位判斷，把 Tooltip 完美推到節點「外側」，絕不重疊標題
         if (Math.abs(dx) >= Math.abs(dy)) {
+          // ── 左右方位 ──
+          top = nodeTop + (nodeHeight - ttH) / 2; // 垂直與節點對齊
           if (dx > 0) {
-            left = nr.left - wr.left + nr.width + GAP;
-            tooltip.style.transform = 'translateX(-10px)';
+            // 在右邊：Tooltip 出現在節點的右側外
+            left = nodeLeft + nodeWidth + GAP;
+            startTransform = 'translateX(10px)'; // 從右方滑入
           } else {
-            left = nr.left - wr.left - TT_W - GAP;
-            tooltip.style.transform = 'translateX(10px)';
+            // 在左邊：Tooltip 出現在節點的左側外
+            left = nodeLeft - ttW - GAP;
+            startTransform = 'translateX(-10px)'; // 從左方滑入
           }
-
-          top = nr.top - wr.top + (nr.height - TT_H) / 2;
         } else {
+          // ── 上下方位 ──
+          left = nodeLeft + (nodeWidth - ttW) / 2; // 水平與節點置中對齊
           if (dy > 0) {
-            top = nr.top - wr.top + nr.height + GAP;
-            tooltip.style.transform = 'translateY(-10px)';
+            // 在下方：Tooltip 出現在節點的下方外
+            top = nodeTop + nodeHeight + GAP;
+            startTransform = 'translateY(10px)'; // 從下方滑入
           } else {
-            top = nr.top - wr.top - TT_H - GAP;
-            tooltip.style.transform = 'translateY(10px)';
+            // 在上方：Tooltip 出現在節點的上方外（正上方 n0 會完美從上面出現）
+            top = nodeTop - ttH - GAP;
+            startTransform = 'translateY(-10px)'; // 從上方滑入
           }
-
-          left = nr.left - wr.left + (nr.width - TT_W) / 2;
         }
 
-        left = Math.max(4, Math.min(left, wr.width - TT_W - 4));
-        top = Math.max(4, Math.min(top, wr.height - TT_H - 4));
+        // 邊界保護：確保不超出畫布邊緣
+        left = Math.max(8, Math.min(left, wr.width - ttW - 8));
+        top = Math.max(8, Math.min(top, wr.height - ttH - 8));
 
+        // 4. 套用位置與動畫起點
         tooltip.style.left = left + 'px';
         tooltip.style.top = top + 'px';
-        tooltip.style.display = 'block';
+        tooltip.style.transform = startTransform;
 
+        // 5. 觸發漸顯與滑入動畫
         requestAnimationFrame(() => {
+          tooltip.style.transition = 'opacity 0.15s ease-out, transform 0.15s ease-out';
           tooltip.classList.add('show');
+          tooltip.style.transform = 'translate(0, 0)'; // 回歸定位點
         });
       });
 
+      // 滑鼠移走立刻消失，不拖泥帶水
       node.addEventListener('mouseleave', () => {
         tooltip.classList.remove('show');
-
-        setTimeout(() => {
-          tooltip.style.display = 'none';
-        }, 250);
+        tooltip.style.transition = 'none'; // 移開時清除 transition，達到即時消失的效果
+        tooltip.style.display = 'none';
       });
     });
 
+    /* ── Scroll 動畫 ── */
     const titleObserver = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -453,7 +475,8 @@
 
     document.querySelectorAll('.anim-title').forEach(el => titleObserver.observe(el));
 
-    window.addEventListener('load', positionNodes);
+    /* ── Init ── */
+    window.addEventListener('load',   positionNodes);
     window.addEventListener('resize', positionNodes);
     setTimeout(positionNodes, 80);
   </script>
