@@ -60,10 +60,9 @@
       cursor: pointer;
     }
 
-    .flip-wrap:hover .flip-inner,
     .flip-wrap.flipped .flip-inner {
-      transform: rotateY(180deg);
-    }
+  transform: rotateY(180deg);
+}
 
     /* Card faces */
     .flip-front, .flip-back {
@@ -402,7 +401,7 @@
                 <p style="font-size:0.87rem;color:var(--clr-muted);margin-bottom:var(--sp-md)">${issue.summary}</p>
                 <div class="issue-stat">${issue.stat}</div>
               </div>
-              <div class="flip-hint">↩ Hover 翻面看解方</div>
+              <div class="flip-hint">👆 點擊翻面看解方</div>
             </div>
             <!-- Back -->
             <div class="flip-back">
