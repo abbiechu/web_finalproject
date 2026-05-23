@@ -61,8 +61,8 @@
     }
 
     .flip-wrap.flipped .flip-inner {
-  transform: rotateY(180deg);
-}
+      transform: rotateY(180deg);
+    }
 
     /* Card faces */
     .flip-front, .flip-back {
@@ -105,59 +105,11 @@
       margin-bottom: var(--sp-sm);
     }
 
-    .issue-stat {
-      font-size: 0.83rem;
-      color: var(--clr-muted);
-      padding: var(--sp-sm) var(--sp-md);
-      background: #F0F0E8;
-      border-radius: var(--radius-sm);
-    }
-
-    .issue-stat strong { color: var(--clr-issue); }
-
-    .flip-hint {
-      font-size: 0.75rem;
-      color: var(--clr-muted);
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
     /* Back content */
     .flip-back h3 {
       color: #fff;
       font-size: 1.05rem;
       margin-bottom: var(--sp-sm);
-    }
-
-    .solution-list {
-      flex: 1;
-      overflow-y: auto;
-    }
-
-    .solution-item {
-      display: flex;
-      align-items: flex-start;
-      gap: var(--sp-sm);
-      margin-bottom: var(--sp-sm);
-      font-size: 0.87rem;
-      color: rgba(255,255,255,0.9);
-    }
-
-    .solution-item::before {
-      content: '✓';
-      color: var(--clr-accent);
-      font-weight: 700;
-      flex-shrink: 0;
-      margin-top: 1px;
-    }
-
-    .solution-action {
-      padding: var(--sp-sm) var(--sp-md);
-      background: rgba(255,255,255,0.15);
-      border-radius: var(--radius-sm);
-      font-size: 0.8rem;
-      color: rgba(255,255,255,0.8);
     }
 
     /* --- Modal --- */
@@ -184,6 +136,8 @@
       position: relative;
       box-shadow: var(--shadow-lg);
       animation: fadeUp 0.3s ease;
+      max-height: 85vh;
+      overflow-y: auto;
     }
 
     .modal-close {
@@ -237,6 +191,11 @@
       flex-shrink: 0;
     }
 
+    @keyframes floatMouse {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-6px); }
+    }
+
     /* Responsive */
     @media (max-width: 600px) {
       .flip-wrap { height: 240px; }
@@ -251,10 +210,7 @@
   <section class="section" style="background:linear-gradient(160deg,#EAF3E6 0%,var(--clr-bg) 70%); padding-bottom:var(--sp-xl)">
     <div class="container">
       <span class="badge badge-brown" style="margin-bottom:var(--sp-md)">問題區</span>
-      <h1>六大環境問題<br/>你了解幾個？?????????????</h1>
-      <p style="max-width:480px; color:var(--clr-muted); margin-top:var(--sp-md); font-size:1.05rem">
-        Hover 或點擊卡片翻面，看見問題背後的解決方案。點擊「深入了解」取得更多資訊。
-      </p>
+      <h1>六大環境問題<br/>你了解幾個？</h1>
     </div>
   </section>
 
@@ -270,6 +226,16 @@
         <button class="filter-btn" data-filter="energy">能源</button>
       </div>
 
+      <!-- Hint -->
+      <p style="font-size:0.82rem; color:var(--clr-muted); margin-bottom:var(--sp-lg); display:flex; align-items:center; gap:6px">
+        <span style="display:inline-block; animation: floatMouse 1.2s ease-in-out infinite;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--clr-primary)" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 2L4 18L8.5 13.5L11.5 20L13.5 19L10.5 12.5L17 12.5L4 2Z"/>
+          </svg>
+        </span>
+        點擊卡片翻面看解方，點擊「深入了解」查看完整內容
+      </p>
+
       <!-- Cards -->
       <div class="issues-grid" id="issuesGrid"></div>
     </div>
@@ -282,9 +248,25 @@
       <div class="modal-icon" id="mIcon"></div>
       <h2 id="mTitle"></h2>
       <div class="stat-block" id="mStat"></div>
-      <div class="modal-solutions">
+      <div class="modal-solutions" style="margin-bottom:var(--sp-lg)">
+        <h4>造成原因</h4>
+        <ul id="mCauses"></ul>
+      </div>
+      <div class="modal-solutions" style="margin-bottom:var(--sp-lg)">
+        <h4>造成後果</h4>
+        <ul id="mConsequences"></ul>
+      </div>
+      <div class="modal-solutions" id="solutionBlock" style="margin-bottom:var(--sp-lg)">
         <h4>解決方案</h4>
         <ul id="mSolutions"></ul>
+      </div>
+      <div class="modal-solutions" id="effectsBlock" style="margin-bottom:var(--sp-lg)">
+        <h4>預期改善成效</h4>
+        <ul id="mEffects"></ul>
+      </div>
+      <div class="modal-solutions" id="actionBlock">
+        <h4>本週行動</h4>
+        <ul id="mAction"></ul>
       </div>
     </div>
   </div>
@@ -308,11 +290,26 @@
         icon: '🛒', title: '過度消費',
         stat: '全球物質消費量在過去 50 年間<strong>增加逾 3 倍</strong>，資源耗竭速度遠超地球再生能力。',
         summary: '衝動購物、一次性用品、快時尚——便利的代價正由地球承擔。',
+        causes: [
+          '廣告與社群媒體不斷刺激購買慾望，製造「需要感」',
+          '快時尚與一次性商品壓低購買門檻，讓丟棄變得理所當然',
+          '「買越多越划算」的促銷文化助長衝動消費行為',
+        ],
+        consequences: [
+          '原物料開採速度超過地球再生能力，導致資源枯竭',
+          '大量廢棄物湧入垃圾掩埋場，土地與地下水遭受污染',
+          '生產與運輸過程排放大量溫室氣體，加劇氣候變遷',
+        ],
         solutions: [
           '購物前等待 24 小時冷靜期，確認是「需要」而非「想要」',
           '選擇二手商品或租借代替購買，延長物品生命週期',
           '支持在地、永續品牌，以消費行為投票給你想要的世界',
           '實踐「斷捨離」，定期整理家中物品並捐贈出去',
+        ],
+        effects: [
+          '減少衝動購物可使個人年度碳足跡降低約 10–15%',
+          '二手購物普及能使紡織廢棄物每年減少數百萬噸',
+          '有意識的消費文化形成後，企業將被迫轉向永續生產模式',
         ],
         action: '本週行動：記錄 7 天所有購物，找出 1 項可避免的衝動消費',
       },
@@ -321,11 +318,26 @@
         icon: '🧴', title: '塑膠污染',
         stat: '每年約 <strong>800 萬噸塑膠</strong>流入海洋，全球僅 <strong>9%</strong> 的塑膠曾被回收。',
         summary: '一個塑膠瓶需要 450 年才能分解，而我們每分鐘售出超過百萬個。',
+        causes: [
+          '一次性塑膠包裝大量使用，企業以低成本優先而非環保優先',
+          '塑膠回收基礎設施不足，許多地區缺乏有效的分類與處理機制',
+          '消費者對塑膠替代品認知不足，便利性凌駕於環保意識之上',
+        ],
+        consequences: [
+          '塑膠微粒進入食物鏈，已在魚類、貝類甚至人體血液中被檢測出',
+          '海洋生物誤食或纏繞塑膠廢棄物，每年造成數百萬動物死亡',
+          '塑膠分解過程釋放有毒化學物質，污染土壤與地下水源',
+        ],
         solutions: [
           '自備購物袋、水瓶、餐具，拒絕一次性塑膠',
           '選購無塑包裝或玻璃、不鏽鋼材質產品',
           '參與社區淨灘或垃圾撿拾活動',
           '向常購買的品牌反映，要求減少過度包裝',
+        ],
+        effects: [
+          '若全球減少 50% 一次性塑膠使用，每年可減少約 400 萬噸海洋塑膠',
+          '推廣可重複使用容器可使個人塑膠廢棄物減少約 70%',
+          '企業改用環保包裝後，生產碳排可降低 20–30%',
         ],
         action: '本週行動：列出家中 5 樣一次性塑膠，找到可替代的永續選項',
       },
@@ -334,11 +346,26 @@
         icon: '🍱', title: '食物浪費',
         stat: '全球食物生產有 <strong>1/3 遭到浪費</strong>，相當於每年 13 億噸，足以養活全球 8.5 億飢餓人口。',
         summary: '從農場到餐桌，食物在每個環節都面臨損失，而消費者端的浪費尤為嚴重。',
+        causes: [
+          '消費者對食品標示認知錯誤，常將「最佳賞味期」誤解為「到期不能吃」',
+          '超市與餐廳為維持賣相，大量淘汰外觀不完美但仍可食用的食材',
+          '家庭採購計畫不足，購買過量導致食物在冰箱中腐敗',
+        ],
+        consequences: [
+          '浪費食物等同浪費生產過程中耗費的大量水資源與能源',
+          '腐爛食物進入掩埋場後產生甲烷，其溫室效應是二氧化碳的 25 倍',
+          '在糧食不均的世界中，浪費加劇了全球飢餓與資源分配不公的問題',
+        ],
         solutions: [
           '購物前確認冰箱庫存，制定一週菜單，減少衝動採購',
           '了解食品標示差異：「最佳賞味期」≠「到期不能吃」',
           '學習食物保存技巧，利用剩食製作新料理',
           '使用 Too Good To Go 等 App 購買即將過期的特價食品',
+        ],
+        effects: [
+          '若消費端食物浪費減半，全球溫室氣體排放可降低約 8%',
+          '減少食物浪費能釋放大量農業用地，有助於生態系統恢復',
+          '家庭每年可節省約 10–15% 的食物支出',
         ],
         action: '本週行動：記錄一週內丟棄的食物，找出最常浪費的品項',
       },
@@ -347,11 +374,26 @@
         icon: '👕', title: '快時尚衝擊',
         stat: '時尚產業排放全球 <strong>10%</strong> 的碳排，每年生產的衣物有 <strong>85%</strong> 最終進入垃圾掩埋場。',
         summary: '「買了一季就不穿」的快時尚模式，每年消耗大量水資源與有毒染料。',
+        causes: [
+          '品牌每年推出數十個系列，人為縮短流行週期刺激購買慾',
+          '低廉售價掩蓋了真實的環境與勞工成本，讓消費者低估丟棄代價',
+          '社群媒體打卡文化助長「穿過一次就過時」的消費心態',
+        ],
+        consequences: [
+          '染色與整理程序使用大量有毒化學物質，污染當地河流與土壤',
+          '生產一件棉質T恤需耗費約 2,700 公升淡水，加劇水資源短缺',
+          '大量廉價衣物難以回收再利用，最終在開發中國家形成巨型衣物垃圾山',
+        ],
         solutions: [
           '購衣前問自己：「我會穿超過 30 次嗎？」',
           '選擇品質好的經典款式，優於追逐每季新潮',
           '嘗試二手衣店、換衣活動或衣物租借平台',
           '學習基礎縫補技能，讓心愛衣物壽命更長',
+        ],
+        effects: [
+          '衣物平均使用壽命延長一倍，可使時尚產業碳排減少約 44%',
+          '二手服飾市場擴大可每年減少數百萬噸紡織廢棄物進入掩埋場',
+          '消費者轉向永續品牌將推動整體產業供應鏈改革',
         ],
         action: '本週行動：整理衣櫃，將半年未穿的衣物捐出或出售',
       },
@@ -360,11 +402,26 @@
         icon: '💻', title: '電子垃圾',
         stat: '全球每年產生約 <strong>5,360 萬噸</strong>電子廢棄物，是成長最快速的廢棄物類別，僅 <strong>17.4%</strong> 被正式回收。',
         summary: '廢棄電子設備含有鉛、汞、鎘等有毒物質，不當處理會嚴重污染土壤與地下水。',
+        causes: [
+          '科技品牌刻意縮短產品支援週期，迫使消費者頻繁升級換新',
+          '電子產品設計越來越難以維修，零件不通用且維修成本高昂',
+          '各國電子廢棄物回收法規不健全，非法棄置與出口情形普遍',
+        ],
+        consequences: [
+          '鉛、汞、鎘等重金屬滲入土壤與地下水，影響周邊居民健康數十年',
+          '非法處理電子垃圾的工人長期暴露於有毒化學物質，罹患職業病風險極高',
+          '珍貴的金、銀、銅等稀有資源隨廢棄物流失，造成資源永久性浪費',
+        ],
         solutions: [
           '電器壞了先尋求維修，而非立即購買新品',
           '購買新電器時，選擇具有完善回收計畫的品牌',
           '將舊手機、電池、電器送至合格的電子廢棄物回收點',
           '選購通過 EPEAT 或 Energy Star 認證的電子產品',
+        ],
+        effects: [
+          '提升回收率至 50% 可每年挽救價值超過 570 億美元的稀有資源',
+          '完善的電子廢棄物處理可使重金屬土壤污染面積大幅縮減',
+          '延長電子產品使用年限可使製造端碳排放降低 30% 以上',
         ],
         action: '本週行動：清查家中不再使用的電子產品，送至合格回收點',
       },
@@ -373,11 +430,26 @@
         icon: '⚡', title: '能源浪費',
         stat: '建築物能耗占全球 <strong>40%</strong> 的能源消耗，其中大量為不必要的浪費（待機電耗、低效設備）。',
         summary: '隨手關燈、拔插頭看似小事，但台灣家庭平均有 10% 電費來自「幽靈電力」。',
+        causes: [
+          '老舊低效能家電持續使用，待機狀態下仍持續耗費大量電力',
+          '用電習慣缺乏意識，空調、照明長時間無人使用仍開著',
+          '電價補貼政策使電力成本偏低，削弱民眾節能的經濟動機',
+        ],
+        consequences: [
+          '火力發電廠燃燒化石燃料發電，排放大量二氧化碳與空氣污染物',
+          '電力需求持續攀升迫使增建發電設施，衝擊生態環境與土地使用',
+          '能源浪費加重電網負擔，提高夏季尖峰用電時段停電風險',
+        ],
         solutions: [
           '使用智慧插座或定時器，消除待機幽靈電耗',
           '將白熾燈泡全面換成 LED，省電 80%',
           '調整冷氣溫度至 26-28°C，每升高 1°C 省電 6%',
           '選購節能標章家電，長期省電又省錢',
+        ],
+        effects: [
+          '全面換用 LED 照明可使家庭照明用電減少約 80%',
+          '消除待機電耗可為每戶家庭每年節省約 10% 電費',
+          '若全球建築物能效提升 30%，每年可減少數十億噸碳排放',
         ],
         action: '本週行動：睡前巡視家中，拔掉所有非必要插頭',
       },
@@ -399,53 +471,91 @@
                 <div class="issue-icon">${issue.icon}</div>
                 <div class="issue-title">${issue.title}</div>
                 <p style="font-size:0.87rem;color:var(--clr-muted);margin-bottom:var(--sp-md)">${issue.summary}</p>
-                <div class="issue-stat">${issue.stat}</div>
               </div>
-              <div class="flip-hint">👆 點擊翻面看解方</div>
+              <button
+                onclick="openModal(${issue.id}, 'front'); event.stopPropagation();"
+                class="btn btn-outline"
+                style="margin-top:var(--sp-sm);width:100%;justify-content:center;font-size:0.82rem"
+              >深入了解 →</button>
             </div>
             <!-- Back -->
             <div class="flip-back">
               <div>
                 <h3>✅ 解決方案</h3>
-                <div class="solution-list">
-                  ${issue.solutions.slice(0,3).map(s => `<div class="solution-item">${s}</div>`).join('')}
-                </div>
+                <p style="font-size:0.87rem;color:rgba(255,255,255,0.85);margin-top:var(--sp-sm)">
+                  點擊深入了解，查看完整解決方案與預期改善成效。
+                </p>
               </div>
-              <div>
-                <div class="solution-action">🎯 ${issue.action}</div>
-                <button
-                  onclick="openModal(${issue.id}); event.stopPropagation();"
-                  class="btn btn-accent"
-                  style="margin-top:var(--sp-sm);width:100%;justify-content:center;font-size:0.82rem"
-                >深入了解 →</button>
-              </div>
+              <button
+                onclick="openModal(${issue.id}, 'back'); event.stopPropagation();"
+                class="btn btn-accent"
+                style="width:100%;justify-content:center;font-size:0.82rem"
+              >深入了解 →</button>
             </div>
           </div>
         </div>
       `).join('');
 
-      // Click to flip on mobile
       grid.querySelectorAll('.flip-wrap').forEach(el => {
-        el.addEventListener('click', () => el.classList.toggle('flipped'));
+        el.addEventListener('click', (e) => {
+          if (e.target.closest('button')) return;
+          el.classList.toggle('flipped');
+        });
       });
     }
 
     /* ================================================
        MODAL
        ================================================ */
-    function openModal(id) {
-      const issue = ISSUES.find(i => i.id === id);
-      if (!issue) return;
+   function openModal(id, side) {
+    const issue = ISSUES.find(i => i.id === id);
+    if (!issue) return;
 
-      document.getElementById('mIcon').textContent   = issue.icon;
-      document.getElementById('mTitle').textContent  = issue.title;
-      document.getElementById('mStat').innerHTML     = issue.stat;
-      document.getElementById('mSolutions').innerHTML =
-        issue.solutions.map(s => `<li>${s}</li>`).join('');
+    document.getElementById('mIcon').textContent = issue.icon;
+    document.getElementById('mTitle').textContent = issue.title;
 
-      document.getElementById('modal').classList.add('open');
-      document.body.style.overflow = 'hidden';
+    const solutionBlock = document.getElementById('solutionBlock');
+    const effectsBlock  = document.getElementById('effectsBlock');
+    const actionBlock   = document.getElementById('actionBlock');
+    const statBlock     = document.getElementById('mStat');
+    const causesBlock   = document.querySelector('#mCauses').closest('.modal-solutions');
+    const consequencesBlock = document.querySelector('#mConsequences').closest('.modal-solutions');
+
+    if (side === 'back') {
+      // 頂部顯示本週行動，隱藏統計數字
+      statBlock.innerHTML = `🎯 ${issue.action}`;
+      statBlock.style.background = '#DFF0DF';
+
+      // 隱藏造成原因與後果
+      causesBlock.style.display      = 'none';
+      consequencesBlock.style.display = 'none';
+
+      // 顯示解決方案、成效、行動
+      solutionBlock.style.display = 'block';
+      effectsBlock.style.display  = 'block';
+      actionBlock.style.display   = 'none';
+
+      document.getElementById('mSolutions').innerHTML = issue.solutions.map(s => `<li>${s}</li>`).join('');
+      document.getElementById('mEffects').innerHTML   = issue.effects.map(s => `<li>${s}</li>`).join('');
+    } else {
+      // 正面：顯示統計數字、原因、後果
+      statBlock.innerHTML = issue.stat;
+      statBlock.style.background = '#F0F0E8';
+
+      causesBlock.style.display      = 'block';
+      consequencesBlock.style.display = 'block';
+
+      document.getElementById('mCauses').innerHTML       = issue.causes.map(s => `<li>${s}</li>`).join('');
+      document.getElementById('mConsequences').innerHTML = issue.consequences.map(s => `<li>${s}</li>`).join('');
+
+      solutionBlock.style.display = 'none';
+      effectsBlock.style.display  = 'none';
+      actionBlock.style.display   = 'none';
     }
+
+    document.getElementById('modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
 
     function closeModal(e) {
       if (e && e.target !== document.getElementById('modal') && !e.target.classList.contains('modal-close')) return;
