@@ -80,7 +80,8 @@
       background: var(--clr-surface);
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: center;
+      gap: var(--sp-md);
     }
 
     .flip-back {
@@ -475,7 +476,7 @@
               <button
                 onclick="openModal(${issue.id}, 'front'); event.stopPropagation();"
                 class="btn btn-outline"
-                style="margin-top:var(--sp-sm);width:100%;justify-content:center;font-size:0.82rem"
+                style="margin-top:var(--sp-sm);width:100%;justify-content:center;font-size:0.82rem;height:44px"
               >深入了解 →</button>
             </div>
             <!-- Back -->
@@ -489,7 +490,7 @@
               <button
                 onclick="openModal(${issue.id}, 'back'); event.stopPropagation();"
                 class="btn btn-accent"
-                style="width:100%;justify-content:center;font-size:0.82rem"
+                style="width:100%;justify-content:center;font-size:0.82rem;height:44px"
               >深入了解 →</button>
             </div>
           </div>
