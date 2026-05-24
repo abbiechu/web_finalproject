@@ -46,7 +46,6 @@
       gap: var(--sp-xl);
     }
 
-    /* Perspective wrapper */
     .flip-wrap {
       perspective: 1000px;
       height: 280px;
@@ -64,7 +63,6 @@
       transform: rotateY(180deg);
     }
 
-    /* Card faces */
     .flip-front, .flip-back {
       position: absolute;
       inset: 0;
@@ -81,7 +79,6 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
-      
     }
 
     .flip-back {
@@ -93,7 +90,6 @@
       justify-content: center;
     }
 
-    /* Front content */
     .issue-icon {
       font-size: 2.8rem;
       margin-bottom: var(--sp-sm);
@@ -106,11 +102,126 @@
       margin-bottom: var(--sp-sm);
     }
 
-    /* Back content */
     .flip-back h3 {
       color: #fff;
       font-size: 1.05rem;
       margin-bottom: var(--sp-sm);
+    }
+
+    /* --- Video Carousel --- */
+    .video-section {
+      background: var(--clr-dark);
+      padding: var(--sp-2xl) 0;
+    }
+
+    .video-section-title {
+      text-align: center;
+      color: #fff;
+      margin-bottom: var(--sp-xl);
+      font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+    }
+
+    .video-section-title span {
+      color: var(--clr-accent);
+    }
+
+    .video-carousel-wrap {
+      position: relative;
+      overflow: hidden;
+      padding: 0 var(--sp-md);
+    }
+
+    .video-track {
+      display: flex;
+      align-items: center;
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .video-item {
+      flex-shrink: 0;
+      width: 85%;
+      margin: 0 3%;
+      transition: opacity 0.5s, transform 0.5s;
+      opacity: 0.3;
+      transform: scale(0.88);
+    }
+
+    .video-item.active {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .video-frame-wrap {
+      position: relative;
+      padding-bottom: 56.25%;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: #000;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .video-frame-wrap iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .video-label {
+      text-align: center;
+      color: var(--clr-muted);
+      font-size: 0.85rem;
+      margin-top: var(--sp-md);
+    }
+
+    .video-label strong {
+      color: var(--clr-dark);
+      font-size: 0.95rem;
+    }
+
+    /* Prev / Next buttons */
+    .video-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      font-size: 1.4rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: background var(--t-fast);
+      z-index: 10;
+      border: none;
+    }
+
+    .video-nav-btn:hover { background: var(--clr-primary); }
+    .video-nav-btn.prev { left: 4px; }
+    .video-nav-btn.next { right: 4px; }
+    .video-nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+    /* Dots */
+    .video-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: var(--sp-lg);
+    }
+
+    .video-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.2);   /* 改這行 */
+      cursor: pointer;
+      transition: background var(--t-fast), transform var(--t-fast);
+      border: none;
+    }
+
+    .video-dot.active {
+      background: var(--clr-primary);  /* 改這行 */
+      transform: scale(1.3);
     }
 
     /* --- Modal --- */
@@ -197,10 +308,17 @@
       50%       { transform: translateY(-6px); }
     }
 
-    /* Responsive */
+    @media (max-width: 768px) {
+      .video-item { width: 80%; margin: 0 2%; }
+    }
+
     @media (max-width: 600px) {
       .flip-wrap { height: 240px; }
       .issues-grid { grid-template-columns: 1fr; }
+      .video-item { width: 90%; margin: 0 1%; }
+    }
+    @media (max-width: 768px) {
+      .hero-grid { grid-template-columns: 1fr !important; }
     }
   </style>
 </head>
@@ -209,16 +327,29 @@
 
   <!-- Page hero -->
   <section class="section" style="background:linear-gradient(160deg,#EAF3E6 0%,var(--clr-bg) 70%); padding-bottom:var(--sp-xl)">
-    <div class="container">
-      <span class="badge badge-brown" style="margin-bottom:var(--sp-md)">問題區</span>
-      <h1>六大環境問題<br/>你了解幾個？</h1>
+  <div class="container">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:var(--sp-2xl); align-items:flex-start">
+      <!-- 左：標題 -->
+      <div>
+        <span class="badge badge-brown" style="margin-bottom:var(--sp-md)">問題區</span>
+        <h1>六大環境問題<br/>你了解幾個？</h1>
+      </div>
+      <!-- 右：影片輪播 -->
+      <div style="align-self:flex-start; margin-top:var(--sp-xl);">
+        <div id="videoCarouselWrap" style="position:relative; overflow: hidden; padding-right: 60px;">
+          <div id="videoTrack" style="display:flex; align-items:center; transition:transform 0.5s cubic-bezier(0.4,0,0.2,1)"></div>
+          <button class="video-nav-btn prev" id="videoPrev" style="top:40%">‹</button>
+          <button class="video-nav-btn next" id="videoNext" style="top:40%">›</button>
+        </div>
+        <div class="video-dots" id="videoDots"></div>
+      </div>
     </div>
-  </section>
+  </div>
+</section>
 
   <!-- Main -->
   <section class="section">
     <div class="container">
-      <!-- Filter -->
       <div class="filter-bar" id="filterBar">
         <button class="filter-btn active" data-filter="all">全部</button>
         <button class="filter-btn" data-filter="consumption">消費</button>
@@ -227,7 +358,6 @@
         <button class="filter-btn" data-filter="energy">能源</button>
       </div>
 
-      <!-- Hint -->
       <p style="font-size:0.82rem; color:var(--clr-muted); margin-bottom:var(--sp-lg); display:flex; align-items:center; gap:6px">
         <span style="display:inline-block; animation: floatMouse 1.2s ease-in-out infinite;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--clr-primary)" xmlns="http://www.w3.org/2000/svg">
@@ -237,7 +367,6 @@
         點擊卡片翻面看解方，點擊「深入了解」查看完整內容
       </p>
 
-      <!-- Cards -->
       <div class="issues-grid" id="issuesGrid"></div>
     </div>
   </section>
@@ -283,7 +412,96 @@
     Navbar.init('issues');
 
     /* ================================================
-       DATA — 六大環境問題
+       VIDEO DATA
+       ================================================ */
+    const ALL_VIDEOS = [
+      { ytId: '0aATDJ3x-Fw', category: '過度消費' },
+      { ytId: '9-dpv2xbFyk', category: '塑膠污染' },
+      { ytId: 'L8pEdHzQcik', category: '塑膠污染' },
+      { ytId: 'zkASAZGIuu0', category: '食物浪費' },
+      { ytId: '0R76cnBgrQs', category: '食物浪費' },
+      { ytId: 'tLfNUD0-8ts', category: '快時尚衝擊' },
+      { ytId: '00NIQgQE_d4', category: '快時尚衝擊' },
+      { ytId: 'MQLadfsvfLo', category: '電子垃圾' },
+      { ytId: '5k-PR4y_ng0', category: '電子垃圾' },
+      { ytId: 'QsAgaD7IeuA', category: '能源浪費' },
+    ];
+
+    /* ================================================
+       VIDEO CAROUSEL
+       ================================================ */
+    let currentVideo = 0;
+
+    function buildCarousel() {
+      const track = document.getElementById('videoTrack');
+      const dots  = document.getElementById('videoDots');
+
+      track.innerHTML = ALL_VIDEOS.map((v, i) => `
+        <div class="video-item ${i === 0 ? 'active' : ''}" id="vItem${i}">
+          <div class="video-frame-wrap">
+            <iframe
+              src="https://www.youtube.com/embed/${v.ytId}?rel=0"
+              title="${v.category}"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+            ></iframe>
+          </div>
+          <div class="video-label">
+            <strong>${v.category}</strong>
+          </div>
+        </div>
+      `).join('');
+
+      dots.innerHTML = ALL_VIDEOS.map((_, i) => `
+        <button class="video-dot ${i === 0 ? 'active' : ''}" onclick="goToVideo(${i})"></button>
+      `).join('');
+
+      updateCarousel();
+    }
+
+    function updateCarousel() {
+      const items    = document.querySelectorAll('.video-item');
+      const dotBtns  = document.querySelectorAll('.video-dot');
+      const track    = document.getElementById('videoTrack');
+      const wrap     = document.getElementById('videoCarouselWrap');
+
+      items.forEach((el, i) => {
+        el.classList.toggle('active', i === currentVideo);
+      });
+
+      dotBtns.forEach((d, i) => d.classList.toggle('active', i === currentVideo));
+
+      // Calculate offset: center the active item
+      const itemW     = items[0].offsetWidth;
+      const style     = window.getComputedStyle(items[0]);
+      const marginL   = parseFloat(style.marginLeft);
+      const marginR   = parseFloat(style.marginRight);
+      const totalW    = itemW + marginL + marginR;
+      const wrapW     = wrap.offsetWidth;
+      const offset    = (wrapW / 2) - (currentVideo * totalW) - (itemW / 2);
+      track.style.transform = `translateX(${offset}px)`;
+
+      document.getElementById('videoPrev').disabled = currentVideo === 0;
+      document.getElementById('videoNext').disabled = currentVideo === ALL_VIDEOS.length - 1;
+    }
+
+    function goToVideo(i) {
+      currentVideo = i;
+      updateCarousel();
+    }
+
+    document.getElementById('videoPrev').addEventListener('click', () => {
+      if (currentVideo > 0) { currentVideo--; updateCarousel(); }
+    });
+
+    document.getElementById('videoNext').addEventListener('click', () => {
+      if (currentVideo < ALL_VIDEOS.length - 1) { currentVideo++; updateCarousel(); }
+    });
+
+    window.addEventListener('resize', updateCarousel);
+
+    /* ================================================
+       ISSUES DATA
        ================================================ */
     const ISSUES = [
       {
@@ -348,7 +566,6 @@
         backTitle: '減塑行動',
         backSummary: '解方：減少使用一次性塑膠製品的次數，降低塑膠污染。',
       },
-      
       {
         id: 3, tag: 'waste',
         icon: '🍱', title: '食物浪費',
@@ -411,7 +628,6 @@
         backTitle: '慢時尚',
         backSummary: '解方：選擇高品質耐穿衣物，參與二手交換。',
       },
-      
       {
         id: 5, tag: 'waste',
         icon: '💻', title: '電子垃圾',
@@ -510,11 +726,11 @@
                   onclick="openModal(${issue.id}, 'back'); event.stopPropagation();"
                   class="btn btn-outline"
                   style="background:#fff; color:var(--clr-primary); width:100%;justify-content:center;font-size:0.82rem;margin-top:var(--sp-lg);height:44px"
-                >深入了解 →</button>
-             </div>
+                >深入了解</button>
+              </div>
+            </div>
           </div>
-        </div>
-      `).join('');
+      `  ).join('');
 
       grid.querySelectorAll('.flip-wrap').forEach(el => {
         el.addEventListener('click', (e) => {
@@ -527,55 +743,46 @@
     /* ================================================
        MODAL
        ================================================ */
-   function openModal(id, side) {
-    const issue = ISSUES.find(i => i.id === id);
-    if (!issue) return;
+    function openModal(id, side) {
+      const issue = ISSUES.find(i => i.id === id);
+      if (!issue) return;
 
-    document.getElementById('mIcon').textContent = issue.icon;
-    document.getElementById('mTitle').textContent = issue.title;
+      document.getElementById('mIcon').textContent = issue.icon;
+      document.getElementById('mTitle').textContent = issue.title;
 
-    const solutionBlock = document.getElementById('solutionBlock');
-    const effectsBlock  = document.getElementById('effectsBlock');
-    const actionBlock   = document.getElementById('actionBlock');
-    const statBlock     = document.getElementById('mStat');
-    const causesBlock   = document.querySelector('#mCauses').closest('.modal-solutions');
-    const consequencesBlock = document.querySelector('#mConsequences').closest('.modal-solutions');
+      const statBlock         = document.getElementById('mStat');
+      const solutionBlock     = document.getElementById('solutionBlock');
+      const effectsBlock      = document.getElementById('effectsBlock');
+      const actionBlock       = document.getElementById('actionBlock');
+      const causesBlock       = document.querySelector('#mCauses').closest('.modal-solutions');
+      const consequencesBlock = document.querySelector('#mConsequences').closest('.modal-solutions');
 
-    if (side === 'back') {
-      // 頂部顯示本週行動，隱藏統計數字
-      statBlock.innerHTML = `🎯 ${issue.action}`;
-      statBlock.style.background = '#DFF0DF';
+      if (side === 'back') {
+        statBlock.innerHTML        = `🎯 ${issue.action}`;
+        statBlock.style.background = '#DFF0DF';
+        causesBlock.style.display       = 'none';
+        consequencesBlock.style.display = 'none';
+        solutionBlock.style.display = 'block';
+        effectsBlock.style.display  = 'block';
+        actionBlock.style.display   = 'block';
+        document.getElementById('mSolutions').innerHTML = issue.solutions.map(s => `<li>${s}</li>`).join('');
+        document.getElementById('mEffects').innerHTML   = issue.effects.map(s => `<li>${s}</li>`).join('');
+        document.getElementById('mAction').innerHTML    = `<li>${issue.action}</li>`; 
+      } else {
+        statBlock.innerHTML        = issue.stat;
+        statBlock.style.background = '#F0F0E8';
+        causesBlock.style.display       = 'block';
+        consequencesBlock.style.display = 'block';
+        document.getElementById('mCauses').innerHTML       = issue.causes.map(s => `<li>${s}</li>`).join('');
+        document.getElementById('mConsequences').innerHTML = issue.consequences.map(s => `<li>${s}</li>`).join('');
+        solutionBlock.style.display = 'none';
+        effectsBlock.style.display  = 'none';
+        actionBlock.style.display   = 'none';
+      }
 
-      // 隱藏造成原因與後果
-      causesBlock.style.display      = 'none';
-      consequencesBlock.style.display = 'none';
-
-      // 顯示解決方案、成效、行動
-      solutionBlock.style.display = 'block';
-      effectsBlock.style.display  = 'block';
-      actionBlock.style.display   = 'none';
-
-      document.getElementById('mSolutions').innerHTML = issue.solutions.map(s => `<li>${s}</li>`).join('');
-      document.getElementById('mEffects').innerHTML   = issue.effects.map(s => `<li>${s}</li>`).join('');
-    } else {
-      // 正面：顯示統計數字、原因、後果
-      statBlock.innerHTML = issue.stat;
-      statBlock.style.background = '#F0F0E8';
-
-      causesBlock.style.display      = 'block';
-      consequencesBlock.style.display = 'block';
-
-      document.getElementById('mCauses').innerHTML       = issue.causes.map(s => `<li>${s}</li>`).join('');
-      document.getElementById('mConsequences').innerHTML = issue.consequences.map(s => `<li>${s}</li>`).join('');
-
-      solutionBlock.style.display = 'none';
-      effectsBlock.style.display  = 'none';
-      actionBlock.style.display   = 'none';
+      document.getElementById('modal').classList.add('open');
+      document.body.style.overflow = 'hidden';
     }
-
-    document.getElementById('modal').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
 
     function closeModal(e) {
       if (e && e.target !== document.getElementById('modal') && !e.target.classList.contains('modal-close')) return;
@@ -595,6 +802,7 @@
     });
 
     // Init
+    buildCarousel();
     renderCards();
   </script>
 </body>
