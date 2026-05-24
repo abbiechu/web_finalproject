@@ -360,6 +360,20 @@
       gap: var(--sp-sm);
     }
 
+    .diagnosis-content {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--clr-text);
+    }
+
+    .diagnosis-content p {
+      margin-bottom: var(--sp-md);
+    }
+
+    .diagnosis-content strong {
+      color: var(--clr-primary);
+    }
+
     .breakdown-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -558,6 +572,10 @@
       .tier-badge-large .tier-name {
         font-size: 1.5rem;
       }
+
+      .diagnosis-content {
+        font-size: 0.9rem;
+      }
     }
 
     @media (max-width: 480px) {
@@ -718,6 +736,10 @@
       .diagnosis-card h3 {
         font-size: 0.95rem;
       }
+
+      .diagnosis-content {
+        font-size: 0.85rem;
+      }
     }
   </style>
 </head>
@@ -833,7 +855,7 @@
 
         <div class="diagnosis-card">
           <h3>🎯 個人化建議</h3>
-          <div id="diagnosisContent"></div>
+          <div class="diagnosis-content" id="diagnosisContent"></div>
         </div>
       </div>
 
@@ -1000,151 +1022,176 @@
             { text: '從不修理', score: 0 },
             { text: '偶爾修理', score: 33 },
             { text: '經常修理', score: 66 },
-            { text: '總是優先修理', score: 100 }
+            { text: '優先嘗試修理', score: 100 }
           ]
         },
         {
           category: 'reuse',
-          text: '您對廢棄物分類回收的參與程度？',
+          text: '您家中有多少舊物品被轉換或重新利用？',
           options: [
-            { text: '不進行分類', score: 0 },
-            { text: '有時分類', score: 33 },
-            { text: '經常分類', score: 66 },
-            { text: '嚴格進行分類', score: 100 }
+            { text: '幾乎沒有', score: 0 },
+            { text: '有一些', score: 33 },
+            { text: '經常重新利用', score: 66 },
+            { text: '大部分都被重新利用', score: 100 }
           ]
         },
         {
           category: 'reuse',
-          text: '您是否會購買由回收材料製成的產品？',
-          options: [
-            { text: '從不購買', score: 0 },
-            { text: '偶爾購買', score: 33 },
-            { text: '經常購買', score: 66 },
-            { text: '優先購買回收製品', score: 100 }
-          ]
-        },
-        {
-          category: 'reuse',
-          text: '您是否了解當地的回收設施和方式？',
+          text: '您是否參與或了解社區的回收計劃？',
           options: [
             { text: '完全不了解', score: 0 },
-            { text: '略知一二', score: 33 },
-            { text: '比較了解', score: 66 },
-            { text: '非常了解', score: 100 }
+            { text: '有所了解', score: 33 },
+            { text: '相當了解', score: 66 },
+            { text: '主動參與並推廣', score: 100 }
+          ]
+        },
+        {
+          category: 'reuse',
+          text: '您購買的物品中有多少選擇環保或可回收材料？',
+          options: [
+            { text: '很少考慮', score: 0 },
+            { text: '偶爾考慮', score: 33 },
+            { text: '經常考慮', score: 66 },
+            { text: '優先購買環保材料', score: 100 }
           ]
         },
         // 節能減碳 (15-19)
         {
           category: 'energy',
-          text: '您使用什麼交通工具上班或外出？',
+          text: '您的日常出行方式如何？',
           options: [
-            { text: '主要開私家車', score: 0 },
-            { text: '經常開私家車', score: 25 },
-            { text: '經常使用公共交通', score: 50 },
-            { text: '主要使用公共交通或騎行', score: 100 }
+            { text: '主要開車（單獨或少數人）', score: 0 },
+            { text: '混合使用車和大眾交通', score: 33 },
+            { text: '多數使用大眾交通', score: 66 },
+            { text: '主要步行、騎行或公共交通', score: 100 }
           ]
         },
         {
           category: 'energy',
-          text: '您家中使用可再生能源（如太陽能）的比例？',
+          text: '您在家中節能方面的做法如何？',
           options: [
-            { text: '完全不使用', score: 0 },
-            { text: '少量使用', score: 33 },
-            { text: '中等使用', score: 66 },
-            { text: '主要使用可再生能源', score: 100 }
+            { text: '不特別注意能源消耗', score: 0 },
+            { text: '有時關注', score: 33 },
+            { text: '經常採取節能措施', score: 66 },
+            { text: '系統性地實施多項節能措施', score: 100 }
           ]
         },
         {
           category: 'energy',
-          text: '您是否會主動節省家中的電力和水資源？',
+          text: '您對購買能源效率產品的重視程度？',
           options: [
-            { text: '從不節省', score: 0 },
-            { text: '有時節省', score: 33 },
-            { text: '經常節省', score: 66 },
-            { text: '積極節省', score: 100 }
+            { text: '從不考慮', score: 0 },
+            { text: '偶爾考慮', score: 33 },
+            { text: '經常考慮', score: 66 },
+            { text: '優先選擇高效率產品', score: 100 }
           ]
         },
         {
           category: 'energy',
-          text: '您使用的電器設備中，有多少是能源效率高的？',
+          text: '您是否關注自己的碳足跡？',
           options: [
-            { text: '很少或沒有', score: 0 },
-            { text: '部分設備', score: 33 },
-            { text: '大多數設備', score: 66 },
-            { text: '全部都是高效能設備', score: 100 }
+            { text: '完全不關注', score: 0 },
+            { text: '有所了解但不行動', score: 33 },
+            { text: '知道並努力減少', score: 66 },
+            { text: '積極追蹤並持續優化', score: 100 }
           ]
         },
         {
           category: 'energy',
-          text: '您對自己的碳足跡了解程度如何？',
+          text: '您對環境議題（氣候變遷、污染等）的關注度？',
           options: [
-            { text: '完全不了解', score: 0 },
-            { text: '略知一二', score: 33 },
-            { text: '比較了解', score: 66 },
-            { text: '非常了解並積極減少', score: 100 }
+            { text: '很少關注', score: 0 },
+            { text: '偶爾關注', score: 33 },
+            { text: '經常關注', score: 66 },
+            { text: '持續深入了解並行動', score: 100 }
           ]
         }
-      ]
+      ],
+      diagnosis: {
+        diet: {
+          name: '綠色飲食',
+          icon: '🥗',
+          advice: {
+            high: '<p><strong>您在綠色飲食方面表現優異！</strong>您已經充分意識到飲食對環境的影響，並採取了積極的行動。您的減少肉類攝入、選擇當季在地產品、和推行食物廢棄物減少等做法都是值得表揚的。</p><p>繼續保持這些良好習慣，可以考慮進一步探索：訂閱社區支持農業（CSA）計劃，嘗試更多植物為基礎的食譜，或參與食品永續教育活動。您的選擇直接支持了更健康的農業實踐和更低的碳排放。</p>',
+            medium: '<p><strong>您在綠色飲食方面有良好的基礎。</strong>您已經開始注意到飲食中的環保因素，並做出了一些正面的改變。這是一個很好的開始，表明您願意為環保負責任。</p><p>下一步可以考慮：更系統地減少肉類消費，學習如何計劃減少食物浪費的策略，探索更多當地農人市場或有機選項，以及查詢您常購買的食品的環保標籤。即使是小的改變，乘以更多人的努力，也能帶來大的影響。</p>',
+            low: '<p><strong>在綠色飲食方面有改進的空間。</strong>您目前的飲食習慣可能對環境有較大影響，但這也意味著您有很大的改進潛力。每個人都可以改變，從小事開始往往最有效。</p><p>建議開始採取這些行動：嘗試「無肉一週」挑戰，減少食物浪費（計劃購物清單，妥善保存食物），開始選擇至少一些當季蔬菜，帶上可重複使用的購物袋。查看食品包裝上的標籤，了解哪些產品更永續。小步驟會逐漸演變成大的習慣改變。</p>'
+          }
+        },
+        shopping: {
+          name: '明智購物',
+          icon: '🛍️',
+          advice: {
+            high: '<p><strong>您在明智購物方面是典範！</strong>您已經採用了永續消費的核心原則，包括減少購買頻率、優先選擇環保材料、二手物品和可回收包裝。這些選擇直接減少了紡織廢棄物和包裝污染。</p><p>您可以進一步發揮影響力：成為朋友圈中的永續時尚倡導者，探索租賃或交換平台，支持道德品牌和當地工匠，參與服裝修繕工作坊。您的購物習慣證明了環保生活的可行性，並激勵他人做出相同的選擇。</p>',
+            medium: '<p><strong>您在明智購物方面已有不錯的意識。</strong>您開始思考消費選擇的影響，並嘗試做出更負責任的購買決定。這反映出您對永續生活的真實承諾。</p><p>進一步的建議：建立一套個人的購物規則（例如買前等待 30 天），更頻繁地探索二手商店和線上轉售平台，主動查詢品牌的環保政策，嘗試用可持續材料製成的新品牌。每次購物時，問自己「我真的需要嗎？」往往會帶來最環保的選擇。</p>',
+            low: '<p><strong>在明智購物方面有巨大的改進潛力。</strong>消費習慣對環境的影響往往是我們最直接但又常被忽視的部分。改變購物方式是向永續生活邁進的重要一步。</p><p>從這些實際步驟開始：執行 3 個月的「無新衣物」挑戰，訪問您當地的二手店或線上轉售平台，學習衣物護理和修繕的基本技能，在購買前製作清單並堅持遵循。這不僅幫助環境，通常也能節省金錢。當您看到浪費減少、衣櫃更充分利用時，滿足感也會增加。</p>'
+          }
+        },
+        reuse: {
+          name: '物品再生',
+          icon: '♻️',
+          advice: {
+            high: '<p><strong>您在物品再生方面表現卓越！</strong>您已經真正實踐了循環經濟的精神，優先選擇捐贈、修理和重新利用而不是丟棄。您參與回收計劃的行動也表明了您對社區環保責任的承諾。</p><p>為了擴大您的影響力，考慮：組織或參與修繕工作坊，成為您社區的回收倡導者，探索更多創意的再利用想法，或支持二手商品交換社區。您的行動證明了大量物品可以在多次生命周期中被使用，減少了垃圾填埋場的負擔。</p>',
+            medium: '<p><strong>您在物品再生方面有很好的基礎。</strong>您已經開始理解廢棄物不是不可避免的，並正在尋找更好的替代方案。這是構建更永續生活方式的關鍵基礎。</p><p>接下來的步驟：更系統地探索本地回收選項，學習簡單的修繕技能（線上有很多教程），參加社區物品交換活動，更積極地尋求捐贈而不是丟棄舊物品。建立一個「待捐贈」區域，當物品積累時定期聯繫慈善機構。您會驚訝於有多少東西可以給予第二生命。</p>',
+            low: '<p><strong>在物品再生方面有很大的改進空間。</strong>許多被丟棄的物品實際上仍然有用或可以修復。改變關於廢棄物的想法可以產生重大環境影響。</p><p>開始這些簡單的行動：停止自動丟棄破損物品（嘗試修理或尋求幫助），定期捐贈您不再使用的物品，探索當地的回收中心並了解他們接受什麼，購買二手物品至少是新物品購買的一部分。建立一個習慣：在丟棄任何東西之前，問一下「這可以修理、捐贈還是回收嗎？」這會很快變成自動反應，並大大減少您的廢棄物。</p>'
+          }
+        },
+        energy: {
+          name: '節能減碳',
+          icon: '⚡',
+          advice: {
+            high: '<p><strong>您在節能減碳方面領先示範！</strong>您的綜合努力——從交通選擇到家庭能源使用、購買決策和對氣候議題的深入關注——都展示了真正的環保承諾。您正在實踐低碳生活的多個方面。</p><p>為了進一步優化：計算您的個人碳足跡以找出最有影響的改進領域，探索可再生能源選項（太陽能面板、綠色電力計劃），倡導更多人採取類似行動，支持氣候政策和環境組織。您的個人選擇加上公眾倡導可以產生倍增效應。</p>',
+            medium: '<p><strong>您在節能減碳方面已展開行動。</strong>您意識到個人能源使用的重要性並正在努力減少影響。這些努力將在減少總碳排放方面發揮作用。</p><p>重點改進領域：評估您的運輸方式並制定優化計劃，實施具體的家庭節能措施（絕緣、高效照明、smart thermostats），當購買新設備時優先考慮能效等級，更頻繁地追蹤和反思您的碳足跡。計劃通常比偶發性努力更有效。考慮設定月度或季度的能源節約目標。</p>',
+            low: '<p><strong>在節能減碳方面有顯著的改進潛力。</strong>能源和交通往往是個人碳足跡中最大的部分，所以這是產生最大影響的地方。好消息是，許多節能措施也能節省金錢。</p><p>立即採取行動：評估您目前的運輸習慣，探索公共交通、騎行或步行的機會，進行家庭能源審計（許多公用事業提供免費或低成本），開始用 LED 燈泡替換傳統燈泡，關閉未使用的電子設備。查詢您的電力提供商是否提供綠色能源選項。這些初步步驟不需要大投資，但會減少您的碳足跡並降低能源賬單。</p>'
+          }
+        }
+      }
     };
 
-    // ============================================
-    // 全局變數
-    // ============================================
-
-    let currentPage = 0; // 0-3 對應四個主題
-    let userAnswers = {};
-    let radarChart = null;
+    // 狀態管理
+    let quizAnswers = {};
+    let currentPage = 1;
+    const QUESTIONS_PER_PAGE = 5;
 
     // ============================================
-    // 初始化
+    // 初始化與導航
     // ============================================
 
     function startQuiz() {
-      document.getElementById('introPanel').style.display = 'none';
+      quizAnswers = {};
+      currentPage = 1;
+      document.getElementById('introPanel').classList.remove('active');
       document.getElementById('quizPanel').classList.add('active');
-      currentPage = 0;
-      userAnswers = {};
-      renderPage();
+      renderQuestions();
+      updateProgressBar();
     }
 
-    // ============================================
-    // 渲染頁面
-    // ============================================
-
-    function renderPage() {
-      const category = QUIZ_DATA.categories[currentPage];
-      const categoryQuestions = QUIZ_DATA.questions.filter(q => q.category === category.id);
-
-      // 更新頁頭
-      document.getElementById('categoryIcon').textContent = category.icon;
-      document.getElementById('categoryTitle').textContent = category.name;
-      document.getElementById('pageInfo').textContent = `第 ${currentPage + 1} / 4 主題`;
-      document.getElementById('currentPage').textContent = `第 ${currentPage + 1} / 4 頁`;
-      document.getElementById('progressFill').style.width = `${(currentPage + 1) * 25}%`;
-
-      // 設定背景顏色
-      const tierBadge = document.querySelector('.tier-badge-large');
-      if (tierBadge) {
-        tierBadge.style.background = category.color;
-      }
-
-      // 渲染題目
+    function renderQuestions() {
       const container = document.getElementById('questionsContainer');
       container.innerHTML = '';
 
-      categoryQuestions.forEach((question, index) => {
-        const questionId = QUIZ_DATA.questions.indexOf(question);
-        const savedAnswer = userAnswers[questionId];
+      const startIdx = (currentPage - 1) * QUESTIONS_PER_PAGE;
+      const endIdx = Math.min(startIdx + QUESTIONS_PER_PAGE, QUIZ_DATA.questions.length);
+      const pageCategoryId = QUIZ_DATA.questions[startIdx].category;
+      const pageCategory = QUIZ_DATA.categories.find(c => c.id === pageCategoryId);
+
+      // 更新標題
+      document.getElementById('categoryIcon').textContent = pageCategory.icon;
+      document.getElementById('categoryTitle').textContent = pageCategory.name;
+      document.getElementById('pageInfo').textContent = `第 ${currentPage} / 4 主題`;
+
+      // 遍歷該頁的所有問題
+      for (let i = startIdx; i < endIdx; i++) {
+        const question = QUIZ_DATA.questions[i];
+        const questionNum = i + 1;
 
         const questionHTML = `
           <div class="question-item">
-            <div class="question-number">${index + 1}</div>
+            <div class="question-number">${questionNum}</div>
             <div class="question-text">${question.text}</div>
             <div class="options-list">
-              ${question.options.map((option, optionIndex) => `
-                <button class="option-btn ${savedAnswer === optionIndex ? 'selected' : ''}" 
-                        onclick="selectAnswer(${questionId}, ${optionIndex})">
-                  <span class="option-letter">${String.fromCharCode(65 + optionIndex)}</span>
+              ${question.options.map((option, idx) => `
+                <button class="option-btn" onclick="selectAnswer(${i}, ${idx})">
+                  <span class="option-letter">${String.fromCharCode(65 + idx)}</span>
                   <span>${option.text}</span>
                 </button>
               `).join('')}
@@ -1152,192 +1199,163 @@
           </div>
         `;
         container.innerHTML += questionHTML;
-      });
-
-      // 更新按鈕狀態
-      document.getElementById('prevBtn').disabled = currentPage === 0;
-      document.getElementById('nextBtn').textContent = currentPage === 3 ? '查看結果 →' : '下一頁 →';
-    }
-
-    // ============================================
-    // 選擇答案
-    // ============================================
-
-    function selectAnswer(questionId, optionIndex) {
-      userAnswers[questionId] = optionIndex;
-
-      // 更新 UI - 只移除同一題的 selected，其他題目保留
-      const questionElement = event.target.closest('.question-item');
-      questionElement.querySelectorAll('.option-btn').forEach(btn => {
-        btn.classList.remove('selected');
-      });
-      event.target.closest('.option-btn').classList.add('selected');
-    }
-
-    // ============================================
-    // 翻頁
-    // ============================================
-
-    function previousPage() {
-      if (currentPage > 0) {
-        currentPage--;
-        renderPage();
-        window.scrollTo(0, 0);
       }
+
+      // 高亮已選擇的答案
+      Object.keys(quizAnswers).forEach(qIdx => {
+        const selectedBtn = document.querySelectorAll('.option-btn')[
+          parseInt(qIdx) * 4 + quizAnswers[qIdx]
+        ];
+        if (selectedBtn) selectedBtn.classList.add('selected');
+      });
+
+      updateButtons();
+      document.getElementById('currentPage').textContent = `第 ${currentPage} / 4 頁`;
+    }
+
+    function selectAnswer(questionIdx, optionIdx) {
+      quizAnswers[questionIdx] = optionIdx;
+      renderQuestions();
     }
 
     function nextPage() {
-      // 檢查當前頁面是否所有題目都已作答
-      const category = QUIZ_DATA.categories[currentPage];
-      const categoryQuestions = QUIZ_DATA.questions.filter(q => q.category === category.id);
-      const allAnswered = categoryQuestions.every((q, idx) => {
-        const questionId = QUIZ_DATA.questions.indexOf(q);
-        return userAnswers[questionId] !== undefined;
-      });
-
-      if (!allAnswered) {
-        alert('⚠️ 請完成這一頁的所有題目後再繼續');
-        return;
-      }
-
-      if (currentPage < 3) {
+      if (currentPage < 4) {
         currentPage++;
-        renderPage();
+        renderQuestions();
+        updateProgressBar();
         window.scrollTo(0, 0);
       } else {
-        showResults();
+        showResult();
       }
     }
 
+    function previousPage() {
+      if (currentPage > 1) {
+        currentPage--;
+        renderQuestions();
+        updateProgressBar();
+        window.scrollTo(0, 0);
+      }
+    }
+
+    function updateButtons() {
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const nextBtnLabel = document.getElementById('nextBtn').textContent;
+
+      prevBtn.disabled = currentPage === 1;
+      nextBtn.textContent = currentPage === 4 ? '完成 ✓' : '下一頁 →';
+    }
+
+    function updateProgressBar() {
+      const percentage = (currentPage / 4) * 100;
+      document.getElementById('progressFill').style.width = percentage + '%';
+    }
+
     // ============================================
-    // 計算結果
+    // 計分與結果
     // ============================================
 
-    function showResults() {
-      // 計算總分
+    function calculateScores() {
+      const categoryScores = {};
+      
+      // 初始化各類別分數
+      QUIZ_DATA.categories.forEach(cat => {
+        categoryScores[cat.id] = { total: 0, count: 0, percentage: 0 };
+      });
+
+      // 計算每個類別的分數
+      QUIZ_DATA.questions.forEach((question, idx) => {
+        if (quizAnswers.hasOwnProperty(idx)) {
+          const selectedOptionIdx = quizAnswers[idx];
+          const score = question.options[selectedOptionIdx].score;
+          categoryScores[question.category].total += score;
+          categoryScores[question.category].count += 1;
+        }
+      });
+
+      // 計算百分比
+      Object.keys(categoryScores).forEach(catId => {
+        const data = categoryScores[catId];
+        if (data.count > 0) {
+          data.percentage = Math.round(data.total / data.count);
+        }
+      });
+
+      // 計算總分（100分制）
       let totalScore = 0;
-      let categoryScores = {
-        diet: 0,
-        shopping: 0,
-        reuse: 0,
-        energy: 0
-      };
-      let categoryCounts = {
-        diet: 0,
-        shopping: 0,
-        reuse: 0,
-        energy: 0
-      };
+      let totalQuestions = 0;
+      Object.keys(categoryScores).forEach(catId => {
+        totalScore += categoryScores[catId].total;
+        totalQuestions += categoryScores[catId].count;
+      });
+      const overallScore = Math.round((totalScore / (totalQuestions * 100)) * 100);
 
-      for (let questionId in userAnswers) {
-        const question = QUIZ_DATA.questions[questionId];
-        const optionIndex = userAnswers[questionId];
-        const score = question.options[optionIndex].score;
+      return { categoryScores, overallScore };
+    }
 
-        totalScore += score;
-        categoryScores[question.category] += score;
-        categoryCounts[question.category]++;
-      }
-
-      // 計算總分（保持 0-100 分制）
-      totalScore = Math.round(totalScore / 20);
-
-      // 計算平均分
-      for (let cat in categoryScores) {
-        categoryScores[cat] = Math.round(categoryScores[cat] / categoryCounts[cat]);
-      }
-
-      // 決定等級
-      let tier, emoji, tierName;
-      if (totalScore >= 90) {
-        tier = 'gold';
-        emoji = '🏆';
-        tierName = '金色永續守護者';
-      } else if (totalScore >= 70) {
-        tier = 'silver';
-        emoji = '🥈';
-        tierName = '銀色綠色實踐家';
-      } else if (totalScore >= 50) {
-        tier = 'bronze';
-        emoji = '🥉';
-        tierName = '銅色環保新手';
+    function getTierInfo(score) {
+      if (score >= 90) {
+        return { emoji: '🏆', name: '金色永續守護者', color: '#FFD700', level: 'high' };
+      } else if (score >= 70) {
+        return { emoji: '🥈', name: '銀色綠色實踐家', color: '#C0C0C0', level: 'high' };
+      } else if (score >= 50) {
+        return { emoji: '🥉', name: '銅色環保新手', color: '#CD7F32', level: 'medium' };
       } else {
-        tier = 'sprout';
-        emoji = '🌱';
-        tierName = '綠芽探索者';
+        return { emoji: '🌱', name: '綠芽探索者', color: '#7CB342', level: 'low' };
       }
+    }
 
-      // 更新結果頁面
+    function showResult() {
       document.getElementById('quizPanel').classList.remove('active');
       document.getElementById('resultPanel').classList.add('active');
 
-      document.getElementById('tierEmoji').textContent = emoji;
-      document.getElementById('tierName').textContent = tierName;
-      document.getElementById('tierScore').textContent = `${totalScore} /100 分`;
+      const { categoryScores, overallScore } = calculateScores();
+      const tierInfo = getTierInfo(overallScore);
 
-      // 設定背景顏色
-      const tierBadge = document.getElementById('tierBadge');
-      const tierColors = {
-        gold: '#FFD700',
-        silver: '#C0C0C0',
-        bronze: '#CD7F32',
-        sprout: '#3a6b3a'
-      };
-      tierBadge.style.background = tierColors[tier];
+      // 更新分級徽章
+      document.getElementById('tierEmoji').textContent = tierInfo.emoji;
+      document.getElementById('tierName').textContent = tierInfo.name;
+      document.getElementById('tierScore').textContent = `${overallScore} 分`;
+      document.getElementById('tierBadge').style.backgroundColor = tierInfo.color;
 
-      // 渲染分解圖表
-      renderBreakdownGrid(categoryScores);
+      // 生成雷達圖
+      generateRadarChart(categoryScores);
 
-      // 渲染雷達圖
-      renderRadarChart(categoryScores);
+      // 生成個人化建議
+      generateDiagnosis(categoryScores, tierInfo);
 
-      // 渲染診斷內容
-      renderDiagnosis(totalScore, categoryScores);
+      // 生成細項卡片
+      generateBreakdownCards(categoryScores);
+
+      window.scrollTo(0, 0);
     }
 
-    function renderBreakdownGrid(categoryScores) {
-      const categories = QUIZ_DATA.categories;
-      const grid = document.getElementById('breakdownGrid');
-      grid.innerHTML = '';
-
-      categories.forEach(cat => {
-        const score = categoryScores[cat.id];
-        const html = `
-          <div class="breakdown-card">
-            <div style="font-size: 1.5rem; margin-bottom: var(--sp-sm);">${cat.icon}</div>
-            <div style="font-size: 0.9rem; font-weight: 600; margin-bottom: var(--sp-sm);">${cat.name}</div>
-            <div class="breakdown-score">${score}</div>
-            <div class="breakdown-label">/ 100</div>
-          </div>
-        `;
-        grid.innerHTML += html;
-      });
-    }
-
-    function renderRadarChart(categoryScores) {
+    function generateRadarChart(categoryScores) {
       const ctx = document.getElementById('radarChart').getContext('2d');
+      const labels = QUIZ_DATA.categories.map(c => c.name);
+      const data = QUIZ_DATA.categories.map(c => categoryScores[c.id].percentage);
+      const colors = QUIZ_DATA.categories.map(c => c.color);
 
-      if (radarChart) {
-        radarChart.destroy();
+      if (window.radarChartInstance) {
+        window.radarChartInstance.destroy();
       }
 
-      radarChart = new Chart(ctx, {
+      window.radarChartInstance = new Chart(ctx, {
         type: 'radar',
         data: {
-          labels: ['綠色飲食', '明智購物', '物品再生', '節能減碳'],
+          labels: labels,
           datasets: [{
             label: '您的環保指數',
-            data: [
-              categoryScores.diet,
-              categoryScores.shopping,
-              categoryScores.reuse,
-              categoryScores.energy
-            ],
+            data: data,
             borderColor: '#3a6b3a',
-            backgroundColor: 'rgba(58, 107, 58, 0.2)',
+            backgroundColor: 'rgba(58, 107, 58, 0.1)',
             borderWidth: 2,
             pointRadius: 5,
-            pointBackgroundColor: '#3a6b3a'
+            pointHoverRadius: 7,
+            pointBackgroundColor: '#3a6b3a',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2
           }]
         },
         options: {
@@ -1348,100 +1366,82 @@
               beginAtZero: true,
               max: 100,
               ticks: {
-                stepSize: 20
+                stepSize: 20,
+                font: { size: 12 }
               }
             }
+          },
+          plugins: {
+            legend: { display: false }
           }
         }
       });
     }
 
-    function renderDiagnosis(totalScore, categoryScores) {
-      const content = document.getElementById('diagnosisContent');
+    function generateDiagnosis(categoryScores, tierInfo) {
+      const diagnosisContent = document.getElementById('diagnosisContent');
+      let html = '';
 
-      let diagnosis = '';
-
-      if (totalScore >= 90) {
-        diagnosis = `
-          <div class="alert-item tip">
-            <strong>🌟 您是永續生活的模範</strong>
-            <p>您的環保意識和行動力都非常出色，已經在日常生活中實踐了責任消費與生產的理念。</p>
-          </div>
-          <div class="alert-item tip">
-            <strong>💡 下一步建議</strong>
-            <p>考慮成為環保大使，分享您的經驗，影響身邊的人一起加入永續生活的行列。</p>
-          </div>
-        `;
-      } else if (totalScore >= 70) {
-        diagnosis = `
-          <div class="alert-item tip">
-            <strong>✨ 您是綠色生活的實踐者</strong>
-            <p>您已經在多個方面實踐了永續消費，保持這樣的努力非常棒！</p>
-          </div>
-          <div class="alert-item warn">
-            <strong>📈 改進空間</strong>
-            <p>可以在得分較低的領域加強，例如 ${getLowestCategory(categoryScores)}。</p>
-          </div>
-        `;
-      } else if (totalScore >= 50) {
-        diagnosis = `
-          <div class="alert-item tip">
-            <strong>🌱 您已開始環保之旅</strong>
-            <p>您對永續生活有基本認識，現在是深化行動的好時機。</p>
-          </div>
-          <div class="alert-item warn">
-            <strong>🎯 重點改進</strong>
-            <p>建議優先改進 ${getLowestCategory(categoryScores)} 領域，從小行動開始。</p>
-          </div>
-        `;
-      } else {
-        diagnosis = `
-          <div class="alert-item warn">
-            <strong>🔔 永續生活的開始</strong>
-            <p>您正在開始了解永續消費的重要性，這是很好的起點！</p>
-          </div>
-          <div class="alert-item warn">
-            <strong>🚀 行動計畫</strong>
-            <p>從 ${getLowestCategory(categoryScores)} 開始，選擇一個簡單的改變，逐步建立永續習慣。</p>
-          </div>
-        `;
-      }
-
-      content.innerHTML = diagnosis;
-    }
-
-    function getLowestCategory(categoryScores) {
-      const categories = QUIZ_DATA.categories;
-      let lowest = categories[0];
-      let lowestScore = categoryScores[lowest.id];
-
-      for (let cat of categories) {
-        if (categoryScores[cat.id] < lowestScore) {
-          lowest = cat;
-          lowestScore = categoryScores[cat.id];
+      // 添加總體評語
+      const overallScore = Math.round(
+        Object.values(categoryScores).reduce((sum, cat) => sum + cat.percentage, 0) / 4
+      );
+      
+      QUIZ_DATA.categories.forEach(category => {
+        const catScore = categoryScores[category.id].percentage;
+        const advice = QUIZ_DATA.diagnosis[category.id].advice;
+        
+        let adviceText;
+        if (catScore >= 70) {
+          adviceText = advice.high;
+        } else if (catScore >= 50) {
+          adviceText = advice.medium;
+        } else {
+          adviceText = advice.low;
         }
-      }
 
-      return lowest.name;
+        html += `
+          <div style="margin-bottom: 1.5rem;">
+            <h4 style="color: var(--clr-primary); margin-bottom: 0.5rem; font-size: 0.95rem;">
+              ${category.icon} ${category.name}（${catScore} 分）
+            </h4>
+            ${adviceText}
+          </div>
+        `;
+      });
+
+      diagnosisContent.innerHTML = html;
     }
 
-    // ============================================
-    // 重新測驗
-    // ============================================
+    function generateBreakdownCards(categoryScores) {
+      const breakdownGrid = document.getElementById('breakdownGrid');
+      breakdownGrid.innerHTML = '';
+
+      QUIZ_DATA.categories.forEach(category => {
+        const score = categoryScores[category.id].percentage;
+        const card = document.createElement('div');
+        card.className = 'breakdown-card';
+        card.innerHTML = `
+          <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">${category.icon}</div>
+          <div class="breakdown-score">${score}</div>
+          <div class="breakdown-label">${category.name}</div>
+        `;
+        breakdownGrid.appendChild(card);
+      });
+    }
 
     function resetQuiz() {
       document.getElementById('resultPanel').classList.remove('active');
-      document.getElementById('introPanel').style.display = 'flex';
-      currentPage = 0;
-      userAnswers = {};
-
-      if (radarChart) {
-        radarChart.destroy();
-        radarChart = null;
-      }
-
+      document.getElementById('introPanel').classList.add('active');
+      quizAnswers = {};
+      currentPage = 1;
       window.scrollTo(0, 0);
     }
+
+    // 頁面加載時初始化
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('introPanel').classList.add('active');
+    });
   </script>
 </body>
 </html>
