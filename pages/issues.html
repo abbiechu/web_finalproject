@@ -10,6 +10,23 @@
        Branch: feature/issues  (羅乃慈)
        File:   pages/issues.html
        ============================================ */
+    body {
+      background-image: url('https://images.unsplash.com/photo-1740471348165-2aac81fff608?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+      background-size: cover;
+      background-attachment: fixed;
+      background-position: center;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.10);
+      z-index: 0;
+      pointer-events: none;
+    }
+    .section, section {
+      background: rgba(245, 242, 234, 0.88) !important;
+    }
 
     /* --- Filter Bar --- */
     .filter-bar {
@@ -23,15 +40,15 @@
       padding: 0.4rem 1rem;
       border-radius: var(--radius-xl);
       border: 2px solid var(--clr-border);
-      background: transparent;
+      background: var(--clr-surface);
       color: var(--clr-muted);
       font-size: 0.85rem;
       font-weight: 500;
       transition: all var(--t-fast);
       cursor: pointer;
       font-family: var(--ff-body);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
-
     .filter-btn:hover,
     .filter-btn.active {
       border-color: var(--clr-primary);
@@ -326,7 +343,7 @@
   <script src="../js/navbar.js"></script>
 
   <!-- Page hero -->
-  <section class="section" style="background:linear-gradient(160deg,#EAF3E6 0%,var(--clr-bg) 70%); padding-bottom:var(--sp-xl)">
+  <section class="section" style="background:linear-gradient(160deg,rgba(234,243,230,0.85) 0%,rgba(245,242,234,0.85) 70%);  padding-bottom:var(--sp-xl)">
   <div class="container">
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:var(--sp-2xl); align-items:flex-start">
       <!-- 左：標題 -->
@@ -335,7 +352,7 @@
         <h1>六大環境問題<br/>你了解幾個？</h1>
       </div>
       <!-- 右：影片輪播 -->
-      <div style="align-self:flex-start; margin-top:var(--sp-xl);">
+      <div style="align-self:flex-start; margin-top:0;">
         <div id="videoCarouselWrap" style="position:relative; overflow: hidden; padding-right: 60px;">
           <div id="videoTrack" style="display:flex; align-items:center; transition:transform 0.5s cubic-bezier(0.4,0,0.2,1)"></div>
           <button class="video-nav-btn prev" id="videoPrev" style="top:40%">‹</button>
