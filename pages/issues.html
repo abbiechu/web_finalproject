@@ -781,10 +781,10 @@
         consequencesBlock.style.display = 'none';
         solutionBlock.style.display = 'block';
         effectsBlock.style.display  = 'block';
-        actionBlock.style.display   = 'block';
+        actionBlock.style.display   = 'none';
         document.getElementById('mSolutions').innerHTML = issue.solutions.map(s => `<li>${s}</li>`).join('');
         document.getElementById('mEffects').innerHTML   = issue.effects.map(s => `<li>${s}</li>`).join('');
-        document.getElementById('mAction').innerHTML    = `<li>${issue.action}</li>`; 
+        
       } else {
         statBlock.innerHTML        = issue.stat;
         statBlock.style.background = '#F0F0E8';
