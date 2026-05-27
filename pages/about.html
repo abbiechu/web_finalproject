@@ -260,23 +260,48 @@
       { title: '我們的理念', body: '環保不是犧牲生活品質，而是更聰明地消費。每個有意識的選擇，都是給地球的一份禮物。' },
     ];
 
-    const ANGLES = [-90, -30, 30, 90, 150, 210];
-    const RADIUS = 210;
+    /*
+     * 左側：n0=核心背景, n1=網站特色, n2=問題意識  (tooltip 往左展開)
+     * 右側：n3=團隊目標, n4=核心價值, n5=我們的理念 (tooltip 往右展開)
+     *
+     * 用固定座標定位，不用角度三角函數，完全不會有上下擋住的問題
+     */
+
     const CARD_W = 136;
-    const CARD_H = 106;
-    const TT_W   = 200;  // 必須與 CSS width 一致
-    const GAP    = 14;
+    const TT_W   = 200;
+    const GAP    = 16;
 
     function positionNodes() {
       const wrap = document.getElementById('mmWrap');
-      const cx = wrap.offsetWidth  / 2;
-      const cy = wrap.offsetHeight / 2;
+      const W  = wrap.offsetWidth;
+      const H  = wrap.offsetHeight;
+      const cx = W / 2;
+      const cy = H / 2;
 
-      ANGLES.forEach((deg, i) => {
-        const rad  = deg * Math.PI / 180;
+      // 左側三個節點的 X：置於中心左邊
+      const leftX  = cx - 240 - CARD_W / 2;
+      // 右側三個節點的 X：置於中心右邊
+      const rightX = cx + 240 - CARD_W / 2;
+
+      // 三個節點的垂直位置：上、中、下
+      const topY    = cy - 160 - 53;
+      const middleY = cy       - 53;
+      const bottomY = cy + 160 - 53;
+
+      const positions = [
+        { x: leftX,  y: topY    },  // n0 左上
+        { x: leftX,  y: middleY },  // n1 左中
+        { x: leftX,  y: bottomY },  // n2 左下
+        { x: rightX, y: topY    },  // n3 右上
+        { x: rightX, y: middleY },  // n4 右中
+        { x: rightX, y: bottomY },  // n5 右下
+      ];
+
+      positions.forEach((pos, i) => {
         const node = document.getElementById('n' + i);
-        node.style.left = (cx + RADIUS * Math.cos(rad) - CARD_W / 2) + 'px';
-        node.style.top  = (cy + RADIUS * Math.sin(rad) - CARD_H / 2) + 'px';
+        node.style.left = pos.x + 'px';
+        node.style.top  = pos.y + 'px';
+        node.dataset.side = i < 3 ? 'left' : 'right';
       });
 
       drawLines(cx, cy);
@@ -288,7 +313,7 @@
       for (let i = 0; i < 6; i++) {
         const node = document.getElementById('n' + i);
         const nx = parseFloat(node.style.left) + CARD_W / 2;
-        const ny = parseFloat(node.style.top)  + CARD_H / 2;
+        const ny = parseFloat(node.style.top)  + node.offsetHeight / 2;
         const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         line.setAttribute('x1', cx); line.setAttribute('y1', cy);
         line.setAttribute('x2', nx); line.setAttribute('y2', ny);
@@ -304,61 +329,46 @@
 
     document.querySelectorAll('.mm-node').forEach((node, i) => {
       node.addEventListener('mouseenter', () => {
-        // 1. 填入內容
         document.getElementById('ttTitle').textContent = NODE_DATA[i].title;
         document.getElementById('ttBody').textContent  = NODE_DATA[i].body;
 
-        // 2. 移除 show，量出真實高度（visibility:hidden 仍佔位可量）
         tooltip.classList.remove('show');
         tooltip.style.transition = 'none';
-        const ttH = tooltip.offsetHeight; // 寬固定 200px，高度準確
+        const ttH = tooltip.offsetHeight;
 
-        // 3. 從 style 屬性取節點座標，高度動態量測
         const nodeLeft = parseFloat(node.style.left);
         const nodeTop  = parseFloat(node.style.top);
-        const nodeH    = node.offsetHeight;  // 動態量，永遠準確
+        const nodeH    = node.offsetHeight;
         const wrap     = document.getElementById('mmWrap');
         const wW = wrap.offsetWidth;
         const wH = wrap.offsetHeight;
 
-        // 4. 依角度決定方向與滑入起點
-        const angle = ANGLES[i];
-        let left, top, sx = 0, sy = 0;
+        const isLeft = node.dataset.side === 'left';
+        let left, top, sx;
 
-        if (angle === -90) {
-          // 正上方 → tooltip 出現在節點上面
-          left = nodeLeft + (CARD_W - TT_W) / 2;
-          top  = nodeTop - ttH - GAP;
-          sy   = -10;
-        } else if (angle === 90) {
-          // 正下方 → tooltip 出現在節點下面
-          left = nodeLeft + (CARD_W - TT_W) / 2;
-          top  = nodeTop + nodeH + GAP;
-          sy   = 10;
-        } else if (angle === -30 || angle === 30) {
-          // 右側 → tooltip 往右
-          left = nodeLeft + CARD_W + GAP;
-          top  = nodeTop + (nodeH - ttH) / 2;
-          sx   = 10;
-        } else {
-          // 左側（150°, 210°）→ tooltip 往左
+        if (isLeft) {
+          // 左側節點 → tooltip 往左展開
           left = nodeLeft - TT_W - GAP;
-          top  = nodeTop + (nodeH - ttH) / 2;
           sx   = -10;
+        } else {
+          // 右側節點 → tooltip 往右展開
+          left = nodeLeft + CARD_W + GAP;
+          sx   = 10;
         }
 
-        // 5. 邊界保護
+        // 垂直置中對齊節點
+        top = nodeTop + (nodeH - ttH) / 2;
+
+        // 邊界保護
         left = Math.max(4, Math.min(left, wW - TT_W - 4));
         top  = Math.max(4, Math.min(top,  wH - ttH  - 4));
 
-        // 6. 套上位置與起始偏移
         tooltip.style.left      = left + 'px';
         tooltip.style.top       = top  + 'px';
-        tooltip.style.transform = `translate(${sx}px, ${sy}px)`;
+        tooltip.style.transform = `translateX(${sx}px)`;
 
-        // 7. 強制 reflow 後加 show，確保 Chrome 正確觸發 transition
         void tooltip.offsetHeight;
-        tooltip.style.transition = '';  // 清掉 inline none，讓 CSS transition 生效
+        tooltip.style.transition = '';
         tooltip.classList.add('show');
       });
 
