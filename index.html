@@ -6,47 +6,78 @@
   <title>EcoPulse — SDG 12 責任消費與生產</title>
   <link rel="stylesheet" href="css/base.css" />
   <style>
-    /* ── 高級感 Hero 區佈局 ── */
+    /* ── 終極高級感：動態微光漸層背景 ── */
     .hero {
       min-height: calc(100vh - var(--nav-h));
       display: flex; 
       align-items: center;
       position: relative; 
       overflow: hidden;
-      /* 背景改為更細緻、多層次的微光漸層 */
-      background: radial-gradient(circle at 10% 30%, rgba(234, 243, 230, 0.6) 0%, rgba(255, 255, 255, 0) 50%),
-                  linear-gradient(165deg, #F4F7F3 0%, var(--clr-bg, #fafbfa) 100%);
-    }
-    
-    /* 左側微光（Aura Halo）— 營造高級留白靈魂 */
-    .hero::before {
-      content: ''; 
-      position: absolute; 
-      top: 20%; 
-      left: -10%; 
-      width: 500px; 
-      height: 500px;
-      background: radial-gradient(circle, rgba(58, 107, 58, 0.04) 0%, transparent 70%);
-      filter: blur(40px);
-      pointer-events: none;
+      /* 基礎優雅微綠底色 */
+      background-color: #F3F7F2; 
     }
 
-    /* 橫向展延容器：放寬到 680px，消滅死板空虛 */
+    /* 緩慢流動的環境光圈 (Aura Background) - 徹底消除死白 */
+    .hero::before, .hero::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      z-index: 0;
+      opacity: 0.6;
+    }
+    /* 左側漂浮微光：填補左側視覺空白 */
+    .hero::before {
+      top: -10%;
+      left: -10%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(90, 154, 90, 0.15) 0%, transparent 70%);
+      animation: floatLight 12s infinite alternate ease-in-out;
+    }
+    /* 右下側對比微光 */
+    .hero::after {
+      bottom: -10%;
+      right: 10%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(200, 220, 195, 0.2) 0%, transparent 70%);
+      animation: floatLight 8s infinite alternate-reverse ease-in-out;
+    }
+
+    @keyframes floatLight {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(40px, 30px) scale(1.1); }
+    }
+
+    /* 裝飾性極簡線條：利用幾何線條壓住最左邊的留白，營造科技高級感 */
+    .hero-decor-line {
+      position: absolute;
+      left: 0;
+      top: 25%;
+      width: 120px;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(58,107,58,0.3) 0%, transparent 100%);
+      z-index: 1;
+    }
+
+    /* 橫向展延容器：放寬到 720px，讓左側與中間連成一氣 */
     .hero-content {
       position: relative;
       z-index: 1;
-      max-width: 680px; 
+      max-width: 720px; 
+      padding-left: 20px; /* 稍微往右推，跟左邊裝飾線產生層次 */
     }
 
-    /* 英文字口號：字體變小、字距拉寬，呈現 Apple 風格的進階質感 */
+    /* 中文品牌口號：字距拉開、低調內斂 */
     .hero-slogan {
-      font-size: 0.78rem;
+      font-size: 0.88rem;
       font-weight: 700;
       color: var(--clr-primary);
+      letter-spacing: 4px; /* 拉開字距建立進階質感 */
+      margin-bottom: 14px;
       text-transform: uppercase;
-      letter-spacing: 3px; /* 關鍵：拉開字距 */
-      margin-bottom: 12px;
-      opacity: 0.85;
+      opacity: 0.9;
       animation: fadeUp .5s ease forwards;
     }
 
@@ -54,9 +85,10 @@
       display: inline-flex;
       align-items: center;
       gap: .4rem;
-      background: #EAF3E6;
+      background: rgba(215, 233, 210, 0.7);
+      backdrop-filter: blur(4px);
       color: var(--clr-primary);
-      border: 1px solid rgba(58,107,58,.12);
+      border: 1px solid rgba(58,107,58,0.15);
       border-radius: var(--radius-xl);
       padding: .35rem .9rem;
       font-size: .8rem;
@@ -66,26 +98,26 @@
       animation: fadeUp .5s ease forwards;
     }
 
-    /* 主標題：稍微放寬，筆畫間更有呼吸空間 */
+    /* 主標題：融入生產與消費雙主題，橫向加寬拉長 */
     .hero h1 {
-      font-size: 3.2rem; /* 稍微放大，增強視覺壓制力 */
+      font-size: 3.4rem; 
       line-height: 1.25;
       margin-bottom: var(--sp-lg);
       letter-spacing: -0.5px;
+      color: #222;
       animation: fadeUp .6s .1s ease both;
     }
     .hero h1 em {
       font-style: normal;
       color: var(--clr-primary);
-      position: relative;
     }
     
-    /* 介紹文字：寬度加長到 520px，自然流暢地填補左側空間 */
+    /* 介紹文字：放寬到 560px，並調整內文強調兩端平衡 */
     .hero p {
       font-size: 1.05rem;
       color: var(--clr-muted);
-      max-width: 520px; 
-      line-height: 1.65;
+      max-width: 560px; 
+      line-height: 1.7;
       margin-bottom: var(--sp-2xl);
       animation: fadeUp .6s .2s ease both;
     }
@@ -107,13 +139,15 @@
       flex-direction: column;
       gap: var(--sp-md);
       animation: fadeUp .8s .4s ease both;
+      z-index: 1;
     }
     .stat-card {
-      background: var(--clr-surface);
-      border: 1px solid var(--clr-border);
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px); /* 磨砂玻璃質感 */
+      border: 1px solid rgba(255, 255, 255, 0.6);
       border-radius: var(--radius-md);
       padding: var(--sp-md) var(--sp-lg);
-      box-shadow: var(--shadow-md);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.04);
       text-align: center;
       min-width: 160px;
     }
@@ -141,6 +175,7 @@
       color: var(--clr-muted);
       font-size: .78rem;
       animation: fadeUp 1s .8s ease both;
+      z-index: 1;
     }
     .scroll-arrow {
       width: 24px;
@@ -155,7 +190,7 @@
       50% { transform: rotate(45deg) translateY(6px); }
     }
 
-    /* 其他區塊樣式完全保留 */
+    /* 其他下方區塊樣式完全保留 */
     .sdg-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-xl);align-items:center}
     .sdg-text h2{margin-bottom:var(--sp-md)}
     .sdg-text p{color:var(--clr-muted);margin-bottom:var(--sp-md)}
@@ -190,13 +225,15 @@
   <script src="js/navbar.js"></script>
 
   <section class="hero">
+    <div class="hero-decor-line"></div>
+    
     <div class="container">
       <div class="hero-content">
-        <div class="hero-slogan">ECOPULSE — TRACKING THE PLANET'S BEAT</div>
+        <div class="hero-slogan">ECOPULSE — 用數據把關地球心跳</div>
         
         <div class="hero-badge">🌱 SDG 12 · 責任消費與生產</div>
-        <h1>讓消費習慣<br/>成為<em>地球的解方</em></h1>
-        <p>EcoPulse 透過數據視覺化與互動測驗，幫助你了解自身消費行為對環境的影響，並提供切實可行的改善建議。</p>
+        <h1>連結<em>永續生產</em>與<br/><em>責任消費</em>的綠色脈動</h1>
+        <p>EcoPulse 透過數據視覺化與互動測驗，帶你從源頭了解綠色供應鏈的生產轉型，並引導消費者做出有意識的購買選擇，共同翻轉地球的未來環境。</p>
         <div class="hero-actions">
           <a href="pages/quiz.html" class="btn btn-primary">🧪 開始環保測驗</a>
           <a href="pages/issues.html" class="btn btn-outline">瞭解問題 →</a>
@@ -277,7 +314,7 @@
           <div class="step-num">2</div>
           <div style="font-size:2rem;margin-bottom:var(--sp-md)">📝</div>
           <h3>完成測驗</h3>
-          <p>回答 20 道日常生活問題，系統自動計算你在四大面向的環保指數。</p>
+          <p>回答 20 道日常生活問題，系統 automatic 計算你在四大面向的環保指數。</p>
           <a href="pages/quiz.html" class="step-link">開始測驗 →</a>
         </div>
         <div class="card step-card fade-up">
