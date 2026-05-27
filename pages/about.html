@@ -6,9 +6,13 @@
   <title>關於我們 — EcoPulse</title>
   <link rel="stylesheet" href="../css/base.css" />
   <style>
+    /* ============================================
+       Branch: feature/about  (朱家締)
+       ============================================ */
+
     .anim-title {
       opacity: 0;
-      transform: translateY(28px);
+      transform: translateY(24px);
       transition: opacity 0.7s ease, transform 0.7s ease;
     }
     .anim-title.visible { opacity: 1; transform: translateY(0); }
@@ -18,28 +22,31 @@
       padding: var(--sp-2xl) 0 var(--sp-xl);
     }
 
+    /* ── Mind Map ── */
     .mindmap-section { background: var(--clr-surface); }
 
     .mm-wrap {
       position: relative;
       width: 100%;
-      height: 580px;
+      height: 560px;
       user-select: none;
     }
 
+    /* SVG 層：連線 + 延伸標籤都畫在這裡 */
     .mm-svg {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
-      pointer-events: none;
+      overflow: visible;
     }
 
+    /* 中心圓 */
     .mm-center {
       position: absolute;
       left: 50%; top: 50%;
       transform: translate(-50%, -50%);
-      width: 120px; height: 120px;
+      width: 130px; height: 130px;
       border-radius: 50%;
       background: var(--clr-primary);
       color: #fff;
@@ -51,7 +58,7 @@
       font-size: 1rem;
       text-align: center;
       z-index: 10;
-      box-shadow: var(--shadow-md);
+      box-shadow: 0 6px 24px rgba(58,107,58,0.35);
       line-height: 1.3;
     }
     .mm-center small {
@@ -61,60 +68,110 @@
       margin-top: 4px;
     }
 
+    /* 節點卡片 */
     .mm-node {
       position: absolute;
-      width: 136px;
+      width: 130px;
       background: var(--clr-surface);
       border: 1.5px solid var(--clr-border);
       border-radius: var(--radius-md);
-      padding: var(--sp-md);
+      padding: 12px 14px;
       cursor: default;
-      transition: border-color var(--t-normal), box-shadow var(--t-normal), transform var(--t-normal);
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
       z-index: 10;
     }
     .mm-node:hover {
       border-color: var(--clr-primary);
-      box-shadow: 0 0 0 4px rgba(58,107,58,0.12);
-      transform: scale(1.05);
+      box-shadow: 0 0 0 4px rgba(58,107,58,0.10);
+      transform: scale(1.04);
       z-index: 20;
     }
-    .mm-node .n-icon  { font-size: 1.4rem; margin-bottom: 4px; }
-    .mm-node .n-title { font-size: 0.88rem; font-weight: 600; color: var(--clr-dark); }
-    .mm-node .n-hint  { font-size: 0.75rem; color: var(--clr-muted); margin-top: 2px; }
+    .mm-node .n-icon  { font-size: 1.3rem; margin-bottom: 4px; }
+    .mm-node .n-title { font-size: 0.85rem; font-weight: 600; color: var(--clr-dark); }
 
-    /* 固定寬度，才能準確量出真實高度 */
-    .mm-tooltip {
-      position: absolute;
-      width: 200px;
-      background: var(--clr-surface);
-      border: 1.5px solid var(--clr-primary);
-      border-radius: var(--radius-md);
-      padding: var(--sp-md) var(--sp-lg);
-      box-shadow: var(--shadow-lg);
-      z-index: 40;
-      pointer-events: none;
-      visibility: hidden;
+    /* SVG 延伸線條與標籤（預設隱藏，hover 節點才顯示） */
+    .branch-group {
       opacity: 0;
-      transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0.18s;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
     }
-    .mm-tooltip.show {
-      visibility: visible;
-      opacity: 1;
-      transform: translate(0, 0) !important;
-      transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0s;
+    .branch-group.show { opacity: 1; }
+
+    .branch-path {
+      fill: none;
+      stroke: var(--clr-primary);
+      stroke-width: 1.5;
+      stroke-opacity: 0.6;
+      stroke-dasharray: none;
     }
-    .mm-tooltip .tt-title {
+
+    .branch-dot {
+      fill: var(--clr-primary);
+      opacity: 0.7;
+    }
+
+    .branch-label-bg {
+      fill: #DFF0DF;
+      rx: 6;
+    }
+
+    .branch-label-text {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      fill: var(--clr-primary);
+    }
+
+    /* 主幹虛線（中心到節點，常駐顯示） */
+    .main-line {
+      fill: none;
+      stroke: #3A6B3A;
+      stroke-width: 1.5;
+      stroke-opacity: 0.35;
+      stroke-dasharray: 6 4;
+    }
+
+    /* ── SDG 數據統計 ── */
+    .stats-section { background: var(--clr-primary); }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--sp-xl);
+      text-align: center;
+    }
+
+    .stat-item {}
+
+    .stat-number {
       font-family: var(--ff-display);
-      font-size: 0.95rem;
-      color: var(--clr-primary);
+      font-size: 2.8rem;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1;
       margin-bottom: var(--sp-sm);
     }
-    .mm-tooltip .tt-body {
-      font-size: 0.83rem;
-      color: var(--clr-muted);
-      line-height: 1.6;
+
+    .stat-unit {
+      font-size: 1.4rem;
+      opacity: 0.8;
     }
 
+    .stat-desc {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.75);
+      line-height: 1.5;
+    }
+
+    .stat-divider {
+      width: 32px;
+      height: 2px;
+      background: rgba(255,255,255,0.3);
+      margin: var(--sp-sm) auto;
+      border-radius: 2px;
+    }
+
+    /* ── Team ── */
     .team-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -133,21 +190,27 @@
     .team-card .rol { font-size: 0.82rem; color: var(--clr-primary); font-weight: 600; margin-bottom: var(--sp-sm); }
     .team-card p   { font-size: 0.85rem; color: var(--clr-muted); }
 
-    .values-grid {
+    /* ── Design Principles（純展示，不再 hover） ── */
+    .principles-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: var(--sp-lg);
     }
-    .value-card { border-top: 4px solid var(--clr-primary); }
-    .value-card .num {
+    .principle-card {
+      background: var(--clr-surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--clr-border);
+      padding: var(--sp-xl);
+    }
+    .principle-num {
       font-family: var(--ff-display);
-      font-size: 2.5rem;
-      color: var(--clr-border);
+      font-size: 3rem;
+      color: #DFF0DF;
       line-height: 1;
       margin-bottom: var(--sp-sm);
     }
-    .value-card h3 { margin-bottom: var(--sp-sm); font-size: 1.05rem; }
-    .value-card p  { font-size: 0.87rem; color: var(--clr-muted); }
+    .principle-card h3 { font-size: 1rem; margin-bottom: var(--sp-sm); color: var(--clr-primary); }
+    .principle-card p  { font-size: 0.87rem; color: var(--clr-muted); line-height: 1.7; }
 
     .footer {
       background: var(--clr-dark);
@@ -157,17 +220,18 @@
       font-size: 0.85rem;
     }
 
-    @media (max-width: 768px) {
-      .mm-wrap     { height: 500px; }
-      .mm-node     { width: 108px; padding: var(--sp-sm); }
-      .team-grid   { grid-template-columns: 1fr; }
-      .values-grid { grid-template-columns: 1fr; }
+    @media (max-width: 900px) {
+      .stats-grid     { grid-template-columns: repeat(2, 1fr); }
+      .team-grid      { grid-template-columns: 1fr; }
+      .principles-grid { grid-template-columns: 1fr; }
+      .mm-wrap        { height: 480px; }
     }
   </style>
 </head>
 <body>
   <script src="../js/navbar.js"></script>
 
+  <!-- PAGE HERO -->
   <section class="page-hero">
     <div class="container">
       <span class="badge badge-green" style="margin-bottom:var(--sp-md)">關於我們</span>
@@ -178,31 +242,63 @@
     </div>
   </section>
 
+  <!-- MIND MAP -->
   <section class="section mindmap-section">
     <div class="container">
       <h2 class="section-title anim-title">互動心智圖</h2>
-      <p class="section-subtitle">Hover 各節點查看詳細說明</p>
+      <p class="section-subtitle">Hover 各節點展開延伸說明</p>
 
       <div class="mm-wrap" id="mmWrap">
+        <!-- SVG：主幹線 + hover 後的延伸線標籤 -->
         <svg class="mm-svg" id="mmSvg"></svg>
 
-        <div class="mm-center">🌿<br/>ECO PULSE<small>關於我們</small></div>
+        <div class="mm-center">
+          🌿<br/>ECO PULSE
+          <small>關於我們</small>
+        </div>
 
-        <div class="mm-node" id="n0"><div class="n-icon">🌱</div><div class="n-title">核心背景</div><div class="n-hint">為何而生</div></div>
-        <div class="mm-node" id="n1"><div class="n-icon">💡</div><div class="n-title">網站特色</div><div class="n-hint">互動 · 即時回饋</div></div>
-        <div class="mm-node" id="n2"><div class="n-icon">⚠️</div><div class="n-title">問題意識</div><div class="n-hint">三大核心挑戰</div></div>
-        <div class="mm-node" id="n3"><div class="n-icon">🎯</div><div class="n-title">團隊目標</div><div class="n-hint">5 分鐘 · 1 個行動</div></div>
-        <div class="mm-node" id="n4"><div class="n-icon">💎</div><div class="n-title">核心價值</div><div class="n-hint">透明 · 互動 · 行動</div></div>
-        <div class="mm-node" id="n5"><div class="n-icon">🌍</div><div class="n-title">我們的理念</div><div class="n-hint">更聰明地消費</div></div>
+        <!-- 左側三個 -->
+        <div class="mm-node" id="n0"><div class="n-icon">🌱</div><div class="n-title">核心背景</div></div>
+        <div class="mm-node" id="n1"><div class="n-icon">⚠️</div><div class="n-title">問題意識</div></div>
+        <div class="mm-node" id="n2"><div class="n-icon">🎯</div><div class="n-title">團隊目標</div></div>
+        <!-- 右側三個 -->
+        <div class="mm-node" id="n3"><div class="n-icon">💡</div><div class="n-title">網站特色</div></div>
+        <div class="mm-node" id="n4"><div class="n-icon">💎</div><div class="n-title">核心價值</div></div>
+        <div class="mm-node" id="n5"><div class="n-icon">🌍</div><div class="n-title">我們的理念</div></div>
+      </div>
+    </div>
+  </section>
 
-        <div class="mm-tooltip" id="mmTooltip">
-          <div class="tt-title" id="ttTitle"></div>
-          <div class="tt-body"  id="ttBody"></div>
+  <!-- SDG 12 數據統計 -->
+  <section class="section stats-section">
+    <div class="container">
+      <h2 class="section-title anim-title" style="color:#fff; margin-bottom:var(--sp-2xl)">SDG 12 關鍵數據</h2>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number"><span class="count" data-target="33">0</span><span class="stat-unit">%</span></div>
+          <div class="stat-divider"></div>
+          <div class="stat-desc">全球食物生產<br/>遭到浪費</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number"><span class="count" data-target="800">0</span><span class="stat-unit">萬噸</span></div>
+          <div class="stat-divider"></div>
+          <div class="stat-desc">每年塑膠<br/>流入海洋</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number"><span class="count" data-target="10">0</span><span class="stat-unit">%</span></div>
+          <div class="stat-divider"></div>
+          <div class="stat-desc">時尚產業佔<br/>全球碳排放</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number"><span class="count" data-target="9">0</span><span class="stat-unit">%</span></div>
+          <div class="stat-divider"></div>
+          <div class="stat-desc">全球塑膠<br/>曾被回收</div>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- TEAM -->
   <section class="section">
     <div class="container">
       <h2 class="section-title anim-title">團隊成員</h2>
@@ -230,14 +326,27 @@
     </div>
   </section>
 
+  <!-- DESIGN PRINCIPLES -->
   <section class="section" style="background:var(--clr-surface)">
     <div class="container">
       <h2 class="section-title anim-title">設計原則</h2>
       <p class="section-subtitle">讓複雜的環境資訊變得簡單、直覺、可行動</p>
-      <div class="values-grid">
-        <div class="card value-card"><div class="num">01</div><h3>資訊分層</h3><p>核心概念優先呈現，細節依需求展開，避免資訊過載，讓使用者自主決定深度。</p></div>
-        <div class="card value-card"><div class="num">02</div><h3>互動回饋</h3><p>每個操作都有即時視覺回應。翻牌、測驗、雷達圖——讓學習成為體驗而非閱讀。</p></div>
-        <div class="card value-card"><div class="num">03</div><h3>行動導向</h3><p>不只告訴你「有問題」，更提供具體的本週可實踐行動，讓改變從今天開始。</p></div>
+      <div class="principles-grid">
+        <div class="principle-card">
+          <div class="principle-num">01</div>
+          <h3>資訊分層</h3>
+          <p>核心概念優先呈現，細節依需求展開，避免資訊過載，讓使用者自主決定閱讀深度。</p>
+        </div>
+        <div class="principle-card">
+          <div class="principle-num">02</div>
+          <h3>互動回饋</h3>
+          <p>每個操作都有即時視覺回應。翻牌、測驗、雷達圖——讓學習成為體驗而非閱讀。</p>
+        </div>
+        <div class="principle-card">
+          <div class="principle-num">03</div>
+          <h3>行動導向</h3>
+          <p>不只告訴你「有問題」，更提供具體的本週可實踐行動，讓改變從今天開始。</p>
+        </div>
       </div>
     </div>
   </section>
@@ -251,133 +360,205 @@
   <script>
     Navbar.init('about');
 
+    /* ══════════════════════════════════════════
+       心智圖資料
+       左側 n0,n1,n2 / 右側 n3,n4,n5
+       每個節點有 2 條延伸支線
+    ══════════════════════════════════════════ */
     const NODE_DATA = [
-      { title: '核心背景', body: '全球每年產生約 20 億噸固體廢棄物，超過 30% 未妥善處理。SDG 12 強調必須從根源改變生產與消費模式，EcoPulse 因此誕生。' },
-      { title: '網站特色', body: '提供環保雷達圖與個人化建議；結合互動翻牌與測驗，讓減碳行動變得好玩又可衡量，不同於靜態介紹網站。' },
-      { title: '問題意識', body: '過度消費、塑膠污染、食物浪費——三大問題彼此連動，需要系統性的日常行為改變才能有效應對。' },
-      { title: '團隊目標', body: '讓每位訪客在 5 分鐘內清楚自己的消費足跡，並帶走至少 1 個本週可實踐的改善行動。' },
-      { title: '核心價值', body: '透明（資料公開可查）、互動（對話而非說教）、行動導向（每個建議本週就能實踐）。' },
-      { title: '我們的理念', body: '環保不是犧牲生活品質，而是更聰明地消費。每個有意識的選擇，都是給地球的一份禮物。' },
+      {
+        title: '核心背景', side: 'left',
+        branches: ['SDG 12 永續發展目標', '每年 20 億噸廢棄物']
+      },
+      {
+        title: '問題意識', side: 'left',
+        branches: ['過度消費 · 塑膠污染', '食物浪費 · 快時尚']
+      },
+      {
+        title: '團隊目標', side: 'left',
+        branches: ['5 分鐘了解碳足跡', '帶走 1 個可實踐行動']
+      },
+      {
+        title: '網站特色', side: 'right',
+        branches: ['互動翻牌 · 即時回饋', '環保雷達圖視覺化']
+      },
+      {
+        title: '核心價值', side: 'right',
+        branches: ['透明 · 資料公開可查', '行動導向 · 可立即實踐']
+      },
+      {
+        title: '我們的理念', side: 'right',
+        branches: ['更聰明地消費', '每個選擇都算數']
+      },
     ];
 
-    /*
-     * 左側：n0=核心背景, n1=網站特色, n2=問題意識  (tooltip 往左展開)
-     * 右側：n3=團隊目標, n4=核心價值, n5=我們的理念 (tooltip 往右展開)
-     *
-     * 用固定座標定位，不用角度三角函數，完全不會有上下擋住的問題
-     */
+    const CARD_W = 130;
+    const R      = 8;   // 轉角弧度半徑
 
-    const CARD_W = 136;
-    const TT_W   = 200;
-    const GAP    = 16;
+    /* ── 計算節點位置 ── */
+    function getPositions(W, H) {
+      const cx = W / 2;
+      const cy = H / 2;
+      const lx = cx - 230 - CARD_W / 2;  // 左側節點左上角 X
+      const rx = cx + 230 - CARD_W / 2;  // 右側節點左上角 X
+      const ys = [cy - 170, cy, cy + 170]; // 上中下 Y（節點中心）
+
+      return [
+        { x: lx, cy: ys[0], side: 'left'  }, // n0
+        { x: lx, cy: ys[1], side: 'left'  }, // n1
+        { x: lx, cy: ys[2], side: 'left'  }, // n2
+        { x: rx, cy: ys[0], side: 'right' }, // n3
+        { x: rx, cy: ys[1], side: 'right' }, // n4
+        { x: rx, cy: ys[2], side: 'right' }, // n5
+      ];
+    }
 
     function positionNodes() {
       const wrap = document.getElementById('mmWrap');
-      const W  = wrap.offsetWidth;
-      const H  = wrap.offsetHeight;
+      const W = wrap.offsetWidth;
+      const H = wrap.offsetHeight;
+      const pos = getPositions(W, H);
+
+      pos.forEach((p, i) => {
+        const node = document.getElementById('n' + i);
+        const nodeH = node.offsetHeight;
+        node.style.left = p.x + 'px';
+        node.style.top  = (p.cy - nodeH / 2) + 'px';
+        node.dataset.side = p.side;
+      });
+
+      drawAll(W, H);
+    }
+
+    /* ══════════════════════════════════════════
+       SVG 繪製：主幹虛線 + 延伸支線
+    ══════════════════════════════════════════ */
+    function drawAll(W, H) {
+      const svg = document.getElementById('mmSvg');
+      svg.innerHTML = '';
       const cx = W / 2;
       const cy = H / 2;
 
-      // 左側三個節點的 X：置於中心左邊
-      const leftX  = cx - 240 - CARD_W / 2;
-      // 右側三個節點的 X：置於中心右邊
-      const rightX = cx + 240 - CARD_W / 2;
-
-      // 三個節點的垂直位置：上、中、下
-      const topY    = cy - 160 - 53;
-      const middleY = cy       - 53;
-      const bottomY = cy + 160 - 53;
-
-      const positions = [
-        { x: leftX,  y: topY    },  // n0 左上
-        { x: leftX,  y: middleY },  // n1 左中
-        { x: leftX,  y: bottomY },  // n2 左下
-        { x: rightX, y: topY    },  // n3 右上
-        { x: rightX, y: middleY },  // n4 右中
-        { x: rightX, y: bottomY },  // n5 右下
-      ];
-
-      positions.forEach((pos, i) => {
-        const node = document.getElementById('n' + i);
-        node.style.left = pos.x + 'px';
-        node.style.top  = pos.y + 'px';
-        node.dataset.side = i < 3 ? 'left' : 'right';
-      });
-
-      drawLines(cx, cy);
-    }
-
-    function drawLines(cx, cy) {
-      const svg = document.getElementById('mmSvg');
-      svg.innerHTML = '';
       for (let i = 0; i < 6; i++) {
-        const node = document.getElementById('n' + i);
-        const nx = parseFloat(node.style.left) + CARD_W / 2;
-        const ny = parseFloat(node.style.top)  + node.offsetHeight / 2;
-        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', cx); line.setAttribute('y1', cy);
-        line.setAttribute('x2', nx); line.setAttribute('y2', ny);
-        line.setAttribute('stroke', '#3A6B3A');
-        line.setAttribute('stroke-width', '1.5');
-        line.setAttribute('stroke-opacity', '0.4');
-        line.setAttribute('stroke-dasharray', '6 4');
-        svg.appendChild(line);
+        const node   = document.getElementById('n' + i);
+        const nodeH  = node.offsetHeight;
+        const nodeL  = parseFloat(node.style.left);
+        const nodeT  = parseFloat(node.style.top);
+        const nodeCy = nodeT + nodeH / 2;
+        const isLeft = NODE_DATA[i].side === 'left';
+
+        // 節點靠近中心那側的 X
+        const nodeEdgeX = isLeft ? nodeL + CARD_W : nodeL;
+
+        /* 主幹虛線：中心 → 節點邊緣 */
+        const ml = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        ml.setAttribute('x1', cx);        ml.setAttribute('y1', cy);
+        ml.setAttribute('x2', nodeEdgeX); ml.setAttribute('y2', nodeCy);
+        ml.setAttribute('class', 'main-line');
+        svg.appendChild(ml);
+
+        /* 延伸支線群組（hover 才顯示）*/
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.setAttribute('class', 'branch-group');
+        g.setAttribute('id', 'branch' + i);
+        svg.appendChild(g);
+
+        const branches = NODE_DATA[i].branches;
+        const branchOffsets = [-28, 28]; // 上下偏移量
+
+        branches.forEach((label, bi) => {
+          const offsetY = branchOffsets[bi];
+          const startX  = isLeft ? nodeL : nodeL + CARD_W;
+          const startY  = nodeCy;
+
+          // 延伸距離
+          const extLen  = 110;
+          // 轉彎後的水平段長度
+          const hLen    = 70;
+
+          let path, dotX, dotY, labelX, labelAnchor;
+
+          if (isLeft) {
+            /*
+             * 左側：從節點左邊出發，先往左走，再往下/上轉彎（帶圓弧），再往左走到標籤
+             *
+             *  節點左邊 ──────╮
+             *                 │ (弧度轉角)
+             *                 ╰──── 標籤文字
+             */
+            const ex    = startX - extLen;  // 水平段終點 X
+            const endY  = startY + offsetY; // 垂直段終點 Y
+            const arcDir = offsetY > 0 ? 1 : 0; // 1=順時針(往下), 0=逆時針(往上)
+
+            // path: 從起點往左，圓弧轉彎，再往左延伸
+            path = `M ${startX} ${startY}
+                    L ${ex + R} ${startY}
+                    Q ${ex} ${startY} ${ex} ${startY + (offsetY > 0 ? R : -R)}
+                    L ${ex} ${endY + (offsetY > 0 ? -R : R)}
+                    Q ${ex} ${endY} ${ex - R} ${endY}
+                    L ${ex - hLen} ${endY}`;
+
+            dotX        = ex - hLen - 4;
+            dotY        = endY;
+            labelX      = ex - hLen - 10;
+            labelAnchor = 'end';
+          } else {
+            /*
+             * 右側：從節點右邊出發，先往右走，再往下/上轉彎（帶圓弧），再往右走到標籤
+             */
+            const ex   = startX + extLen;
+            const endY = startY + offsetY;
+
+            path = `M ${startX} ${startY}
+                    L ${ex - R} ${startY}
+                    Q ${ex} ${startY} ${ex} ${startY + (offsetY > 0 ? R : -R)}
+                    L ${ex} ${endY + (offsetY > 0 ? -R : R)}
+                    Q ${ex} ${endY} ${ex + R} ${endY}
+                    L ${ex + hLen} ${endY}`;
+
+            dotX        = ex + hLen + 4;
+            dotY        = endY;
+            labelX      = ex + hLen + 10;
+            labelAnchor = 'start';
+          }
+
+          // 路徑線
+          const pathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          pathEl.setAttribute('d', path);
+          pathEl.setAttribute('class', 'branch-path');
+          g.appendChild(pathEl);
+
+          // 小圓點
+          const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          dot.setAttribute('cx', dotX);
+          dot.setAttribute('cy', dotY);
+          dot.setAttribute('r', 4);
+          dot.setAttribute('class', 'branch-dot');
+          g.appendChild(dot);
+
+          // 標籤背景 + 文字（先加文字量寬度）
+          const textEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          textEl.setAttribute('x', labelX);
+          textEl.setAttribute('y', dotY + 4);
+          textEl.setAttribute('text-anchor', labelAnchor);
+          textEl.setAttribute('class', 'branch-label-text');
+          textEl.textContent = label;
+          g.appendChild(textEl);
+        });
       }
     }
 
-    const tooltip = document.getElementById('mmTooltip');
-
+    /* ── Hover 顯示延伸線 ── */
     document.querySelectorAll('.mm-node').forEach((node, i) => {
       node.addEventListener('mouseenter', () => {
-        document.getElementById('ttTitle').textContent = NODE_DATA[i].title;
-        document.getElementById('ttBody').textContent  = NODE_DATA[i].body;
-
-        tooltip.classList.remove('show');
-        tooltip.style.transition = 'none';
-        const ttH = tooltip.offsetHeight;
-
-        const nodeLeft = parseFloat(node.style.left);
-        const nodeTop  = parseFloat(node.style.top);
-        const nodeH    = node.offsetHeight;
-        const wrap     = document.getElementById('mmWrap');
-        const wW = wrap.offsetWidth;
-        const wH = wrap.offsetHeight;
-
-        const isLeft = node.dataset.side === 'left';
-        let left, top, sx;
-
-        if (isLeft) {
-          // 左側節點 → tooltip 往左展開
-          left = nodeLeft - TT_W - GAP;
-          sx   = -10;
-        } else {
-          // 右側節點 → tooltip 往右展開
-          left = nodeLeft + CARD_W + GAP;
-          sx   = 10;
-        }
-
-        // 垂直置中對齊節點
-        top = nodeTop + (nodeH - ttH) / 2;
-
-        // 邊界保護
-        left = Math.max(4, Math.min(left, wW - TT_W - 4));
-        top  = Math.max(4, Math.min(top,  wH - ttH  - 4));
-
-        tooltip.style.left      = left + 'px';
-        tooltip.style.top       = top  + 'px';
-        tooltip.style.transform = `translateX(${sx}px)`;
-
-        void tooltip.offsetHeight;
-        tooltip.style.transition = '';
-        tooltip.classList.add('show');
+        document.getElementById('branch' + i)?.classList.add('show');
       });
-
       node.addEventListener('mouseleave', () => {
-        tooltip.classList.remove('show');
+        document.getElementById('branch' + i)?.classList.remove('show');
       });
     });
 
-    // 標題 scroll 動畫
+    /* ── 標題 scroll 動畫 ── */
     const titleObs = new IntersectionObserver(entries => {
       entries.forEach(e => {
         if (e.isIntersecting) {
@@ -386,9 +567,41 @@
         }
       });
     }, { threshold: 0.2 });
-
     document.querySelectorAll('.anim-title').forEach(el => titleObs.observe(el));
 
+    /* ── 數字滾動動畫 ── */
+    function animateCount(el) {
+      const target = parseInt(el.dataset.target);
+      const dur    = 1800;
+      const step   = 16;
+      const steps  = dur / step;
+      let current  = 0;
+      const inc    = target / steps;
+
+      const timer = setInterval(() => {
+        current += inc;
+        if (current >= target) {
+          el.textContent = target;
+          clearInterval(timer);
+        } else {
+          el.textContent = Math.floor(current);
+        }
+      }, step);
+    }
+
+    const statsObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.querySelectorAll('.count').forEach(animateCount);
+          statsObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.3 });
+
+    document.querySelector('.stats-section') &&
+      statsObs.observe(document.querySelector('.stats-section'));
+
+    /* ── Init ── */
     window.addEventListener('load',   positionNodes);
     window.addEventListener('resize', positionNodes);
     setTimeout(positionNodes, 80);
