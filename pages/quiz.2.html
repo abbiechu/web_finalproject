@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>環保測驗 — EcoPulse 消費者版</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --clr-primary: #2d5a27;
+      --clr-primary-lt: #4a8c41;
+      --clr-primary-dark: #1a3a16;
+      --clr-surface: #f8faf7;
+      --clr-border: #d4e4d0;
+      --clr-text: #1e2e1c;
+      --clr-muted: #6b836a;
+      --clr-dark: #0f1f0e;
+      --nav-h: 64px;
+      --sp-xs: 4px; --sp-sm: 8px; --sp-md: 16px;
+      --sp-lg: 24px; --sp-xl: 32px; --sp-2xl: 48px; --sp-3xl: 64px;
+      --radius-sm: 6px; --radius-md: 10px; --radius-lg: 16px; --radius-xl: 24px;
+      --t-fast: 0.15s ease; --t-normal: 0.25s ease;
+      --ff-display: 'Syne', sans-serif;
+      --ff-body: 'Noto Sans TC', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--ff-body);
+      color: var(--clr-text);
+      background: #f0f5ee;
+      min-height: 100vh;
+    }
+
+    .container { max-width: 960px; margin: 0 auto; padding: 0 var(--sp-lg); }
+    .section { padding: var(--sp-2xl) 0; }
+
+    .badge-green {
+      display: inline-block;
+      padding: 0.3rem 0.9rem;
+      background: #d0e8ca;
+      color: var(--clr-primary-dark);
+      border-radius: var(--radius-xl);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    h1 {
+      font-family: var(--ff-display);
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800;
+      color: var(--clr-dark);
+      line-height: 1.15;
+    }
+
+    /* ===== 介紹頁面 ===== */
+    #introPanel {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+    }
+
+    .intro-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-2xl);
+      align-items: center;
+    }
+
+    .intro-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--sp-sm);
+      margin: var(--sp-lg) 0;
+    }
+
+    .category-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0.4rem 0.9rem;
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--clr-border);
+      background: white;
+      font-size: 0.83rem;
+      font-weight: 500;
+    }
+
+    .tier-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-md);
+    }
+
+    .tier-item {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-md);
+      padding: var(--sp-md);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--clr-border);
+      background: white;
+    }
+
+    .tier-icon { font-size: 1.5rem; width: 40px; text-align: center; }
+    .tier-item strong { display: block; font-size: 0.9rem; }
+    .tier-item span { font-size: 0.8rem; color: var(--clr-muted); }
+
+    /* ===== 測驗頁面 ===== */
+    #quizPanel {
+      display: none;
+      min-height: 100vh;
+      padding: var(--sp-2xl) 0;
+    }
+
+    #quizPanel.active { display: block; }
+
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--sp-2xl);
+      padding-bottom: var(--sp-lg);
+      border-bottom: 2px solid var(--clr-border);
+    }
+
+    .quiz-header h2 {
+      font-family: var(--ff-display);
+      font-size: 1.5rem;
+      color: var(--clr-dark);
+      display: flex;
+      align-items: center;
+      gap: var(--sp-md);
+    }
+
+    .quiz-progress {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-sm);
+      font-size: 0.9rem;
+      color: var(--clr-muted);
+    }
+
+    .progress-bar-container {
+      width: 200px; height: 6px;
+      background: var(--clr-border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--clr-primary), var(--clr-primary-lt));
+      transition: width 0.5s ease;
+    }
+
+    .questions-container {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-xl);
+      margin-bottom: var(--sp-2xl);
+    }
+
+    .question-item {
+      background: white;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--clr-border);
+      padding: var(--sp-xl);
+      transition: all var(--t-normal);
+    }
+
+    .question-item:hover {
+      border-color: var(--clr-primary);
+      box-shadow: 0 4px 12px rgba(45, 90, 39, 0.1);
+    }
+
+    .question-number {
+      width: 32px; height: 32px;
+      background: var(--clr-primary);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: var(--sp-md);
+    }
+
+    .question-text {
+      font-family: var(--ff-body);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--clr-dark);
+      margin-bottom: var(--sp-lg);
+      line-height: 1.6;
+    }
+
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-md);
+    }
+
+    .option-btn {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-md);
+      padding: var(--sp-md) var(--sp-lg);
+      border-radius: var(--radius-md);
+      border: 2px solid var(--clr-border);
+      background: var(--clr-surface);
+      text-align: left;
+      cursor: pointer;
+      transition: all var(--t-fast);
+      font-family: var(--ff-body);
+      font-size: 0.95rem;
+      color: var(--clr-text);
+      width: 100%;
+    }
+
+    .option-btn:hover {
+      border-color: var(--clr-primary);
+      background: #eaf3e6;
+      transform: translateX(4px);
+    }
+
+    .option-btn.selected {
+      border-color: var(--clr-primary);
+      background: #eaf3e6;
+    }
+
+    .option-letter {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--clr-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      transition: all var(--t-fast);
+    }
+
+    .option-btn.selected .option-letter,
+    .option-btn:hover .option-letter {
+      background: var(--clr-primary);
+      color: #fff;
+    }
+
+    .quiz-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--sp-lg);
+      margin-top: var(--sp-2xl);
+    }
+
+    .btn {
+      padding: 0.8rem 1.5rem;
+      border-radius: var(--radius-md);
+      border: none;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--t-fast);
+      font-family: var(--ff-body);
+    }
+
+    .btn-primary { background: var(--clr-primary); color: #fff; }
+    .btn-primary:hover:not(:disabled) {
+      background: var(--clr-primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(45, 90, 39, 0.3);
+    }
+
+    .btn-secondary { background: var(--clr-border); color: var(--clr-text); }
+    .btn-secondary:hover:not(:disabled) { background: var(--clr-muted); color: #fff; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .quiz-page-info { text-align: center; font-size: 0.9rem; color: var(--clr-muted); }
+
+    /* ===== 結果頁面 ===== */
+    #resultPanel {
+      display: none;
+      min-height: 100vh;
+      padding: var(--sp-2xl) 0;
+    }
+
+    #resultPanel.active { display: block; }
+
+    .result-header { text-align: center; padding: var(--sp-3xl) 0 var(--sp-2xl); }
+
+    .tier-badge-large {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--sp-sm);
+      padding: var(--sp-xl) var(--sp-2xl);
+      border-radius: var(--radius-xl);
+      margin-bottom: var(--sp-lg);
+      color: #fff;
+    }
+
+    .tier-badge-large .tier-emoji { font-size: 3.5rem; }
+    .tier-badge-large .tier-name { font-family: var(--ff-display); font-size: 1.8rem; }
+    .tier-badge-large .tier-score { font-size: 1rem; opacity: 0.85; }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-xl);
+      align-items: start;
+      margin: var(--sp-2xl) 0;
+    }
+
+    .radar-wrap {
+      background: white;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--clr-border);
+      padding: var(--sp-xl);
+    }
+
+    .radar-wrap h3 { font-size: 1rem; margin-bottom: var(--sp-md); text-align: center; }
+
+    .diagnosis-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--clr-border);
+      padding: var(--sp-xl);
+    }
+
+    .diagnosis-card h3 {
+      font-size: 1rem;
+      margin-bottom: var(--sp-lg);
+      display: flex;
+      align-items: center;
+      gap: var(--sp-sm);
+    }
+
+    .diag-block {
+      padding: var(--sp-md);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--sp-md);
+      font-size: 0.93rem;
+      line-height: 1.7;
+    }
+
+    .diag-block.tip { background: #e8f5e4; border-left: 4px solid var(--clr-primary); }
+    .diag-block.warn { background: #fff8e8; border-left: 4px solid #d4a017; }
+
+    .diag-block strong { display: block; margin-bottom: 6px; font-size: 0.95rem; }
+
+    .breakdown-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-md);
+      margin: var(--sp-xl) 0;
+    }
+
+    .breakdown-card {
+      background: white;
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-md);
+      padding: var(--sp-lg);
+      text-align: center;
+    }
+
+    .breakdown-score {
+      font-family: var(--ff-display);
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--clr-primary);
+    }
+
+    .breakdown-label { font-size: 0.8rem; color: var(--clr-muted); margin-top: 4px; }
+
+    @media (max-width: 768px) {
+      .intro-grid, .result-grid { grid-template-columns: 1fr; }
+      .quiz-header { flex-direction: column; align-items: flex-start; gap: var(--sp-md); }
+      .progress-bar-container { width: 100%; }
+      .quiz-progress { width: 100%; }
+    }
+
+    @media (max-width: 480px) {
+      .quiz-nav { flex-direction: column; }
+      .btn { width: 100%; }
+      .breakdown-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== 介紹頁面 ===== -->
+  <section class="section" id="introPanel">
+    <div class="container">
+      <div class="intro-grid">
+        <div>
+          <span class="badge-green" style="margin-bottom: var(--sp-md)">🌿 消費者版 · 環保測驗</span>
+          <h1>你到底有多<br/>環保？</h1>
+          <p style="color: var(--clr-muted); margin: var(--sp-md) 0; font-size: 1.05rem; line-height: 1.8;">
+            20 道貼近日常的選擇題，從你的飲食、購物、回收到用電習慣，<br/>
+            幫你算出真實的環保指數，並給你量身訂做的行動建議。
+          </p>
+          <div class="intro-badges">
+            <span class="category-badge">🥗 你今天吃了什麼 × 5</span>
+            <span class="category-badge">🛍️ 你怎麼買東西 × 5</span>
+            <span class="category-badge">♻️ 你如何丟東西 × 5</span>
+            <span class="category-badge">⚡ 你怎麼用能源 × 5</span>
+          </div>
+          <button class="btn btn-primary" onclick="startQuiz()" style="font-size: 1rem; padding: 0.9rem 2rem; margin-top: var(--sp-md)">
+            🚀 開始測驗
+          </button>
+        </div>
+
+        <div class="tier-list">
+          <div class="tier-item">
+            <div class="tier-icon">🏆</div>
+            <div>
+              <strong>90+　金色永續守護者</strong>
+              <span>你的生活已經是別人的目標</span>
+            </div>
+          </div>
+          <div class="tier-item">
+            <div class="tier-icon">🥈</div>
+            <div>
+              <strong>70–89　銀色綠色實踐家</strong>
+              <span>說到做到，持續往前走</span>
+            </div>
+          </div>
+          <div class="tier-item">
+            <div class="tier-icon">🥉</div>
+            <div>
+              <strong>50–69　銅色環保新手</strong>
+              <span>有在做，但還有很多可以試試</span>
+            </div>
+          </div>
+          <div class="tier-item">
+            <div class="tier-icon">🌱</div>
+            <div>
+              <strong>< 50　永續培訓員</strong>
+              <span>沒關係，從今天開始就算數</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 測驗頁面 ===== -->
+  <section class="section" id="quizPanel">
+    <div class="container">
+      <div class="quiz-header">
+        <h2>
+          <span id="categoryIcon">🥗</span>
+          <span id="categoryTitle">你今天吃了什麼</span>
+        </h2>
+        <div class="quiz-progress">
+          <span id="pageInfo">第 1 / 4 主題</span>
+          <div class="progress-bar-container">
+            <div class="progress-bar-fill" id="progressFill" style="width: 25%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="questions-container" id="questionsContainer"></div>
+
+      <div class="quiz-nav">
+        <button class="btn btn-secondary" onclick="previousPage()" id="prevBtn" disabled>← 上一頁</button>
+        <div class="quiz-page-info"><span id="currentPage">第 1 / 4 頁</span></div>
+        <button class="btn btn-primary" onclick="nextPage()" id="nextBtn">下一頁 →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 結果頁面 ===== -->
+  <section class="section" id="resultPanel">
+    <div class="container">
+      <div class="result-header">
+        <div class="tier-badge-large" id="tierBadge">
+          <div class="tier-emoji" id="tierEmoji">🏆</div>
+          <div class="tier-name" id="tierName">金色永續守護者</div>
+          <div class="tier-score" id="tierScore">90 分</div>
+        </div>
+      </div>
+
+      <div class="result-grid">
+        <div class="radar-wrap">
+          <h3>環保指數雷達圖</h3>
+          <canvas id="radarChart"></canvas>
+        </div>
+        <div class="diagnosis-card">
+          <h3>🎯 給你的個人建議</h3>
+          <div id="diagnosisContent"></div>
+        </div>
+      </div>
+
+      <div class="breakdown-grid" id="breakdownGrid"></div>
+
+      <div style="text-align: center; margin-top: var(--sp-2xl)">
+        <button class="btn btn-primary" onclick="resetQuiz()" style="font-size: 1rem; padding: 0.9rem 2rem">
+          🔄 再測一次
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const QUIZ_DATA = {
+      categories: [
+        { id: 'diet',     name: '你今天吃了什麼',  icon: '🥗', color: '#2d5a27' },
+        { id: 'shopping', name: '你怎麼買東西',    icon: '🛍️', color: '#4a7a20' },
+        { id: 'reuse',    name: '你如何丟東西',    icon: '♻️', color: '#3d7070' },
+        { id: 'energy',   name: '你怎麼用能源',    icon: '⚡', color: '#5a4a8a' }
+      ],
+      questions: [
+        // 綠色飲食
+        {
+          category: 'diet',
+          text: '昨天的三餐，你有幾餐有肉？',
+          options: [
+            { text: '三餐都有肉，不吃肉感覺沒飽', score: 0 },
+            { text: '兩餐有肉', score: 25 },
+            { text: '一餐有肉，其他吃素或蔬食', score: 50 },
+            { text: '都沒吃肉，或我本來就吃素', score: 100 }
+          ]
+        },
+        {
+          category: 'diet',
+          text: '去超市買菜，你會特別注意食材是哪裡來的嗎？',
+          options: [
+            { text: '完全不看，哪個便宜選哪個', score: 0 },
+            { text: '偶爾會瞄一眼產地', score: 33 },
+            { text: '會挑本地或當季的，但不絕對', score: 66 },
+            { text: '盡量選在地當季，這是我買菜的原則', score: 100 }
+          ]
+        },
+        {
+          category: 'diet',
+          text: '上週你丟掉了多少食物？',
+          options: [
+            { text: '很多，冰箱常有過期食物', score: 0 },
+            { text: '有一些，偶爾忘記吃', score: 33 },
+            { text: '很少，偶爾有剩', score: 66 },
+            { text: '幾乎沒有，買多少吃多少', score: 100 }
+          ]
+        },
+        {
+          category: 'diet',
+          text: '去買東西或外帶食物，你會自備容器或環保袋嗎？',
+          options: [
+            { text: '不會，店家給什麼用什麼', score: 0 },
+            { text: '偶爾記得帶', score: 33 },
+            { text: '大部分時候有帶', score: 66 },
+            { text: '包包裡隨時都有環保袋和餐具', score: 100 }
+          ]
+        },
+        {
+          category: 'diet',
+          text: '你知道「有機」和「公平貿易」標章代表什麼意思嗎？',
+          options: [
+            { text: '沒概念，也不在乎', score: 0 },
+            { text: '聽過，但買東西不會特別看', score: 33 },
+            { text: '大概知道，有時候會選', score: 66 },
+            { text: '很清楚，我購物時會主動找這些標章', score: 100 }
+          ]
+        },
+
+        // 明智購物
+        {
+          category: 'shopping',
+          text: '你上次買衣服是什麼時候？',
+          options: [
+            { text: '這週，我幾乎每週都在買', score: 0 },
+            { text: '這個月，買個一兩件很正常', score: 25 },
+            { text: '大概一季買一次', score: 50 },
+            { text: '半年以上了，衣服夠穿就好', score: 100 }
+          ]
+        },
+        {
+          category: 'shopping',
+          text: '買衣服時，你會看布料標籤嗎？',
+          options: [
+            { text: '完全不看，好看就買', score: 0 },
+            { text: '偶爾看，但不影響決定', score: 33 },
+            { text: '有時會挑棉麻等天然材質', score: 66 },
+            { text: '會刻意避開合成纖維、選擇環保材質', score: 100 }
+          ]
+        },
+        {
+          category: 'shopping',
+          text: '你最近有沒有在二手平台（如蝦皮二手、臉書社團）買過東西？',
+          options: [
+            { text: '幾乎沒有，二手感覺不乾淨', score: 0 },
+            { text: '偶爾買過，但不常', score: 33 },
+            { text: '有，這是我的選項之一', score: 66 },
+            { text: '優先逛二手，買新品反而少', score: 100 }
+          ]
+        },
+        {
+          category: 'shopping',
+          text: '收到網購包裹，你有注意過外包裝是否可以回收嗎？',
+          options: [
+            { text: '拆完就整包丟掉', score: 0 },
+            { text: '偶爾會想到，但不確定怎麼分', score: 33 },
+            { text: '會試著分類，塑膠袋和紙箱分開', score: 66 },
+            { text: '會，而且我買東西時就會優先選包裝少的賣家', score: 100 }
+          ]
+        },
+        {
+          category: 'shopping',
+          text: '購物前，你會先想想「這東西真的需要嗎？」',
+          options: [
+            { text: '不會，看到喜歡的就買', score: 0 },
+            { text: '偶爾會猶豫一下，但還是買了', score: 33 },
+            { text: '會等幾天再決定，避免衝動消費', score: 66 },
+            { text: '會列清單，只買確定需要的', score: 100 }
+          ]
+        },
+
+        // 物品再生
+        {
+          category: 'reuse',
+          text: '家裡有不用的東西，你通常怎麼處理？',
+          options: [
+            { text: '直接丟垃圾桶', score: 0 },
+            { text: '有時候送人或捐出去，但大多直接丟', score: 33 },
+            { text: '會找人要或捐到二手店', score: 66 },
+            { text: '先問有沒有人要，再找回收管道，最後才丟', score: 100 }
+          ]
+        },
+        {
+          category: 'reuse',
+          text: '東西壞了，你的第一反應是？',
+          options: [
+            { text: '買新的，修理太麻煩了', score: 0 },
+            { text: '看情況，大件的才考慮修', score: 33 },
+            { text: '會先查看看能不能修', score: 66 },
+            { text: '先修，修不好才換新的', score: 100 }
+          ]
+        },
+        {
+          category: 'reuse',
+          text: '你在家有確實做垃圾分類嗎（紙、塑膠、鐵鋁罐分開）？',
+          options: [
+            { text: '沒有，全部一起丟', score: 0 },
+            { text: '有時候分，有時候忘記', score: 33 },
+            { text: '大致上有分類', score: 66 },
+            { text: '有，連廚餘都有另外處理', score: 100 }
+          ]
+        },
+        {
+          category: 'reuse',
+          text: '你有沒有買過標榜「用回收材料製作」的商品？',
+          options: [
+            { text: '沒有，也沒想過', score: 0 },
+            { text: '偶爾，但不是主動挑選', score: 33 },
+            { text: '有時候會特別挑這類產品', score: 66 },
+            { text: '有，我買包包、衣服都會優先看這個', score: 100 }
+          ]
+        },
+        {
+          category: 'reuse',
+          text: '你知道你住的地方有哪些回收管道嗎（如舊衣回收箱、電池回收點）？',
+          options: [
+            { text: '完全不知道', score: 0 },
+            { text: '知道一兩個，但很少用', score: 33 },
+            { text: '知道幾個，偶爾會用', score: 66 },
+            { text: '很清楚，會主動使用這些管道', score: 100 }
+          ]
+        },
+
+        // 節能減碳
+        {
+          category: 'energy',
+          text: '你平常通勤或出門，最常搭什麼？',
+          options: [
+            { text: '幾乎每次都開車或騎機車', score: 0 },
+            { text: '多半開車，偶爾搭捷運或公車', score: 25 },
+            { text: '多半搭大眾交通工具', score: 50 },
+            { text: '走路、騎腳踏車或搭大眾運輸，幾乎不開車', score: 100 }
+          ]
+        },
+        {
+          category: 'energy',
+          text: '你家裡有用太陽能板或購買綠電方案嗎？',
+          options: [
+            { text: '沒有，也沒想過', score: 0 },
+            { text: '想過，但還沒行動', score: 33 },
+            { text: '有做一些，例如用綠電憑證', score: 66 },
+            { text: '有裝太陽能或加入綠電方案', score: 100 }
+          ]
+        },
+        {
+          category: 'energy',
+          text: '你平常有沒有隨手關燈、不讓電器待機的習慣？',
+          options: [
+            { text: '不太注意，離開房間也不關', score: 0 },
+            { text: '有時候記得，有時候忘', score: 33 },
+            { text: '大多有做到', score: 66 },
+            { text: '很徹底，連拔插頭也是習慣', score: 100 }
+          ]
+        },
+        {
+          category: 'energy',
+          text: '家裡的電器（冰箱、冷氣、洗衣機），你知道它們的能源效率等級嗎？',
+          options: [
+            { text: '完全不知道也沒注意過', score: 0 },
+            { text: '知道有這個標示，但買的時候沒特別看', score: 33 },
+            { text: '買電器時會看，大多數是一二級', score: 66 },
+            { text: '都是最高效率等級，我買前一定比較', score: 100 }
+          ]
+        },
+        {
+          category: 'energy',
+          text: '你知道自己一年大概排放多少碳嗎？',
+          options: [
+            { text: '完全沒概念，也不在意', score: 0 },
+            { text: '聽說過碳足跡，但沒算過', score: 33 },
+            { text: '大概知道，也有在減少某些行為', score: 66 },
+            { text: '算過，並且有具體計畫減少我的排放', score: 100 }
+          ]
+        }
+      ]
+    };
+
+    let currentPage = 0;
+    let userAnswers = {};
+    let radarChart = null;
+
+    function startQuiz() {
+      document.getElementById('introPanel').style.display = 'none';
+      document.getElementById('quizPanel').classList.add('active');
+      currentPage = 0;
+      userAnswers = {};
+      renderPage();
+    }
+
+    function renderPage() {
+      const category = QUIZ_DATA.categories[currentPage];
+      const categoryQuestions = QUIZ_DATA.questions.filter(q => q.category === category.id);
+
+      document.getElementById('categoryIcon').textContent = category.icon;
+      document.getElementById('categoryTitle').textContent = category.name;
+      document.getElementById('pageInfo').textContent = `第 ${currentPage + 1} / 4 主題`;
+      document.getElementById('currentPage').textContent = `第 ${currentPage + 1} / 4 頁`;
+      document.getElementById('progressFill').style.width = `${(currentPage + 1) * 25}%`;
+
+      const container = document.getElementById('questionsContainer');
+      container.innerHTML = '';
+
+      categoryQuestions.forEach((question, index) => {
+        const questionId = QUIZ_DATA.questions.indexOf(question);
+        const savedAnswer = userAnswers[questionId];
+
+        container.innerHTML += `
+          <div class="question-item">
+            <div class="question-number">${index + 1}</div>
+            <div class="question-text">${question.text}</div>
+            <div class="options-list">
+              ${question.options.map((option, i) => `
+                <button class="option-btn ${savedAnswer === i ? 'selected' : ''}"
+                        onclick="selectAnswer(${questionId}, ${i})">
+                  <span class="option-letter">${String.fromCharCode(65 + i)}</span>
+                  <span>${option.text}</span>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      });
+
+      document.getElementById('prevBtn').disabled = currentPage === 0;
+      document.getElementById('nextBtn').textContent = currentPage === 3 ? '查看結果 →' : '下一頁 →';
+    }
+
+    function selectAnswer(questionId, optionIndex) {
+      userAnswers[questionId] = optionIndex;
+      const questionElement = event.target.closest('.question-item');
+      questionElement.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+      event.target.closest('.option-btn').classList.add('selected');
+    }
+
+    function previousPage() {
+      if (currentPage > 0) { currentPage--; renderPage(); window.scrollTo(0, 0); }
+    }
+
+    function nextPage() {
+      const category = QUIZ_DATA.categories[currentPage];
+      const categoryQuestions = QUIZ_DATA.questions.filter(q => q.category === category.id);
+      const allAnswered = categoryQuestions.every(q => userAnswers[QUIZ_DATA.questions.indexOf(q)] !== undefined);
+
+      if (!allAnswered) { alert('⚠️ 請完成這一頁的所有題目後再繼續'); return; }
+
+      if (currentPage < 3) { currentPage++; renderPage(); window.scrollTo(0, 0); }
+      else showResults();
+    }
+
+    function showResults() {
+      let totalScore = 0;
+      let categoryScores = { diet: 0, shopping: 0, reuse: 0, energy: 0 };
+      let categoryCounts = { diet: 0, shopping: 0, reuse: 0, energy: 0 };
+
+      for (let questionId in userAnswers) {
+        const question = QUIZ_DATA.questions[questionId];
+        const score = question.options[userAnswers[questionId]].score;
+        totalScore += score;
+        categoryScores[question.category] += score;
+        categoryCounts[question.category]++;
+      }
+
+      totalScore = Math.round(totalScore / 20);
+      for (let cat in categoryScores) {
+        categoryScores[cat] = Math.round(categoryScores[cat] / categoryCounts[cat]);
+      }
+
+      let tier, emoji, tierName;
+      if (totalScore >= 90)      { tier = 'gold';   emoji = '🏆'; tierName = '金色永續守護者'; }
+      else if (totalScore >= 70) { tier = 'silver'; emoji = '🥈'; tierName = '銀色綠色實踐家'; }
+      else if (totalScore >= 50) { tier = 'bronze'; emoji = '🥉'; tierName = '銅色環保新手'; }
+      else                       { tier = 'sprout'; emoji = '🌱'; tierName = '綠芽探索者'; }
+
+      document.getElementById('quizPanel').classList.remove('active');
+      document.getElementById('resultPanel').classList.add('active');
+      document.getElementById('tierEmoji').textContent = emoji;
+      document.getElementById('tierName').textContent = tierName;
+      document.getElementById('tierScore').textContent = `${totalScore} / 100 分`;
+
+      const tierColors = { gold: '#c9971a', silver: '#7a8ea0', bronze: '#9e6a3a', sprout: '#2d5a27' };
+      document.getElementById('tierBadge').style.background = tierColors[tier];
+
+      renderBreakdownGrid(categoryScores);
+      renderRadarChart(categoryScores);
+      renderDiagnosis(totalScore, categoryScores);
+    }
+
+    function renderBreakdownGrid(categoryScores) {
+      const grid = document.getElementById('breakdownGrid');
+      grid.innerHTML = QUIZ_DATA.categories.map(cat => `
+        <div class="breakdown-card">
+          <div style="font-size:1.5rem;margin-bottom:var(--sp-sm)">${cat.icon}</div>
+          <div style="font-size:0.9rem;font-weight:600;margin-bottom:var(--sp-sm)">${cat.name}</div>
+          <div class="breakdown-score">${categoryScores[cat.id]}</div>
+          <div class="breakdown-label">/ 100</div>
+        </div>
+      `).join('');
+    }
+
+    function renderRadarChart(categoryScores) {
+      const ctx = document.getElementById('radarChart').getContext('2d');
+      if (radarChart) radarChart.destroy();
+      radarChart = new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: ['飲食', '購物', '回收再生', '節能'],
+          datasets: [{
+            label: '你的環保指數',
+            data: [categoryScores.diet, categoryScores.shopping, categoryScores.reuse, categoryScores.energy],
+            borderColor: '#2d5a27',
+            backgroundColor: 'rgba(45, 90, 39, 0.18)',
+            borderWidth: 2,
+            pointRadius: 5,
+            pointBackgroundColor: '#2d5a27'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          scales: { r: { beginAtZero: true, max: 100, ticks: { stepSize: 20 } } }
+        }
+      });
+    }
+
+    function getLowestCategory(categoryScores) {
+      return QUIZ_DATA.categories.reduce((lowest, cat) =>
+        categoryScores[cat.id] < categoryScores[lowest.id] ? cat : lowest
+      ).name;
+    }
+
+    // 具體的分類建議文字
+    const CATEGORY_TIPS = {
+      diet: {
+        low: '試試看一週一天不吃肉（週一無肉日），研究指出光是這樣，你一年就能少排放約 340 公斤的碳——相當於搭了一趟台北飛東京的飛機。',
+        high: '你在飲食上已經非常環保了！下一步可以嘗試自己堆肥廚餘，或加入社區的食物交換群組。'
+      },
+      shopping: {
+        low: '下次想買衣服之前，先在家翻翻衣櫃，可能有好幾件忘記的寶貝在等你。也可以試試看「30 次穿搭挑戰」——每件新衣服至少穿 30 次。',
+        high: '你購物習慣已經很有意識了！可以更進一步研究品牌的供應鏈透明度，支持真正重視永續的品牌。'
+      },
+      reuse: {
+        low: '光是把紙張和寶特瓶分開回收，就能讓這些資源有機會重生。從今天的垃圾開始，試試看在廚房旁邊放一個回收分類桶。',
+        high: '你的回收習慣很棒！可以進一步了解「修理咖啡館」或社區修繕活動，讓更多物品有第二次生命。'
+      },
+      energy: {
+        low: '離開房間就關燈這個動作，一年可以幫你省下不少電費。把常用的插座換成附開關的延長線，就能輕鬆斷電、告別待機耗電。',
+        high: '你的用能意識相當高！如果有機會，可以計算你家的碳足跡，或試著參與碳抵換計畫來抵消剩餘排放。'
+      }
+    };
+
+    function renderDiagnosis(totalScore, categoryScores) {
+      const content = document.getElementById('diagnosisContent');
+      const lowest = QUIZ_DATA.categories.reduce((l, c) =>
+        categoryScores[c.id] < categoryScores[l.id] ? c : l
+      );
+      const highest = QUIZ_DATA.categories.reduce((h, c) =>
+        categoryScores[c.id] > categoryScores[h.id] ? c : h
+      );
+
+      let intro = '';
+      if (totalScore >= 90) {
+        intro = `<div class="diag-block tip"><strong>🌟 你真的已經做到很多了</strong>你的日常選擇正在真實地影響這個世界。這不是「有空才做」，是你生活的一部分——這點很了不起。</div>`;
+      } else if (totalScore >= 70) {
+        intro = `<div class="diag-block tip"><strong>✨ 你比你想像的更環保</strong>你已經在很多面向都有意識地做選擇，而且都有落實。繼續保持，再推一把就能到頂！</div>`;
+      } else if (totalScore >= 50) {
+        intro = `<div class="diag-block tip"><strong>🌿 好的開始已經有了</strong>你有些習慣已經很不錯，只是還有一些地方比較像「知道但還沒做」。其實改變比你想的容易。</div>`;
+      } else {
+        intro = `<div class="diag-block warn"><strong>🔔 你剛踏上這條路</strong>分數不高沒關係，重要的是你現在做了這個測驗——表示你在意。從一個習慣開始就好。</div>`;
+      }
+
+      const strengthTip = `<div class="diag-block tip"><strong>${highest.icon} 你的強項：${highest.name}（${categoryScores[highest.id]} 分）</strong>${CATEGORY_TIPS[highest.id].high}</div>`;
+      const improveTip = `<div class="diag-block warn"><strong>${lowest.icon} 最值得改進：${lowest.name}（${categoryScores[lowest.id]} 分）</strong>${CATEGORY_TIPS[lowest.id].low}</div>`;
+
+      content.innerHTML = intro + strengthTip + improveTip;
+    }
+
+    function resetQuiz() {
+      document.getElementById('resultPanel').classList.remove('active');
+      document.getElementById('introPanel').style.display = 'flex';
+      currentPage = 0;
+      userAnswers = {};
+      if (radarChart) { radarChart.destroy(); radarChart = null; }
+      window.scrollTo(0, 0);
+    }
+  </script>
+</body>
+</html>
