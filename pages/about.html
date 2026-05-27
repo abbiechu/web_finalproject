@@ -313,9 +313,10 @@
         tooltip.style.transition = 'none';
         const ttH = tooltip.offsetHeight; // 寬固定 200px，高度準確
 
-        // 3. 從 style 屬性取節點座標（不用 getBoundingClientRect，永遠準確）
+        // 3. 從 style 屬性取節點座標，高度動態量測
         const nodeLeft = parseFloat(node.style.left);
         const nodeTop  = parseFloat(node.style.top);
+        const nodeH    = node.offsetHeight;  // 動態量，永遠準確
         const wrap     = document.getElementById('mmWrap');
         const wW = wrap.offsetWidth;
         const wH = wrap.offsetHeight;
@@ -325,24 +326,24 @@
         let left, top, sx = 0, sy = 0;
 
         if (angle === -90) {
-          // 正上方 → tooltip 往上
+          // 正上方 → tooltip 出現在節點上面
           left = nodeLeft + (CARD_W - TT_W) / 2;
           top  = nodeTop - ttH - GAP;
           sy   = -10;
         } else if (angle === 90) {
-          // 正下方 → tooltip 往下
+          // 正下方 → tooltip 出現在節點下面
           left = nodeLeft + (CARD_W - TT_W) / 2;
-          top  = nodeTop + CARD_H + GAP;
+          top  = nodeTop + nodeH + GAP;
           sy   = 10;
         } else if (angle === -30 || angle === 30) {
           // 右側 → tooltip 往右
           left = nodeLeft + CARD_W + GAP;
-          top  = nodeTop + (CARD_H - ttH) / 2;
+          top  = nodeTop + (nodeH - ttH) / 2;
           sx   = 10;
         } else {
           // 左側（150°, 210°）→ tooltip 往左
           left = nodeLeft - TT_W - GAP;
-          top  = nodeTop + (CARD_H - ttH) / 2;
+          top  = nodeTop + (nodeH - ttH) / 2;
           sx   = -10;
         }
 
