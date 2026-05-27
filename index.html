@@ -6,30 +6,156 @@
   <title>EcoPulse — SDG 12 責任消費與生產</title>
   <link rel="stylesheet" href="css/base.css" />
   <style>
+    /* ── 高級感 Hero 區佈局 ── */
     .hero {
       min-height: calc(100vh - var(--nav-h));
-      display: flex; align-items: center;
-      position: relative; overflow: hidden;
-      background: linear-gradient(160deg, #EAF3E6 0%, var(--clr-bg) 60%);
+      display: flex; 
+      align-items: center;
+      position: relative; 
+      overflow: hidden;
+      /* 背景改為更細緻、多層次的微光漸層 */
+      background: radial-gradient(circle at 10% 30%, rgba(234, 243, 230, 0.6) 0%, rgba(255, 255, 255, 0) 50%),
+                  linear-gradient(165deg, #F4F7F3 0%, var(--clr-bg, #fafbfa) 100%);
     }
+    
+    /* 左側微光（Aura Halo）— 營造高級留白靈魂 */
     .hero::before {
-      content:''; position:absolute; inset:0;
-      background:radial-gradient(ellipse 70% 60% at 70% 40%,rgba(90,154,90,.12) 0%,transparent 70%);
-      pointer-events:none;
+      content: ''; 
+      position: absolute; 
+      top: 20%; 
+      left: -10%; 
+      width: 500px; 
+      height: 500px;
+      background: radial-gradient(circle, rgba(58, 107, 58, 0.04) 0%, transparent 70%);
+      filter: blur(40px);
+      pointer-events: none;
     }
-    .hero-content{position:relative;z-index:1;max-width:600px}
-    .hero-badge{display:inline-flex;align-items:center;gap:.4rem;background:#DFF0DF;color:var(--clr-primary);border:1px solid rgba(58,107,58,.2);border-radius:var(--radius-xl);padding:.3rem .9rem;font-size:.82rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;margin-bottom:var(--sp-lg);animation:fadeUp .5s ease forwards}
-    .hero h1{margin-bottom:var(--sp-md);animation:fadeUp .6s .1s ease both}
-    .hero h1 em{font-style:normal;color:var(--clr-primary)}
-    .hero p{font-size:1.1rem;color:var(--clr-muted);max-width:480px;margin-bottom:var(--sp-xl);animation:fadeUp .6s .2s ease both}
-    .hero-actions{display:flex;gap:var(--sp-md);flex-wrap:wrap;animation:fadeUp .6s .3s ease both}
-    .hero-stats{position:absolute;right:5%;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:var(--sp-md);animation:fadeUp .8s .4s ease both}
-    .stat-card{background:var(--clr-surface);border:1px solid var(--clr-border);border-radius:var(--radius-md);padding:var(--sp-md) var(--sp-lg);box-shadow:var(--shadow-md);text-align:center;min-width:160px}
-    .stat-number{font-family:var(--ff-display);font-size:2rem;font-weight:900;color:var(--clr-primary);line-height:1}
-    .stat-label{font-size:.78rem;color:var(--clr-muted);margin-top:4px}
-    .scroll-hint{position:absolute;bottom:var(--sp-xl);left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--clr-muted);font-size:.78rem;animation:fadeUp 1s .8s ease both}
-    .scroll-arrow{width:24px;height:24px;border-right:2px solid var(--clr-muted);border-bottom:2px solid var(--clr-muted);transform:rotate(45deg);animation:bounce 1.5s ease infinite}
-    @keyframes bounce{0%,100%{transform:rotate(45deg) translateY(0)}50%{transform:rotate(45deg) translateY(6px)}}
+
+    /* 橫向展延容器：放寬到 680px，消滅死板空虛 */
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 680px; 
+    }
+
+    /* 英文字口號：字體變小、字距拉寬，呈現 Apple 風格的進階質感 */
+    .hero-slogan {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--clr-primary);
+      text-transform: uppercase;
+      letter-spacing: 3px; /* 關鍵：拉開字距 */
+      margin-bottom: 12px;
+      opacity: 0.85;
+      animation: fadeUp .5s ease forwards;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      background: #EAF3E6;
+      color: var(--clr-primary);
+      border: 1px solid rgba(58,107,58,.12);
+      border-radius: var(--radius-xl);
+      padding: .35rem .9rem;
+      font-size: .8rem;
+      font-weight: 600;
+      letter-spacing: .05em;
+      margin-bottom: var(--sp-xl);
+      animation: fadeUp .5s ease forwards;
+    }
+
+    /* 主標題：稍微放寬，筆畫間更有呼吸空間 */
+    .hero h1 {
+      font-size: 3.2rem; /* 稍微放大，增強視覺壓制力 */
+      line-height: 1.25;
+      margin-bottom: var(--sp-lg);
+      letter-spacing: -0.5px;
+      animation: fadeUp .6s .1s ease both;
+    }
+    .hero h1 em {
+      font-style: normal;
+      color: var(--clr-primary);
+      position: relative;
+    }
+    
+    /* 介紹文字：寬度加長到 520px，自然流暢地填補左側空間 */
+    .hero p {
+      font-size: 1.05rem;
+      color: var(--clr-muted);
+      max-width: 520px; 
+      line-height: 1.65;
+      margin-bottom: var(--sp-2xl);
+      animation: fadeUp .6s .2s ease both;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: var(--sp-md);
+      flex-wrap: wrap;
+      animation: fadeUp .6s .3s ease both;
+    }
+
+    /* 右側數據卡樣式 */
+    .hero-stats {
+      position: absolute;
+      right: 5%;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-md);
+      animation: fadeUp .8s .4s ease both;
+    }
+    .stat-card {
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-md);
+      padding: var(--sp-md) var(--sp-lg);
+      box-shadow: var(--shadow-md);
+      text-align: center;
+      min-width: 160px;
+    }
+    .stat-number {
+      font-family: var(--ff-display);
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--clr-primary);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: .78rem;
+      color: var(--clr-muted);
+      margin-top: 4px;
+    }
+    .scroll-hint {
+      position: absolute;
+      bottom: var(--sp-xl);
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      color: var(--clr-muted);
+      font-size: .78rem;
+      animation: fadeUp 1s .8s ease both;
+    }
+    .scroll-arrow {
+      width: 24px;
+      height: 24px;
+      border-right: 2px solid var(--clr-muted);
+      border-bottom: 2px solid var(--clr-muted);
+      transform: rotate(45deg);
+      animation: bounce 1.5s ease infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: rotate(45deg) translateY(0); }
+      50% { transform: rotate(45deg) translateY(6px); }
+    }
+
+    /* 其他區塊樣式完全保留 */
     .sdg-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-xl);align-items:center}
     .sdg-text h2{margin-bottom:var(--sp-md)}
     .sdg-text p{color:var(--clr-muted);margin-bottom:var(--sp-md)}
@@ -66,13 +192,11 @@
   <section class="hero">
     <div class="container">
       <div class="hero-content">
-        <p style="font-size: 1.05rem; color: var(--clr-primary); font-weight: 700; margin-bottom: 8px; letter-spacing: 1px; animation: fadeUp .5s ease forwards;">
-          EcoPulse — 用數據把關地球心跳
-        </p>
+        <div class="hero-slogan">ECOPULSE — TRACKING THE PLANET'S BEAT</div>
         
         <div class="hero-badge">🌱 SDG 12 · 責任消費與生產</div>
         <h1>讓消費習慣<br/>成為<em>地球的解方</em></h1>
-        <p>EcoPulse 透過數據視覺化與互動測驗，幫助你了解自身消費行為對環境的影響，並提供切現可行的改善建議。</p>
+        <p>EcoPulse 透過數據視覺化與互動測驗，幫助你了解自身消費行為對環境的影響，並提供切實可行的改善建議。</p>
         <div class="hero-actions">
           <a href="pages/quiz.html" class="btn btn-primary">🧪 開始環保測驗</a>
           <a href="pages/issues.html" class="btn btn-outline">瞭解問題 →</a>
