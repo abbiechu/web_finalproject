@@ -17,18 +17,86 @@
       background:radial-gradient(ellipse 70% 60% at 70% 40%,rgba(90,154,90,.12) 0%,transparent 70%);
       pointer-events:none;
     }
+    
+    /* 修正：將左側改為 flex 垂直排列，以便完美容納永續行動小卡 */
+    .hero-container-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--sp-xl);
+      max-width: 600px;
+    }
+
     .hero-content{position:relative;z-index:1;max-width:600px}
     .hero-badge{display:inline-flex;align-items:center;gap:.4rem;background:#DFF0DF;color:var(--clr-primary);border:1px solid rgba(58,107,58,.2);border-radius:var(--radius-xl);padding:.3rem .9rem;font-size:.82rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;margin-bottom:var(--sp-lg);animation:fadeUp .5s ease forwards}
     .hero h1{margin-bottom:var(--sp-md);animation:fadeUp .6s .1s ease both}
     .hero h1 em{font-style:normal;color:var(--clr-primary)}
     .hero p{font-size:1.1rem;color:var(--clr-muted);max-width:480px;margin-bottom:var(--sp-xl);animation:fadeUp .6s .2s ease both}
     .hero-actions{display:flex;gap:var(--sp-md);flex-wrap:wrap;animation:fadeUp .6s .3s ease both}
+    
+    /* ── 方案三：本週永續行動小卡樣式 ── */
+    .action-card {
+      background: var(--clr-surface, #ffffff);
+      border: 1px solid var(--clr-border, #e2e8f0);
+      border-radius: var(--radius-lg, 16px);
+      padding: var(--sp-md) var(--sp-lg);
+      width: 280px;
+      box-shadow: var(--shadow-md);
+      animation: fadeUp .6s .4s ease both;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      z-index: 2;
+    }
+    .action-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 30px rgba(58, 107, 58, 0.08);
+    }
+    .ac-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .ac-icon { font-size: 1.1rem; }
+    .ac-badge {
+      font-size: .75rem;
+      font-weight: 700;
+      color: var(--clr-primary);
+      background: #EAF3E6;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+    .ac-text {
+      font-size: .85rem;
+      color: var(--clr-muted);
+      line-height: 1.5;
+      margin: 0 0 12px 0;
+      min-height: 38px;
+    }
+    .ac-btn {
+      width: 100%;
+      background: var(--clr-primary);
+      color: #ffffff;
+      border: none;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm, 6px);
+      font-size: .8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .ac-btn:hover { background: #2d522d; }
+    .ac-btn.success {
+      background: var(--clr-border);
+      color: var(--clr-muted);
+      cursor: default;
+    }
+
     .hero-stats{position:absolute;right:5%;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:var(--sp-md);animation:fadeUp .8s .4s ease both}
     .stat-card{background:var(--clr-surface);border:1px solid var(--clr-border);border-radius:var(--radius-md);padding:var(--sp-md) var(--sp-lg);box-shadow:var(--shadow-md);text-align:center;min-width:160px}
     .stat-number{font-family:var(--ff-display);font-size:2rem;font-weight:900;color:var(--clr-primary);line-height:1}
     .stat-label{font-size:.78rem;color:var(--clr-muted);margin-top:4px}
     .scroll-hint{position:absolute;bottom:var(--sp-xl);left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--clr-muted);font-size:.78rem;animation:fadeUp 1s .8s ease both}
-    .scroll-arrow{width:24px;height:24px;border-right:2px solid var(--clr-muted);border-bottom:2px solid var(--clr-muted);transform:rotate(45deg);animation:bounce 1.5s ease infinite}
+    .scroll-arrow{width:24px;height:24px;border-right:2px solid var(--muted);border-bottom:2px solid var(--clr-muted);transform:rotate(45deg);animation:bounce 1.5s ease infinite}
     @keyframes bounce{0%,100%{transform:rotate(45deg) translateY(0)}50%{transform:rotate(45deg) translateY(6px)}}
     .sdg-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-xl);align-items:center}
     .sdg-text h2{margin-bottom:var(--sp-md)}
@@ -65,16 +133,30 @@
 
   <section class="hero">
     <div class="container">
-      <div class="hero-content">
-        <div class="hero-badge">🌱 SDG 12 · 責任消費與生產</div>
-        <h1>讓消費習慣<br/>成為<em>地球的解方</em></h1>
-        <p>EcoPulse 透過數據視覺化與互動測驗，幫助你了解自身消費行為對環境的影響，並提供切實可行的改善建議。</p>
-        <div class="hero-actions">
-          <a href="pages/quiz.html" class="btn btn-primary">🧪 開始環保測驗</a>
-          <a href="pages/issues.html" class="btn btn-outline">瞭解問題 →</a>
+      <div class="hero-container-inner">
+        
+        <div class="hero-content">
+          <div class="hero-badge">🌱 SDG 12 · 責任消費與生產</div>
+          <h1>讓消費習慣<br/>成為<em>地球的解方</em></h1>
+          <p>EcoPulse 透過數據視覺化與互動測驗，幫助你了解自身消費行為對環境的影響，並提供切實可行的改善建議。</p>
+          <div class="hero-actions">
+            <a href="pages/quiz.html" class="btn btn-primary">🧪 開始環保測驗</a>
+            <a href="pages/issues.html" class="btn btn-outline">瞭解問題 →</a>
+          </div>
         </div>
+
+        <div class="action-card" id="actionCard">
+          <div class="ac-header">
+            <span class="ac-icon" id="acIcon">💡</span>
+            <span class="ac-badge">本週永續行動</span>
+          </div>
+          <p class="ac-text" id="acText">正在為您挑選永續行動...</p>
+          <button class="ac-btn" id="acBtn" onclick="handleChallenge()">接受挑戰</button>
+        </div>
+
       </div>
     </div>
+
     <div class="hero-stats">
       <div class="stat-card"><div class="stat-number">1/3</div><div class="stat-label">全球食物生產遭到浪費</div></div>
       <div class="stat-card"><div class="stat-number">800萬</div><div class="stat-label">公噸塑膠每年流入海洋</div></div>
@@ -178,6 +260,38 @@
   <script>
     Navbar.init('home', true);
 
+    // ── 方案三新增：隨機永續行動資料庫 ──
+    const SUSTAINABLE_ACTIONS = [
+      { icon: '🥤', text: '出門買飲料嘗試「自備環保杯」，這週一起減少一次性塑膠杯浪費！' },
+      { icon: '🛍️', text: '出門購物隨身攜帶「環保袋」，拒絕拿取多餘的塑膠袋。' },
+      { icon: '🧾', text: '消費時選擇「不索取紙本發票」，改用載具儲存雲端發票。' },
+      { icon: '🥢', text: '外送或外帶點餐時，主動勾選「不需要免洗餐具」。' },
+      { icon: '🍱', text: '實踐「惜食行動」，在外用餐吃多少點多少，減少廚餘浪費。' },
+      { icon: '🚶', text: '去附近超商買東西時「步行或騎單車」，減少短程碳排放。' }
+    ];
+
+    let currentActionIndex = 0;
+
+    // 初始化小卡內容
+    function initActionCard() {
+      const randomIndex = Math.floor(Math.random() * SUSTAINABLE_ACTIONS.length);
+      currentActionIndex = randomIndex;
+      const action = SUSTAINABLE_ACTIONS[randomIndex];
+      
+      document.getElementById('acIcon').textContent = action.icon;
+      document.getElementById('acText').textContent = action.text;
+    }
+
+    // 點擊按鈕互動
+    function handleChallenge() {
+      const btn = document.getElementById('acBtn');
+      if (btn.classList.contains('success')) return;
+
+      btn.textContent = '🎉 挑戰已接受！';
+      btn.classList.add('success');
+    }
+
+    // 原本的動畫控制與 IntersectionObserver
     const observer = new IntersectionObserver(entries => {
       entries.forEach(e => {
         if (e.isIntersecting) {
@@ -211,6 +325,9 @@
     }, { threshold: 0.3 });
 
     statsObs.observe(document.getElementById('statsSection'));
+
+    // 網頁加載完畢後，初始化行動小卡
+    window.addEventListener('DOMContentLoaded', initActionCard);
   </script>
 </body>
 </html>
