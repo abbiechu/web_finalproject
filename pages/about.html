@@ -12,21 +12,21 @@
       transition: opacity 0.7s ease, transform 0.7s ease;
     }
     .anim-title.visible { opacity: 1; transform: translateY(0); }
- 
+
     .page-hero {
       background: linear-gradient(160deg, #EAF3E6 0%, var(--clr-bg) 70%);
       padding: var(--sp-2xl) 0 var(--sp-xl);
     }
- 
+
     .mindmap-section { background: var(--clr-surface); }
- 
+
     .mm-wrap {
       position: relative;
       width: 100%;
       height: 580px;
       user-select: none;
     }
- 
+
     .mm-svg {
       position: absolute;
       inset: 0;
@@ -34,7 +34,7 @@
       height: 100%;
       pointer-events: none;
     }
- 
+
     .mm-center {
       position: absolute;
       left: 50%; top: 50%;
@@ -60,7 +60,7 @@
       opacity: 0.75;
       margin-top: 4px;
     }
- 
+
     .mm-node {
       position: absolute;
       width: 136px;
@@ -81,7 +81,7 @@
     .mm-node .n-icon  { font-size: 1.4rem; margin-bottom: 4px; }
     .mm-node .n-title { font-size: 0.88rem; font-weight: 600; color: var(--clr-dark); }
     .mm-node .n-hint  { font-size: 0.75rem; color: var(--clr-muted); margin-top: 2px; }
- 
+
     /* 固定寬度，才能準確量出真實高度 */
     .mm-tooltip {
       position: absolute;
@@ -93,13 +93,15 @@
       box-shadow: var(--shadow-lg);
       z-index: 40;
       pointer-events: none;
-      display: none;
+      visibility: hidden;
       opacity: 0;
-      transition: opacity 0.18s ease, transform 0.18s ease;
+      transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0.18s;
     }
     .mm-tooltip.show {
+      visibility: visible;
       opacity: 1;
       transform: translate(0, 0) !important;
+      transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0s;
     }
     .mm-tooltip .tt-title {
       font-family: var(--ff-display);
@@ -112,7 +114,7 @@
       color: var(--clr-muted);
       line-height: 1.6;
     }
- 
+
     .team-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -130,7 +132,7 @@
     .team-card h3  { font-size: 1.05rem; margin-bottom: 6px; }
     .team-card .rol { font-size: 0.82rem; color: var(--clr-primary); font-weight: 600; margin-bottom: var(--sp-sm); }
     .team-card p   { font-size: 0.85rem; color: var(--clr-muted); }
- 
+
     .values-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -146,7 +148,7 @@
     }
     .value-card h3 { margin-bottom: var(--sp-sm); font-size: 1.05rem; }
     .value-card p  { font-size: 0.87rem; color: var(--clr-muted); }
- 
+
     .footer {
       background: var(--clr-dark);
       color: rgba(255,255,255,0.6);
@@ -154,7 +156,7 @@
       text-align: center;
       font-size: 0.85rem;
     }
- 
+
     @media (max-width: 768px) {
       .mm-wrap     { height: 500px; }
       .mm-node     { width: 108px; padding: var(--sp-sm); }
@@ -165,7 +167,7 @@
 </head>
 <body>
   <script src="../js/navbar.js"></script>
- 
+
   <section class="page-hero">
     <div class="container">
       <span class="badge badge-green" style="margin-bottom:var(--sp-md)">關於我們</span>
@@ -175,24 +177,24 @@
       </p>
     </div>
   </section>
- 
+
   <section class="section mindmap-section">
     <div class="container">
       <h2 class="section-title anim-title">互動心智圖</h2>
       <p class="section-subtitle">Hover 各節點查看詳細說明</p>
- 
+
       <div class="mm-wrap" id="mmWrap">
         <svg class="mm-svg" id="mmSvg"></svg>
- 
+
         <div class="mm-center">🌿<br/>ECO PULSE<small>關於我們</small></div>
- 
+
         <div class="mm-node" id="n0"><div class="n-icon">🌱</div><div class="n-title">核心背景</div><div class="n-hint">為何而生</div></div>
         <div class="mm-node" id="n1"><div class="n-icon">💡</div><div class="n-title">網站特色</div><div class="n-hint">互動 · 即時回饋</div></div>
         <div class="mm-node" id="n2"><div class="n-icon">⚠️</div><div class="n-title">問題意識</div><div class="n-hint">三大核心挑戰</div></div>
         <div class="mm-node" id="n3"><div class="n-icon">🎯</div><div class="n-title">團隊目標</div><div class="n-hint">5 分鐘 · 1 個行動</div></div>
         <div class="mm-node" id="n4"><div class="n-icon">💎</div><div class="n-title">核心價值</div><div class="n-hint">透明 · 互動 · 行動</div></div>
         <div class="mm-node" id="n5"><div class="n-icon">🌍</div><div class="n-title">我們的理念</div><div class="n-hint">更聰明地消費</div></div>
- 
+
         <div class="mm-tooltip" id="mmTooltip">
           <div class="tt-title" id="ttTitle"></div>
           <div class="tt-body"  id="ttBody"></div>
@@ -200,7 +202,7 @@
       </div>
     </div>
   </section>
- 
+
   <section class="section">
     <div class="container">
       <h2 class="section-title anim-title">團隊成員</h2>
@@ -227,7 +229,7 @@
       </div>
     </div>
   </section>
- 
+
   <section class="section" style="background:var(--clr-surface)">
     <div class="container">
       <h2 class="section-title anim-title">設計原則</h2>
@@ -239,16 +241,16 @@
       </div>
     </div>
   </section>
- 
+
   <footer class="footer">
     <div class="container">
       <p>🌿 EcoPulse &nbsp;|&nbsp; 關於我們由 朱家締 負責製作</p>
     </div>
   </footer>
- 
+
   <script>
     Navbar.init('about');
- 
+
     const NODE_DATA = [
       { title: '核心背景', body: '全球每年產生約 20 億噸固體廢棄物，超過 30% 未妥善處理。SDG 12 強調必須從根源改變生產與消費模式，EcoPulse 因此誕生。' },
       { title: '網站特色', body: '提供環保雷達圖與個人化建議；結合互動翻牌與測驗，讓減碳行動變得好玩又可衡量，不同於靜態介紹網站。' },
@@ -257,29 +259,29 @@
       { title: '核心價值', body: '透明（資料公開可查）、互動（對話而非說教）、行動導向（每個建議本週就能實踐）。' },
       { title: '我們的理念', body: '環保不是犧牲生活品質，而是更聰明地消費。每個有意識的選擇，都是給地球的一份禮物。' },
     ];
- 
+
     const ANGLES = [-90, -30, 30, 90, 150, 210];
     const RADIUS = 210;
     const CARD_W = 136;
     const CARD_H = 90;
     const TT_W   = 200;  // 必須與 CSS width 一致
     const GAP    = 14;
- 
+
     function positionNodes() {
       const wrap = document.getElementById('mmWrap');
       const cx = wrap.offsetWidth  / 2;
       const cy = wrap.offsetHeight / 2;
- 
+
       ANGLES.forEach((deg, i) => {
         const rad  = deg * Math.PI / 180;
         const node = document.getElementById('n' + i);
         node.style.left = (cx + RADIUS * Math.cos(rad) - CARD_W / 2) + 'px';
         node.style.top  = (cy + RADIUS * Math.sin(rad) - CARD_H / 2) + 'px';
       });
- 
+
       drawLines(cx, cy);
     }
- 
+
     function drawLines(cx, cy) {
       const svg = document.getElementById('mmSvg');
       svg.innerHTML = '';
@@ -297,33 +299,31 @@
         svg.appendChild(line);
       }
     }
- 
+
     const tooltip = document.getElementById('mmTooltip');
- 
+
     document.querySelectorAll('.mm-node').forEach((node, i) => {
       node.addEventListener('mouseenter', () => {
         // 1. 填入內容
         document.getElementById('ttTitle').textContent = NODE_DATA[i].title;
         document.getElementById('ttBody').textContent  = NODE_DATA[i].body;
- 
-        // 2. 先顯示（不加 transition），讓瀏覽器算出真實高度
-        tooltip.style.transition = 'none';
-        tooltip.style.opacity    = '0';
-        tooltip.style.display    = 'block';
+
+        // 2. 移除 show，量出真實高度（visibility:hidden 仍佔位可量）
         tooltip.classList.remove('show');
-        const ttH = tooltip.offsetHeight; // 寬已固定 200px，此時高度準確
- 
+        tooltip.style.transition = 'none';
+        const ttH = tooltip.offsetHeight; // 寬固定 200px，高度準確
+
         // 3. 從 style 屬性取節點座標（不用 getBoundingClientRect，永遠準確）
         const nodeLeft = parseFloat(node.style.left);
         const nodeTop  = parseFloat(node.style.top);
         const wrap     = document.getElementById('mmWrap');
         const wW = wrap.offsetWidth;
         const wH = wrap.offsetHeight;
- 
+
         // 4. 依角度決定方向與滑入起點
         const angle = ANGLES[i];
         let left, top, sx = 0, sy = 0;
- 
+
         if (angle === -90) {
           // 正上方 → tooltip 往上
           left = nodeLeft + (CARD_W - TT_W) / 2;
@@ -345,30 +345,27 @@
           top  = nodeTop + (CARD_H - ttH) / 2;
           sx   = -10;
         }
- 
+
         // 5. 邊界保護
         left = Math.max(4, Math.min(left, wW - TT_W - 4));
         top  = Math.max(4, Math.min(top,  wH - ttH  - 4));
- 
-        // 6. 套上起始偏移位置
+
+        // 6. 套上位置與起始偏移
         tooltip.style.left      = left + 'px';
         tooltip.style.top       = top  + 'px';
         tooltip.style.transform = `translate(${sx}px, ${sy}px)`;
- 
-        // 7. 下一幀開啟 transition 觸發滑入動畫
-        requestAnimationFrame(() => {
-          tooltip.style.transition = 'opacity 0.18s ease, transform 0.18s ease';
-          tooltip.classList.add('show'); // CSS: opacity:1; transform:translate(0,0)
-        });
+
+        // 7. 強制 reflow 後加 show，確保 Chrome 正確觸發 transition
+        void tooltip.offsetHeight;
+        tooltip.style.transition = '';  // 清掉 inline none，讓 CSS transition 生效
+        tooltip.classList.add('show');
       });
- 
+
       node.addEventListener('mouseleave', () => {
         tooltip.classList.remove('show');
-        tooltip.style.transition = 'none';
-        tooltip.style.display    = 'none';
       });
     });
- 
+
     // 標題 scroll 動畫
     const titleObs = new IntersectionObserver(entries => {
       entries.forEach(e => {
@@ -378,9 +375,9 @@
         }
       });
     }, { threshold: 0.2 });
- 
+
     document.querySelectorAll('.anim-title').forEach(el => titleObs.observe(el));
- 
+
     window.addEventListener('load',   positionNodes);
     window.addEventListener('resize', positionNodes);
     setTimeout(positionNodes, 80);
