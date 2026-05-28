@@ -128,12 +128,12 @@
 
     /* ── 數據統計 ── */
     .stats-section {
-      background: linear-gradient(180deg, #BCDCC9 0%, #A8D0BA 100%);
+      background: linear-gradient(180deg, #D4E4D0 0%, #C2D8BC 100%);
     }
     .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: var(--sp-xl); text-align: center; }
-    .big-num { font-family: var(--ff-display); font-size: 2.8rem; font-weight: 900; color: #2C4A2C; line-height: 1; margin-bottom: var(--sp-sm); }
-    .num-divider { width: 32px; height: 2px; background: rgba(44,74,44,.25); margin: var(--sp-sm) auto; border-radius: 2px; }
-    .num-desc { font-size: .85rem; color: rgba(44,74,44,.75); line-height: 1.5; }
+    .big-num { font-family: var(--ff-display); font-size: 2.8rem; font-weight: 900; color: #2C4228; line-height: 1; margin-bottom: var(--sp-sm); }
+    .num-divider { width: 32px; height: 2px; background: rgba(44,66,40,.25); margin: var(--sp-sm) auto; border-radius: 2px; }
+    .num-desc { font-size: .85rem; color: rgba(44,66,40,.75); line-height: 1.5; }
 
     /* ── 網站功能：可點擊的有 hover，純展示的沒有 ── */
     .features-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: var(--sp-lg); }
@@ -201,17 +201,9 @@
     .footer a { color: rgba(255,255,255,.8); }
     .footer a:hover { color: #fff; }
 
-    /* ── 漸層淡出分隔 ── */
-    .fade-divider-top {
-      height: 60px;
-      background: linear-gradient(180deg, #fff 0%, #BCDCC9 100%);
-      display: block; width: 100%;
-    }
-    .fade-divider-bottom {
-      height: 60px;
-      background: linear-gradient(180deg, #A8D0BA 0%, #F5F2EA 100%);
-      display: block; width: 100%;
-    }
+    /* ── 波浪分隔 ── */
+    .wave-divider { display: block; width: 100%; line-height: 0; margin: 0; overflow: hidden; }
+    .wave-divider svg { display: block; width: 100%; }
 
     /* ── 環保小知識卡 ── */
     .fact-card {
@@ -229,7 +221,7 @@
       margin-bottom: var(--sp-md);
     }
     .fact-text {
-      font-size: 1.05rem; color: #2C4A2C; line-height: 1.7;
+      font-size: 1.05rem; color: #2C4228; line-height: 1.7;
       min-height: 56px;
       transition: opacity 0.3s ease;
     }
@@ -310,7 +302,12 @@
     </div>
   </section>
 
-  <div class="fade-divider-top"></div>
+  <!-- 波浪上：白→橄欖米白，大幅度 -->
+  <div class="wave-divider" style="background:#fff">
+    <svg viewBox="0 0 1440 90" preserveAspectRatio="none" height="90">
+      <path d="M0,0 C240,90 480,0 720,70 C960,140 1200,20 1440,80 L1440,90 L0,90 Z" fill="#D4E4D0"/>
+    </svg>
+  </div>
 
   <!-- 數據統計 -->
   <section class="section stats-section" id="statsSection" style="padding-top:var(--sp-xl)">
@@ -332,7 +329,12 @@
     </div>
   </section>
 
-  <div class="fade-divider-bottom"></div>
+  <!-- 波浪下：橄欖米白→米白，大幅度 -->
+  <div class="wave-divider" style="background:#C2D8BC">
+    <svg viewBox="0 0 1440 90" preserveAspectRatio="none" height="90">
+      <path d="M0,80 C240,0 480,90 720,20 C960,-50 1200,70 1440,10 L1440,0 L0,0 Z" fill="#F5F2EA"/>
+    </svg>
+  </div>
 
   <!-- 網站功能 -->
   <section class="section sec-tint">
