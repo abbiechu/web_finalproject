@@ -13,60 +13,88 @@
     }
     .anim-title.visible { opacity: 1; transform: translateY(0); }
 
+    /* 從下滑入 */
     .anim-up {
       opacity: 0; transform: translateY(36px);
       transition: opacity 0.65s ease, transform 0.65s ease;
     }
     .anim-up.visible { opacity: 1; transform: translateY(0); }
 
+    /* 從左滑入 */
     .anim-left {
       opacity: 0; transform: translateX(-40px);
       transition: opacity 0.65s ease, transform 0.65s ease;
     }
     .anim-left.visible { opacity: 1; transform: translateX(0); }
 
+    /* 從右滑入 */
     .anim-right {
       opacity: 0; transform: translateX(40px);
       transition: opacity 0.65s ease, transform 0.65s ease;
     }
     .anim-right.visible { opacity: 1; transform: translateX(0); }
 
+    /* absolute 定位元素專用：只淡入 */
     .anim-fade {
       opacity: 0;
       transition: opacity 0.6s ease;
     }
     .anim-fade.visible { opacity: 1; }
 
+    /* 縮放淡入（用於卡片） */
     .anim-scale {
       opacity: 0;
       transition: opacity 0.6s ease, transform 0.6s ease;
     }
     .anim-scale.visible { opacity: 1; }
 
+    /* 延遲 class */
     .delay-1 { transition-delay: 0.1s; }
     .delay-2 { transition-delay: 0.2s; }
     .delay-3 { transition-delay: 0.3s; }
     .delay-4 { transition-delay: 0.4s; }
 
-    /* 心智圖區塊 */
-    .mindmap-section {
+    /* 全網頁基本設定（為背景漣漪做準備） */
+    body {
       position: relative;
+      overflow-x: hidden;
+    }
+
+    /* ── 全網頁滑鼠跟隨漣漪特效（顏色加深、半徑加大） ── */
+    .body-bg-glow {
+      position: fixed; /* 改用 fixed 確保滾動時也能完美跟隨 */
+      width: 800px;    /* 擴大漣漪範圍 */
+      height: 800px;
+      /* 稍微調深顏色，提高存在感 */
+      background: radial-gradient(circle, rgba(90,154,90,0.14) 0%, rgba(212,228,208,0.06) 45%, rgba(255,255,255,0) 70%);
+      top: 0;
+      left: 0;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 0;      /* 置於最底層 */
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    body:hover .body-bg-glow {
+      opacity: 1;
+    }
+
+    /* 讓所有主內容區塊的背景變透明，才看得到全網頁的背景微光 */
+    .page-hero, .section {
+      position: relative;
+      z-index: 1;
+      background: transparent !important; 
+    }
+
+    /* 為了維持原本版面的層次感，可以給大區塊加淡淡的底色基底 */
+    .mindmap-section {
+      background: rgba(255, 255, 255, 0.4) !important;
     }
 
     .mm-wrap {
       position: relative; width: 100%; height: 560px; user-select: none;
       z-index: 2;
     }
-
-    /* 局部微光背景 */
-    .mm-bg-glow {
-      position: absolute; width: 480px; height: 480px;
-      background: radial-gradient(circle, rgba(58,107,58,0.08) 0%, rgba(255,255,255,0) 70%);
-      top: 50%; left: 50%; transform: translate(-50%, -50%);
-      pointer-events: none; z-index: 1; opacity: 0;
-      transition: opacity 0.4s ease;
-    }
-    .mm-wrap:hover .mm-bg-glow { opacity: 1; }
 
     .mm-svg {
       position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible;
@@ -85,23 +113,32 @@
       font-family: var(--ff-body); font-size: 0.7rem; opacity: 0.75; margin-top: 4px;
     }
 
-    /* 還原原本最安全的外框尺寸 130px */
+    /* ── 優化：調整子項目外框大小至中等完美的 155px ── */
     .mm-node {
-      position: absolute; width: 130px; height: 56px; box-sizing: border-box;
-      background: #ffffff; border: 1.5px solid var(--clr-border);
-      border-radius: var(--radius-md); padding: 0 12px; cursor: default;
-      display: flex; flex-direction: column; justify-content: center;
-      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s; z-index: 10;
+      position: absolute; 
+      width: 155px; /* 從 130px 放大至 155px，更顯大氣 */
+      height: 56px; 
+      box-sizing: border-box;
+      background: #ffffff; 
+      border: 1.5px solid var(--clr-border);
+      border-radius: var(--radius-md); 
+      padding: 0 16px; 
+      cursor: default;
+      display: flex; 
+      align-items: center;  /* 改為水平置中排列，視覺上更好看 */
+      gap: 10px;            /* 圖標與文字的間距 */
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s; 
+      z-index: 10;
     }
     .mm-node:hover {
       border-color: var(--clr-primary);
-      box-shadow: 0 0 0 4px rgba(58,107,58,0.08);
-      transform: scale(1.03); z-index: 20;
+      box-shadow: 0 0 0 4px rgba(58,107,58,0.10);
+      transform: scale(1.04); z-index: 20;
     }
-    .mm-node .n-icon  { font-size: 1.1rem; margin-bottom: 2px; line-height: 1; }
-    .mm-node .n-title { font-size: 0.85rem; font-weight: 600; color: var(--clr-dark); line-height: 1.1; }
+    .mm-node .n-icon  { font-size: 1.2rem; display: flex; align-items: center; }
+    .mm-node .n-title { font-size: 0.88rem; font-weight: 600; color: var(--clr-dark); line-height: 1; }
 
-    /* 主幹曲線 */
+    /* 主幹曲線（常駐） */
     .main-curve {
       fill: none; stroke: #3A6B3A;
       stroke-width: 1.5; stroke-opacity: 0.35; stroke-dasharray: 6 4;
@@ -109,14 +146,20 @@
 
     /* hover 字卡 */
     .mm-tooltip {
-      position: absolute; width: 200px; background: #ffffff;
-      border: 1.5px solid var(--clr-primary); border-radius: var(--radius-md);
-      padding: var(--sp-md) var(--sp-lg); box-shadow: var(--shadow-lg);
-      z-index: 40; pointer-events: none; visibility: hidden; opacity: 0;
+      position: absolute;
+      width: 200px;
+      background: #ffffff;
+      border: 1.5px solid var(--clr-primary);
+      border-radius: var(--radius-md);
+      padding: var(--sp-md) var(--sp-lg);
+      box-shadow: var(--shadow-lg);
+      z-index: 40; pointer-events: none;
+      visibility: hidden; opacity: 0;
       transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0.18s;
     }
     .mm-tooltip.show {
-      visibility: visible; opacity: 1; transform: translate(0,0) !important;
+      visibility: visible; opacity: 1;
+      transform: translate(0,0) !important;
       transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0s;
     }
     .mm-tooltip .tt-title {
@@ -155,20 +198,27 @@
     .principle-card {
       background: #ffffff; border-radius: var(--radius-lg);
       border: 1px solid var(--clr-border); padding: var(--sp-xl);
-      position: relative; overflow: hidden; cursor: default;
+      position: relative; overflow: hidden;
+      cursor: default;
     }
 
+    /* SVG 外框跑圈動畫 */
     .principle-ring {
-      position: absolute; inset: 0; width: 100%; height: 100%;
-      pointer-events: none; overflow: visible;
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      overflow: visible;
     }
     .principle-ring rect {
-      fill: none; stroke-width: 2.5; stroke-linecap: round;
+      fill: none;
+      stroke-width: 2.5;
+      stroke-linecap: round;
       transition: stroke-dashoffset 0.85s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .principle-num {
-      font-family: var(--ff-display); font-size: 3rem; color: var(--clr-primary-lt);
+      font-family: var(--ff-display); font-size: 3rem;
+      color: var(--clr-primary-lt);
       line-height: 1; margin-bottom: var(--sp-sm);
     }
     .principle-card h3 { font-size: 1rem; margin-bottom: var(--sp-sm); color: var(--clr-primary); }
@@ -188,6 +238,7 @@
   </style>
 </head>
 <body>
+  <div class="body-bg-glow" id="bodyGlow"></div>
 
   <script src="../js/navbar.js"></script>
 
@@ -207,7 +258,6 @@
       <p class="section-subtitle anim-up delay-1">Hover 各節點展開說明</p>
 
       <div class="mm-wrap" id="mmWrap">
-        <div class="mm-bg-glow" id="mmGlow"></div>
         <svg class="mm-svg" id="mmSvg"></svg>
 
         <div class="mm-center anim-fade">🌿<br/>ECO PULSE<small>關於我們</small></div>
@@ -269,19 +319,40 @@
   <script>
     Navbar.init('about');
 
+    /* ── 節點資料 ── */
     const NODE_DATA = [
-      { title: '核心背景', side: 'left', points: ['全球每年產生約 20 億噸固體廢棄物', '超過 30% 未妥善處理', 'SDG 12 同時關注生產端與消費端'] },
-      { title: '責任生產', side: 'left', points: ['綠色供應鏈與低碳製程', '企業永續報告與資訊揭露', '循環經濟：減廢料、延長產品壽命'] },
-      { title: '責任消費', side: 'left', points: ['有意識地選擇永續商品', '減少一次性消費與過度購買', '了解碳足跡，從日常小事改變'] },
-      { title: '網站特色', side: 'right', points: ['互動翻牌卡片，深入瞭解問題', '20 題環保測驗量化生活習慣', '雷達圖即時呈現個人指數'] },
-      { title: '核心價值', side: 'right', points: ['透明：資料來源公開可查', '互動：對話而非單向說教', '行動導向：建議本週就能實踐'] },
-      { title: '我們的理念', side: 'right', points: ['生產與消費是一體兩面', '企業責任與個人行動缺一不可', '每個有意識的選擇都算數'] },
+      {
+        title: '核心背景', side: 'left',
+        points: ['全球每年產生約 20 億噸固體廢棄物', '超過 30% 未妥善處理', 'SDG 12 同時關注生產端與消費端']
+      },
+      {
+        title: '責任生產', side: 'left',
+        points: ['綠色供應鏈與低碳製程', '企業永續報告與資訊揭露', '循環經濟：減廢料、延長產品壽命']
+      },
+      {
+        title: '責任消費', side: 'left',
+        points: ['有意識地選擇永續商品', '減少一次性消費與過度購買', '了解碳足跡，從日常小事改變']
+      },
+      {
+        title: '網站特色', side: 'right',
+        points: ['互動翻牌卡片，深入瞭解問題', '20 題環保測驗量化生活習慣', '雷達圖即時呈現個人指數']
+      },
+      {
+        title: '核心價值', side: 'right',
+        points: ['透明：資料來源公開可查', '互動：對話而非單向說教', '行動導向：建議本週就能實踐']
+      },
+      {
+        title: '我們的理念', side: 'right',
+        points: ['生產與消費是一體兩面', '企業責任與個人行動缺一不可', '每個有意識的選擇都算數']
+      },
     ];
 
-    const CARD_W = 130; 
-    const GAP    = 12;
+    // 更新為 155px
+    const CARD_W = 155; 
+    const GAP    = 14;
     const TT_W   = 200;
 
+    /* ── 節點與連線定位 ── */
     function positionNodes() {
       const wrap = document.getElementById('mmWrap');
       if (!wrap) return;
@@ -289,9 +360,10 @@
       const H = wrap.offsetHeight;
       const cx = W / 2, cy = H / 2;
 
-      const lx = cx - 220 - CARD_W / 2;
-      const rx = cx + 220 - CARD_W / 2;
-      const ys = [cy - 160, cy, cy + 160];
+      // 配合 155px 的寬度，微調左右間隔使其完美平衡
+      const lx = cx - 250 - CARD_W / 2;
+      const rx = cx + 250 - CARD_W / 2;
+      const ys = [cy - 170, cy, cy + 170];
 
       const positions = [
         { x: lx, cy: ys[0], side: 'left'  },
@@ -315,6 +387,7 @@
       drawCurves(cx, cy);
     }
 
+    /* ── 主幹：二次貝茲曲線 ── */
     function drawCurves(cx, cy) {
       const svg  = document.getElementById('mmSvg');
       if (!svg) return;
@@ -331,6 +404,7 @@
 
         const ex = isLeft ? nodeL + CARD_W : nodeL;
         const ey = nodeCy;
+
         const qx = cx;   
         const qy = ey;   
 
@@ -341,24 +415,25 @@
       }
     }
 
-    const mmWrap = document.getElementById('mmWrap');
-    const mmGlow = document.getElementById('mmGlow');
-    if (mmWrap && mmGlow) {
-      mmWrap.addEventListener('mousemove', (e) => {
-        const rect = mmWrap.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const topVal = e.clientY - rect.top;
-        mmGlow.style.left = x + 'px';
-        mmGlow.style.top  = topVal + 'px';
+    /* ── 全網頁滑鼠漣漪跟隨效果 ── */
+    const bodyGlow = document.getElementById('bodyGlow');
+    if (bodyGlow) {
+      window.addEventListener('mousemove', (e) => {
+        // 使用 e.clientX/Y 配合 fixed 定位，達到流暢的全頁面跟隨
+        bodyGlow.style.left = e.clientX + 'px';
+        bodyGlow.style.top = e.clientY + 'px';
       });
     }
 
+    /* ── Hover Tooltip ── */
     const tooltip = document.getElementById('mmTooltip');
+
     document.querySelectorAll('.mm-node').forEach((node, i) => {
       node.addEventListener('mouseenter', () => {
         const data = NODE_DATA[i];
         document.getElementById('ttTitle').textContent = data.title;
-        document.getElementById('ttList').innerHTML = data.points.map(p => `<li>${p}</li>`).join('');
+        document.getElementById('ttList').innerHTML =
+          data.points.map(p => `<li>${p}</li>`).join('');
 
         tooltip.classList.remove('show');
         tooltip.style.transition = 'none';
@@ -374,9 +449,11 @@
 
         let left, top, sx;
         if (isLeft) {
-          left = nodeL - TT_W - GAP; sx = -10;
+          left = nodeL - TT_W - GAP;
+          sx   = -10;
         } else {
-          left = nodeL + CARD_W + GAP; sx = 10;
+          left = nodeL + CARD_W + GAP;
+          sx   = 10;
         }
         top = nodeT + (nodeH - ttH) / 2;
 
@@ -392,9 +469,12 @@
         tooltip.classList.add('show');
       });
 
-      node.addEventListener('mouseleave', () => { tooltip.classList.remove('show'); });
+      node.addEventListener('mouseleave', () => {
+        tooltip.classList.remove('show');
+      });
     });
 
+    /* ── 設計原則外框動畫 ── */
     function initRings() {
       document.querySelectorAll('.principle-card').forEach((card, idx) => {
         const svgEl  = card.querySelector('svg');
@@ -406,29 +486,37 @@
         const r = 20;
 
         svgEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
-        rectEl.setAttribute('x', 1.5); rectEl.setAttribute('y', 1.5);
-        rectEl.setAttribute('width',  W - 3); rectEl.setAttribute('height', H - 3);
+        rectEl.setAttribute('x', 1.5);
+        rectEl.setAttribute('y', 1.5);
+        rectEl.setAttribute('width',  W - 3);
+        rectEl.setAttribute('height', H - 3);
 
         const gradId = `ringGrad${idx}`;
         if (!svgEl.querySelector(`#${gradId}`)) {
           const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
           defs.innerHTML = `
             <linearGradient id="${gradId}" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#3A6B3A" stop-opacity="0"/>
-              <stop offset="30%" stop-color="#5A9A5A" stop-opacity="0.7"/>
-              <stop offset="70%" stop-color="#5A9A5A" stop-opacity="0.7"/>
+              <stop offset="0%"   stop-color="#3A6B3A" stop-opacity="0"/>
+              <stop offset="30%"  stop-color="#5A9A5A" stop-opacity="0.7"/>
+              <stop offset="70%"  stop-color="#5A9A5A" stop-opacity="0.7"/>
               <stop offset="100%" stop-color="#3A6B3A" stop-opacity="0"/>
             </linearGradient>`;
           svgEl.insertBefore(defs, svgEl.firstChild);
         }
-        rectEl.setAttribute('stroke', `url(#${gradId})`);
+        rectEl.setAttribute('stroke', `url(#(#${gradId})`);
 
         const perimeter = Math.round(2 * (W + H) - (8 - 2 * Math.PI) * r);
+
         rectEl.style.strokeDasharray  = perimeter;
         rectEl.style.strokeDashoffset = perimeter;
 
-        card.addEventListener('mouseenter', () => { rectEl.style.strokeDashoffset = 0; });
-        card.addEventListener('mouseleave', () => { rectEl.style.strokeDashoffset = perimeter; });
+        card.addEventListener('mouseenter', () => {
+          rectEl.style.strokeDashoffset = 0;
+        });
+
+        card.addEventListener('mouseleave', () => {
+          rectEl.style.strokeDashoffset = perimeter;
+        });
       });
     }
 
@@ -436,20 +524,27 @@
     window.addEventListener('resize', initRings);
     setTimeout(initRings, 100);
 
+    /* ── Scroll 動畫 ── */
     const animObs = new IntersectionObserver(entries => {
       entries.forEach(e => {
-        if (e.isIntersecting) { e.target.classList.add('visible'); animObs.unobserve(e.target); }
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          animObs.unobserve(e.target);
+        }
       });
     }, { threshold: 0.15 });
 
     window.addEventListener('load', () => {
       positionNodes();
       setTimeout(() => {
-        document.querySelectorAll('.anim-title, .anim-up, .anim-left, .anim-right, .anim-scale, .anim-fade').forEach(el => animObs.observe(el));
+        document.querySelectorAll(
+          '.anim-title, .anim-up, .anim-left, .anim-right, .anim-scale, .anim-fade'
+        ).forEach(el => animObs.observe(el));
       }, 200);
     });
     window.addEventListener('resize', positionNodes);
     setTimeout(positionNodes, 50);
+    setTimeout(positionNodes, 300);
   </script>
 </body>
 </html>
