@@ -6,11 +6,46 @@
   <title>關於我們 — EcoPulse</title>
   <link rel="stylesheet" href="../css/base.css" />
   <style>
+    /* ── 滑入動畫 ── */
     .anim-title {
       opacity: 0; transform: translateY(24px);
       transition: opacity 0.7s ease, transform 0.7s ease;
     }
     .anim-title.visible { opacity: 1; transform: translateY(0); }
+
+    /* 從下滑入 */
+    .anim-up {
+      opacity: 0; transform: translateY(36px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .anim-up.visible { opacity: 1; transform: translateY(0); }
+
+    /* 從左滑入 */
+    .anim-left {
+      opacity: 0; transform: translateX(-40px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .anim-left.visible { opacity: 1; transform: translateX(0); }
+
+    /* 從右滑入 */
+    .anim-right {
+      opacity: 0; transform: translateX(40px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .anim-right.visible { opacity: 1; transform: translateX(0); }
+
+    /* 縮放淡入（用於卡片） */
+    .anim-scale {
+      opacity: 0; transform: scale(0.94) translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .anim-scale.visible { opacity: 1; transform: scale(1) translateY(0); }
+
+    /* 延遲 class */
+    .delay-1 { transition-delay: 0.1s; }
+    .delay-2 { transition-delay: 0.2s; }
+    .delay-3 { transition-delay: 0.3s; }
+    .delay-4 { transition-delay: 0.4s; }
 
     .page-hero {
       background: linear-gradient(160deg, #EAF3E6 0%, var(--clr-bg) 70%);
@@ -158,9 +193,9 @@
 
   <section class="page-hero">
     <div class="container">
-      <span class="badge badge-green" style="margin-bottom:var(--sp-md)">關於我們</span>
+      <span class="badge badge-green anim-up" style="margin-bottom:var(--sp-md)">關於我們</span>
       <h1 class="anim-title" style="max-width:520px">EcoPulse 的<br/>理念與故事</h1>
-      <p style="max-width:480px;color:var(--clr-muted);margin-top:var(--sp-md);font-size:1.05rem">
+      <p class="anim-up delay-1" style="max-width:480px;color:var(--clr-muted);margin-top:var(--sp-md);font-size:1.05rem">
         我們是三位資管系學生，希望用科技讓永續生產與責任消費的概念變得具體、可量化、可行動——從供應鏈的源頭到每個人的日常選擇，都是改變的起點。
       </p>
     </div>
@@ -169,19 +204,19 @@
   <section class="section mindmap-section">
     <div class="container">
       <h2 class="section-title anim-title">互動心智圖</h2>
-      <p class="section-subtitle">Hover 各節點展開說明</p>
+      <p class="section-subtitle anim-up delay-1">Hover 各節點展開說明</p>
 
       <div class="mm-wrap" id="mmWrap">
         <svg class="mm-svg" id="mmSvg"></svg>
 
-        <div class="mm-center">🌿<br/>ECO PULSE<small>關於我們</small></div>
+        <div class="mm-center anim-scale">🌿<br/>ECO PULSE<small>關於我們</small></div>
 
-        <div class="mm-node" id="n0"><div class="n-icon">🌱</div><div class="n-title">核心背景</div></div>
-        <div class="mm-node" id="n1"><div class="n-icon">🏭</div><div class="n-title">責任生產</div></div>
-        <div class="mm-node" id="n2"><div class="n-icon">🛒</div><div class="n-title">責任消費</div></div>
-        <div class="mm-node" id="n3"><div class="n-icon">💡</div><div class="n-title">網站特色</div></div>
-        <div class="mm-node" id="n4"><div class="n-icon">💎</div><div class="n-title">核心價值</div></div>
-        <div class="mm-node" id="n5"><div class="n-icon">🌍</div><div class="n-title">我們的理念</div></div>
+        <div class="mm-node anim-left" id="n0"><div class="n-icon">🌱</div><div class="n-title">核心背景</div></div>
+        <div class="mm-node anim-left delay-1" id="n1"><div class="n-icon">🏭</div><div class="n-title">責任生產</div></div>
+        <div class="mm-node anim-left delay-2" id="n2"><div class="n-icon">🛒</div><div class="n-title">責任消費</div></div>
+        <div class="mm-node anim-right" id="n3"><div class="n-icon">💡</div><div class="n-title">網站特色</div></div>
+        <div class="mm-node anim-right delay-1" id="n4"><div class="n-icon">💎</div><div class="n-title">核心價值</div></div>
+        <div class="mm-node anim-right delay-2" id="n5"><div class="n-icon">🌍</div><div class="n-title">我們的理念</div></div>
 
         <div class="mm-tooltip" id="mmTooltip">
           <div class="tt-title" id="ttTitle"></div>
@@ -196,25 +231,25 @@
       <h2 class="section-title anim-title">設計原則</h2>
       <p class="section-subtitle">讓複雜的環境資訊變得簡單、直覺、可行動</p>
       <div class="principles-grid" style="grid-template-columns:repeat(4,1fr)">
-        <div class="principle-card">
+        <div class="principle-card anim-scale">
           <svg class="principle-ring" id="ring0"><rect id="rrect0" rx="20" ry="20"/></svg>
           <div class="principle-num">01</div>
           <h3>資訊分層</h3>
           <p>核心概念優先呈現，細節依需求展開，避免資訊過載，讓使用者自主決定閱讀深度。</p>
         </div>
-        <div class="principle-card">
+        <div class="principle-card anim-scale delay-1">
           <svg class="principle-ring" id="ring1"><rect id="rrect1" rx="20" ry="20"/></svg>
           <div class="principle-num">02</div>
           <h3>互動回饋</h3>
           <p>每個操作都有即時視覺回應。翻牌、測驗、雷達圖——讓學習成為體驗而非閱讀。</p>
         </div>
-        <div class="principle-card">
+        <div class="principle-card anim-scale delay-2">
           <svg class="principle-ring" id="ring2"><rect id="rrect2" rx="20" ry="20"/></svg>
           <div class="principle-num">03</div>
           <h3>行動導向</h3>
           <p>不只告訴你「有問題」，更提供具體的本週可實踐行動，讓改變從今天開始。</p>
         </div>
-        <div class="principle-card">
+        <div class="principle-card anim-scale delay-3">
           <svg class="principle-ring" id="ring3"><rect id="rrect3" rx="20" ry="20"/></svg>
           <div class="principle-num">04</div>
           <h3>生產與消費並重</h3>
@@ -431,13 +466,19 @@
     window.addEventListener('resize', initRings);
     setTimeout(initRings, 100);
 
-    /* ── Scroll 動畫 ── */
-    const titleObs = new IntersectionObserver(entries => {
+    /* ── Scroll 動畫：涵蓋所有方向 ── */
+    const animObs = new IntersectionObserver(entries => {
       entries.forEach(e => {
-        if (e.isIntersecting) { e.target.classList.add('visible'); titleObs.unobserve(e.target); }
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          animObs.unobserve(e.target);
+        }
       });
-    }, { threshold: 0.2 });
-    document.querySelectorAll('.anim-title').forEach(el => titleObs.observe(el));
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll(
+      '.anim-title, .anim-up, .anim-left, .anim-right, .anim-scale'
+    ).forEach(el => animObs.observe(el));
 
     window.addEventListener('load',   positionNodes);
     window.addEventListener('resize', positionNodes);
