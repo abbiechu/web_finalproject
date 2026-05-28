@@ -123,19 +123,14 @@
       position: absolute; inset: 0;
       width: 100%; height: 100%;
       pointer-events: none;
+      overflow: visible;
     }
     .principle-ring rect {
       fill: none;
-      stroke: #5A9A5A;
       stroke-width: 2.5;
-      stroke-opacity: 0.65;
       stroke-linecap: round;
-      stroke-dasharray: var(--perimeter);
-      stroke-dashoffset: var(--perimeter);
-      transition: stroke-dashoffset 0.75s ease;
-    }
-    .principle-card:hover .principle-ring rect {
-      stroke-dashoffset: 0;
+      /* dasharray/dashoffset 由 JS 設定，CSS 只管 transition */
+      transition: stroke-dashoffset 0.85s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .principle-num {
@@ -380,28 +375,55 @@
       });
     });
 
-    /* ── 設計原則外框動畫：計算周長並設定 SVG rect ── */
+    /* ── 設計原則外框動畫 ── */
     function initRings() {
-      document.querySelectorAll('.principle-card').forEach((card, i) => {
-        const rect  = card.querySelector('rect');
-        const svg   = card.querySelector('svg');
-        if (!rect || !svg) return;
+      document.querySelectorAll('.principle-card').forEach((card, idx) => {
+        const svgEl  = card.querySelector('svg');
+        const rectEl = card.querySelector('rect');
+        if (!svgEl || !rectEl) return;
 
         const W = card.offsetWidth;
         const H = card.offsetHeight;
-        const r = 20; // border-radius
+        const r = 20;
 
-        svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-        rect.setAttribute('x', 1);
-        rect.setAttribute('y', 1);
-        rect.setAttribute('width',  W - 2);
-        rect.setAttribute('height', H - 2);
+        // 設定 SVG 尺寸
+        svgEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
+        rectEl.setAttribute('x', 1.5);
+        rectEl.setAttribute('y', 1.5);
+        rectEl.setAttribute('width',  W - 3);
+        rectEl.setAttribute('height', H - 3);
 
-        // 周長 = 2*(W+H) - (8-2π)*r（圓角修正，近似值）
+        // 加入漸層 defs（透明→綠→透明，邊緣柔和）
+        const gradId = `ringGrad${idx}`;
+        if (!svgEl.querySelector(`#${gradId}`)) {
+          const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+          defs.innerHTML = `
+            <linearGradient id="${gradId}" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%"   stop-color="#3A6B3A" stop-opacity="0"/>
+              <stop offset="30%"  stop-color="#5A9A5A" stop-opacity="0.7"/>
+              <stop offset="70%"  stop-color="#5A9A5A" stop-opacity="0.7"/>
+              <stop offset="100%" stop-color="#3A6B3A" stop-opacity="0"/>
+            </linearGradient>`;
+          svgEl.insertBefore(defs, svgEl.firstChild);
+        }
+        rectEl.setAttribute('stroke', `url(#${gradId})`);
+
+        // 計算周長
         const perimeter = Math.round(2 * (W + H) - (8 - 2 * Math.PI) * r);
-        rect.style.setProperty('--perimeter', perimeter);
-        rect.style.strokeDasharray  = perimeter;
-        rect.style.strokeDashoffset = perimeter;
+
+        // 預設：隱藏（dashoffset = 周長）
+        rectEl.style.strokeDasharray  = perimeter;
+        rectEl.style.strokeDashoffset = perimeter;
+
+        // mouseenter → 跑出來
+        card.addEventListener('mouseenter', () => {
+          rectEl.style.strokeDashoffset = 0;
+        });
+
+        // mouseleave → 縮回去（反向，從尾端縮）
+        card.addEventListener('mouseleave', () => {
+          rectEl.style.strokeDashoffset = perimeter;
+        });
       });
     }
 
