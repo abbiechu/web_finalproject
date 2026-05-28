@@ -1,373 +1,283 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>選擇測驗身份 — EcoPulse</title>
- <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/base.css" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --green-50:  #EAF3DE;
-      --green-100: #C0DD97;
-      --green-200: #97C459;
-      --green-400: #639922;
-      --green-600: #3B6D11;
-      --green-800: #27500A;
-      --green-900: #173404;
-      --teal-50:   #E1F5EE;
-      --teal-200:  #5DCAA5;
-      --teal-400:  #1D9E75;
-      --teal-600:  #0F6E56;
-      --amber-400: #BA7517;
-    }
-
     body {
-      min-height: 100vh;
-      font-family: 'Noto Sans TC', sans-serif;
-      background-color: #f4f7f0;
-      overflow-x: hidden;
-      display: flex;
-      flex-direction: column;
+      background-image: url('https://images.unsplash.com/photo-1740471348165-2aac81fff608?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+      background-size: cover;
+      background-attachment: fixed;
+      background-position: center;
     }
-
-    /* ── Noise texture overlay ── */
     body::before {
       content: '';
       position: fixed;
       inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
+      background: rgba(0, 0, 0, 0.10);
       z-index: 0;
-    }
-
-    /* ── Decorative blobs ── */
-    .blob {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(80px);
-      opacity: 0.18;
       pointer-events: none;
-      z-index: 0;
-    }
-    .blob-1 { width: 460px; height: 460px; background: var(--green-200); top: -120px; left: -100px; }
-    .blob-2 { width: 340px; height: 340px; background: var(--teal-200); bottom: -80px; right: -60px; }
-    .blob-3 { width: 220px; height: 220px; background: var(--green-100); top: 50%; right: 10%; }
-
-    /* ── Nav bar ── */
-    nav {
-      position: relative;
-      z-index: 10;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 48px;
-      border-bottom: 1px solid rgba(59,109,17,0.12);
-      background: rgba(244,247,240,0.85);
-      backdrop-filter: blur(12px);
-    }
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-    }
-    .logo-icon {
-      width: 36px; height: 36px;
-      background: var(--green-600);
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .logo-icon svg { width: 20px; height: 20px; fill: white; }
-    .logo-text {
-      font-family: 'DM Serif Display', serif;
-      font-size: 22px;
-      color: var(--green-800);
-      letter-spacing: 0.02em;
-    }
-    .nav-tag {
-      font-size: 13px;
-      color: var(--green-600);
-      background: var(--green-50);
-      border: 1px solid var(--green-100);
-      padding: 4px 14px;
-      border-radius: 999px;
-      font-weight: 500;
     }
 
-    /* ── Main content ── */
-    main {
+    /* ── Section：普通區塊，不做 flex，跟 issues.html 一樣 ── */
+    .select-section {
       position: relative;
       z-index: 1;
-      flex: 1;
+      background: rgba(245, 242, 234, 0.88);
+      min-height: calc(100vh - var(--nav-h));
+      padding: var(--sp-3xl) 0;
+    }
+
+    /* ── 置中邏輯放在內層 div ── */
+    .select-inner {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 60px 24px;
+      min-height: calc(100vh - var(--nav-h) - var(--sp-3xl) * 2);
     }
 
-    /* ── Eyebrow ── */
-    .eyebrow {
+    .select-eyebrow {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      font-weight: 500;
+      gap: var(--sp-sm);
+      font-size: 0.78rem;
+      font-weight: 600;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--teal-400);
-      margin-bottom: 18px;
+      color: var(--clr-primary-lt);
+      margin-bottom: var(--sp-lg);
     }
-    .eyebrow-dot {
-      width: 6px; height: 6px;
-      background: var(--teal-400);
+    .select-eyebrow-dot {
+      width: 7px; height: 7px;
+      background: var(--clr-primary-lt);
       border-radius: 50%;
-      animation: pulse 2s ease-in-out infinite;
+      animation: pulse 2.2s ease-in-out infinite;
     }
     @keyframes pulse {
       0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(0.75); }
+      50%       { opacity: 0.4; transform: scale(0.7); }
     }
 
-    /* ── Heading ── */
-    .heading {
-      font-family: 'DM Serif Display', serif;
-      font-size: clamp(28px, 5vw, 44px);
-      color: var(--green-900);
+    .select-heading {
       text-align: center;
-      line-height: 1.25;
-      margin-bottom: 12px;
+      margin-bottom: var(--sp-sm);
     }
-    .heading em {
+    .select-heading em {
       font-style: italic;
-      color: var(--green-600);
-    }
-    .subheading {
-      font-size: 16px;
-      color: #5a6e4a;
-      text-align: center;
-      margin-bottom: 56px;
-      font-weight: 300;
-      line-height: 1.6;
+      color: var(--clr-primary);
     }
 
-    /* ── Cards grid ── */
-    .cards {
+    .select-sub {
+      text-align: center;
+      color: var(--clr-muted);
+      font-size: 1rem;
+      max-width: 460px;
+      margin: 0 auto var(--sp-2xl);
+      line-height: 1.75;
+    }
+
+    .select-cards {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 24px;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-xl);
       width: 100%;
       max-width: 680px;
     }
 
-    .card {
+    .select-card {
       position: relative;
-      background: white;
-      border-radius: 20px;
-      border: 1.5px solid rgba(59,109,17,0.12);
-      padding: 36px 32px 32px;
-      text-decoration: none;
       overflow: hidden;
-      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: var(--sp-md);
+      text-decoration: none;
+      color: var(--clr-text);
     }
-    .card::before {
+    .select-card::before {
       content: '';
       position: absolute;
       top: 0; left: 0; right: 0;
-      height: 4px;
-      border-radius: 20px 20px 0 0;
+      height: 3px;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     }
-    .card-consumer::before { background: linear-gradient(90deg, var(--teal-400), var(--green-200)); }
-    .card-producer::before { background: linear-gradient(90deg, var(--green-600), var(--amber-400)); }
-
-    .card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 20px 60px rgba(59,109,17,0.14);
-      border-color: rgba(59,109,17,0.28);
+    .select-card--consumer::before {
+      background: linear-gradient(90deg, var(--clr-primary), var(--clr-primary-lt));
+    }
+    .select-card--producer::before {
+      background: linear-gradient(90deg, var(--clr-accent), #b8860b);
     }
 
-    /* ── Card decoration circle ── */
-    .card-bg-circle {
+    .select-card-deco {
       position: absolute;
-      width: 160px; height: 160px;
+      width: 140px; height: 140px;
       border-radius: 50%;
-      opacity: 0.06;
-      right: -40px; bottom: -40px;
+      opacity: 0.07;
+      bottom: -40px; right: -30px;
       pointer-events: none;
     }
-    .card-consumer .card-bg-circle { background: var(--teal-400); }
-    .card-producer .card-bg-circle { background: var(--green-600); }
+    .select-card--consumer .select-card-deco { background: var(--clr-primary); }
+    .select-card--producer .select-card-deco { background: var(--clr-accent); }
 
-    /* ── Card icon ── */
-    .card-icon {
-      width: 52px; height: 52px;
-      border-radius: 14px;
+    .select-card-icon {
+      width: 48px; height: 48px;
+      border-radius: var(--radius-md);
       display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
     }
-    .card-consumer .card-icon { background: var(--teal-50); }
-    .card-producer .card-icon { background: var(--green-50); }
-    .card-icon svg { width: 26px; height: 26px; }
-    .card-consumer .card-icon svg { stroke: var(--teal-600); }
-    .card-producer .card-icon svg { stroke: var(--green-600); }
+    .select-card--consumer .select-card-icon { background: #DFF0DF; }
+    .select-card--producer .select-card-icon { background: #FFF3CD; }
 
-    /* ── Card text ── */
-    .card-label {
-      font-size: 11px;
+    .select-card-tag {
+      font-size: 0.75rem;
       font-weight: 600;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.09em;
       text-transform: uppercase;
     }
-    .card-consumer .card-label { color: var(--teal-400); }
-    .card-producer .card-label { color: var(--green-600); }
+    .select-card--consumer .select-card-tag { color: var(--clr-primary); }
+    .select-card--producer .select-card-tag { color: #8a6700; }
 
-    .card-title {
-      font-family: 'DM Serif Display', serif;
-      font-size: 26px;
-      color: var(--green-900);
+    .select-card-title {
+      font-family: var(--ff-display);
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: var(--clr-dark);
       line-height: 1.2;
     }
-    .card-desc {
-      font-size: 14px;
-      color: #6b7f58;
-      line-height: 1.65;
-      font-weight: 300;
+
+    .select-card-desc {
+      font-size: 0.88rem;
+      color: var(--clr-muted);
+      line-height: 1.7;
     }
 
-    /* ── CTA button ── */
-    .card-cta {
-      margin-top: 8px;
+    .select-card-cta {
+      margin-top: var(--sp-sm);
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      font-size: 14px;
-      font-weight: 500;
-      padding: 10px 20px;
-      border-radius: 999px;
-      border: 1.5px solid;
-      transition: background 0.2s ease, color 0.2s ease;
+      gap: 6px;
+      padding: 0.55rem 1.1rem;
+      border-radius: var(--radius-xl);
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 2px solid;
+      transition: background var(--t-fast), color var(--t-fast);
       width: fit-content;
     }
-    .card-consumer .card-cta {
-      color: var(--teal-600);
-      border-color: var(--teal-200);
-      background: var(--teal-50);
+    .select-card--consumer .select-card-cta {
+      color: var(--clr-primary);
+      border-color: var(--clr-primary);
+      background: transparent;
     }
-    .card-consumer:hover .card-cta {
-      background: var(--teal-400);
-      color: white;
-      border-color: var(--teal-400);
+    .select-card--consumer:hover .select-card-cta {
+      background: var(--clr-primary);
+      color: #fff;
     }
-    .card-producer .card-cta {
-      color: var(--green-800);
-      border-color: var(--green-100);
-      background: var(--green-50);
+    .select-card--producer .select-card-cta {
+      color: #8a6700;
+      border-color: var(--clr-accent);
+      background: transparent;
     }
-    .card-producer:hover .card-cta {
-      background: var(--green-600);
-      color: white;
-      border-color: var(--green-600);
+    .select-card--producer:hover .select-card-cta {
+      background: var(--clr-accent);
+      color: var(--clr-dark);
     }
+    .cta-arrow { transition: transform var(--t-fast); }
+    .select-card:hover .cta-arrow { transform: translateX(4px); }
 
-    .arrow {
-      transition: transform 0.2s ease;
-    }
-    .card:hover .arrow { transform: translateX(4px); }
-
-    /* ── Footer ── */
-    footer {
+    .select-footer {
       position: relative;
       z-index: 1;
+      background: var(--clr-dark);
+      color: rgba(255,255,255,0.6);
+      padding: var(--sp-xl) 0;
       text-align: center;
-      padding: 24px;
-      font-size: 13px;
-      color: #8fa07a;
-      border-top: 1px solid rgba(59,109,17,0.08);
+      font-size: 0.85rem;
     }
-    footer strong { color: var(--green-600); font-weight: 500; }
 
-    /* ── Entrance animation ── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to   { opacity: 1; transform: translateY(0); }
+    .select-eyebrow  { animation: fadeUp 0.5s ease both; }
+    .select-heading  { animation: fadeUp 0.5s 0.08s ease both; }
+    .select-sub      { animation: fadeUp 0.5s 0.15s ease both; }
+    .select-card:nth-child(1) { animation: fadeUp 0.55s 0.22s ease both; }
+    .select-card:nth-child(2) { animation: fadeUp 0.55s 0.32s ease both; }
+
+    @media (max-width: 600px) {
+      .select-cards { grid-template-columns: 1fr; max-width: 100%; }
     }
-    .eyebrow  { animation: fadeUp 0.5s ease both; }
-    .heading  { animation: fadeUp 0.5s 0.1s ease both; }
-    .subheading { animation: fadeUp 0.5s 0.18s ease both; }
-    .card     { animation: fadeUp 0.55s ease both; }
-    .card:nth-child(1) { animation-delay: 0.26s; }
-    .card:nth-child(2) { animation-delay: 0.36s; }
   </style>
 </head>
 <body>
-  <div class="blob blob-1"></div>
-  <div class="blob blob-2"></div>
-  <div class="blob blob-3"></div>
 
-  <main>
-    <div class="eyebrow">
-      <span class="eyebrow-dot"></span>
-      開始之前
-    </div>
+  <section class="select-section">
+    <div class="container">
+      <div class="select-inner">
 
-    <h1 class="heading">您的角色是？<br><em>選擇您的身份</em></h1>
-    <p class="subheading">根據您的身份，我們將為您提供最合適的環境知識測驗</p>
-
-    <div class="cards">
-
-      <!-- 消費者 -->
-      <a href="quiz.2.html" class="card card-consumer">
-        <div class="card-bg-circle"></div>
-        <div class="card-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
-            <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
-          </svg>
+        <div class="select-eyebrow">
+          <span class="select-eyebrow-dot"></span>
+          開始之前
         </div>
-        <span class="card-label">消費者</span>
-        <h2 class="card-title">我是消費者</h2>
-        <p class="card-desc">了解日常生活中的消費行為如何影響環境，學習更永續的選擇。</p>
-        <span class="card-cta">
-          進入測驗
-          <svg class="arrow" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 8h10M9 4l4 4-4 4"/>
-          </svg>
-        </span>
-      </a>
 
-      <!-- 生產者 -->
-      <a href="quiz-producer.html" class="card card-producer">
-        <div class="card-bg-circle"></div>
-        <div class="card-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="7" width="20" height="14" rx="2"/>
-            <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/>
-            <line x1="12" y1="12" x2="12" y2="16"/>
-            <line x1="10" y1="14" x2="14" y2="14"/>
-          </svg>
+        <h1 class="select-heading">
+          您的角色是？<br><em>選擇您的身份</em>
+        </h1>
+
+        <p class="select-sub">
+          根據您的身份，我們將為您提供最合適的環境知識測驗
+        </p>
+
+        <div class="select-cards">
+
+          <a href="quiz.html" class="card select-card select-card--consumer">
+            <div class="select-card-deco"></div>
+            <div class="select-card-icon">🛍️</div>
+            <span class="select-card-tag">消費者</span>
+            <h2 class="select-card-title">我是消費者</h2>
+            <p class="select-card-desc">
+              了解日常生活中的飲食、購物、回收和用電習慣，算出你的真實環保指數。
+            </p>
+            <span class="select-card-cta">
+              開始測驗
+              <svg class="cta-arrow" width="14" height="14" viewBox="0 0 16 16" fill="none"
+                   stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 8h10M9 4l4 4-4 4"/>
+              </svg>
+            </span>
+          </a>
+
+          <a href="quiz_producer.html" class="card select-card select-card--producer">
+            <div class="select-card-deco"></div>
+            <div class="select-card-icon">🏭</div>
+            <span class="select-card-tag">生產者</span>
+            <h2 class="select-card-title">我是生產者</h2>
+            <p class="select-card-desc">
+              從原料採購到勞工透明度，找出供應鏈裡的改善空間，評估你的企業有多永續。
+            </p>
+            <span class="select-card-cta">
+              開始自評
+              <svg class="cta-arrow" width="14" height="14" viewBox="0 0 16 16" fill="none"
+                   stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 8h10M9 4l4 4-4 4"/>
+              </svg>
+            </span>
+          </a>
+
         </div>
-        <span class="card-label">生產者</span>
-        <h2 class="card-title">我是生產者</h2>
-        <p class="card-desc">探索產業與供應鏈中的環境挑戰，以及企業如何邁向更綠色的未來。</p>
-        <span class="card-cta">
-          進入測驗
-          <svg class="arrow" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 8h10M9 4l4 4-4 4"/>
-          </svg>
-        </span>
-      </a>
-
+      </div>
     </div>
-  </main>
+  </section>
 
-  <footer>
-    🌿 <strong>EcoPulse</strong> | 環境知識測驗
+  <footer class="select-footer">
+    <div class="container">
+      <p>🌿 EcoPulse &nbsp;|&nbsp; 環境知識測驗</p>
+    </div>
   </footer>
- <script src="../js/navbar.js"></script>
-  <script>Navbar.init('quiz');</script>
+
+  <script src="../js/navbar.js"></script>
+  <script>
+    Navbar.init('quiz');
+  </script>
+
 </body>
 </html>
