@@ -199,6 +199,47 @@
     .footer a { color: rgba(255,255,255,.8); }
     .footer a:hover { color: #fff; }
 
+    /* ── 波浪分隔線 ── */
+    .wave-divider {
+      display: block; width: 100%; overflow: hidden;
+      line-height: 0; margin: 0;
+    }
+    .wave-divider svg { display: block; width: 100%; }
+
+    /* ── 環保小知識卡 ── */
+    .fact-card {
+      max-width: 680px; margin: var(--sp-2xl) auto 0;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: var(--radius-xl);
+      padding: var(--sp-xl) var(--sp-2xl);
+      text-align: center;
+      backdrop-filter: blur(8px);
+    }
+    .fact-label {
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: rgba(255,255,255,0.5);
+      margin-bottom: var(--sp-md);
+    }
+    .fact-text {
+      font-size: 1.05rem; color: #fff; line-height: 1.7;
+      min-height: 56px;
+      transition: opacity 0.3s ease;
+    }
+    .fact-text.fade { opacity: 0; }
+    .fact-btn {
+      margin-top: var(--sp-lg);
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 0.5rem 1.2rem;
+      border-radius: var(--radius-xl);
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: #fff; font-size: 0.85rem; font-weight: 600;
+      cursor: pointer; font-family: var(--ff-body);
+      transition: background 0.2s;
+    }
+    .fact-btn:hover { background: rgba(255,255,255,0.25); }
+
     @media(max-width:900px) {
       .hero-stats  { display: none; }
       .stats-grid  { grid-template-columns: repeat(2,1fr); }
@@ -262,8 +303,15 @@
     </div>
   </section>
 
+  <!-- 波浪：白→綠 -->
+  <div class="wave-divider" style="background:#fff">
+    <svg viewBox="0 0 1440 60" preserveAspectRatio="none" height="60">
+      <path d="M0,0 C360,60 1080,0 1440,60 L1440,60 L0,60 Z" fill="#3A6B3A"/>
+    </svg>
+  </div>
+
   <!-- 數據統計（唯一深色區，視覺錨點） -->
-  <section class="section stats-section" id="statsSection">
+  <section class="section stats-section" id="statsSection" style="padding-top:var(--sp-xl)">
     <div class="container">
       <h2 class="section-title fade-up" style="color:#fff;text-align:center;margin-bottom:var(--sp-2xl)">SDG 12 關鍵數據</h2>
       <div class="stats-grid">
@@ -272,8 +320,22 @@
         <div><div class="big-num"><span class="count" data-target="10">0</span>%</div><div class="num-divider"></div><div class="num-desc">時尚產業佔<br/>全球碳排放</div></div>
         <div><div class="big-num"><span class="count" data-target="9">0</span>%</div><div class="num-divider"></div><div class="num-desc">全球塑膠<br/>曾被回收</div></div>
       </div>
+
+      <!-- 環保小知識 -->
+      <div class="fact-card">
+        <div class="fact-label">💡 你知道嗎？</div>
+        <div class="fact-text" id="factText">載入中...</div>
+        <button class="fact-btn" id="factBtn">換一條 ↻</button>
+      </div>
     </div>
   </section>
+
+  <!-- 波浪：綠→米白 -->
+  <div class="wave-divider" style="background:#3A6B3A">
+    <svg viewBox="0 0 1440 60" preserveAspectRatio="none" height="60">
+      <path d="M0,60 C360,0 1080,60 1440,0 L1440,0 L0,0 Z" fill="#F5F2EA"/>
+    </svg>
+  </div>
 
   <!-- 網站功能 -->
   <section class="section sec-tint">
@@ -390,6 +452,34 @@
         else { el.textContent = Math.floor(current); }
       }, step);
     }
+    // 環保小知識
+    const FACTS = [
+      '一件棉 T 恤從生產到丟棄，平均消耗 2,700 公升水——相當於一個人喝 2.5 年的飲水量。',
+      '全球每分鐘售出超過 100 萬個塑膠瓶，但其中只有不到 10% 會被回收再利用。',
+      '食物從農場到餐桌的運輸過程，約佔全球溫室氣體排放的 6%。選擇在地食材可以有效減少碳足跡。',
+      '電子設備待機狀態下消耗的電力，稱為「幽靈電力」，平均佔家庭用電的 10%。',
+      '如果把全球每年浪費的食物換算成國家，它將是全球第三大溫室氣體排放「國」。',
+      '一個塑膠吸管需要約 200 年才能完全分解，但你使用它的時間可能只有 20 分鐘。',
+      '製造一支智慧型手機所需的稀土金屬開採，平均產生 30 公斤的廢棄物。',
+      '快時尚產業每年生產的衣物中，約有 85% 最終進入垃圾掩埋場或被焚燒。',
+      '選擇二手商品可以讓一件物品的碳排放足跡減少高達 82%。',
+      '全球每年約有 5,000 萬噸電子廢棄物被丟棄，其中含有大量可回收的貴重金屬。',
+    ];
+    let lastFact = -1;
+    function showFact() {
+      let idx;
+      do { idx = Math.floor(Math.random() * FACTS.length); } while (idx === lastFact);
+      lastFact = idx;
+      const el = document.getElementById('factText');
+      el.classList.add('fade');
+      setTimeout(() => {
+        el.textContent = FACTS[idx];
+        el.classList.remove('fade');
+      }, 300);
+    }
+    showFact();
+    document.getElementById('factBtn').addEventListener('click', showFact);
+
     const statsObs = new IntersectionObserver(entries => {
       entries.forEach(e => {
         if (e.isIntersecting) {
