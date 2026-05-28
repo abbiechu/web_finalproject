@@ -20,26 +20,33 @@
     }
     .anim-up.visible { opacity: 1; transform: translateY(0); }
 
-    /* 從左滑入 */
+    /* 從左滑入（非 absolute 元素用） */
     .anim-left {
       opacity: 0; transform: translateX(-40px);
       transition: opacity 0.65s ease, transform 0.65s ease;
     }
     .anim-left.visible { opacity: 1; transform: translateX(0); }
 
-    /* 從右滑入 */
+    /* 從右滑入（非 absolute 元素用） */
     .anim-right {
       opacity: 0; transform: translateX(40px);
       transition: opacity 0.65s ease, transform 0.65s ease;
     }
     .anim-right.visible { opacity: 1; transform: translateX(0); }
 
+    /* absolute 定位元素專用：只淡入，不移動 */
+    .anim-fade {
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    .anim-fade.visible { opacity: 1; }
+
     /* 縮放淡入（用於卡片） */
     .anim-scale {
-      opacity: 0; transform: scale(0.94) translateY(20px);
+      opacity: 0;
       transition: opacity 0.6s ease, transform 0.6s ease;
     }
-    .anim-scale.visible { opacity: 1; transform: scale(1) translateY(0); }
+    .anim-scale.visible { opacity: 1; }
 
     /* 延遲 class */
     .delay-1 { transition-delay: 0.1s; }
@@ -48,7 +55,7 @@
     .delay-4 { transition-delay: 0.4s; }
 
     .page-hero {
-      background: linear-gradient(160deg, #EAF3E6 0%, var(--clr-bg) 70%);
+      background: linear-gradient(160deg, #D4E4D0 0%, var(--clr-bg) 70%);
       padding: var(--sp-2xl) 0 var(--sp-xl);
     }
 
@@ -209,14 +216,14 @@
       <div class="mm-wrap" id="mmWrap">
         <svg class="mm-svg" id="mmSvg"></svg>
 
-        <div class="mm-center anim-scale">🌿<br/>ECO PULSE<small>關於我們</small></div>
+        <div class="mm-center anim-up">🌿<br/>ECO PULSE<small>關於我們</small></div>
 
-        <div class="mm-node anim-left" id="n0"><div class="n-icon">🌱</div><div class="n-title">核心背景</div></div>
-        <div class="mm-node anim-left delay-1" id="n1"><div class="n-icon">🏭</div><div class="n-title">責任生產</div></div>
-        <div class="mm-node anim-left delay-2" id="n2"><div class="n-icon">🛒</div><div class="n-title">責任消費</div></div>
-        <div class="mm-node anim-right" id="n3"><div class="n-icon">💡</div><div class="n-title">網站特色</div></div>
-        <div class="mm-node anim-right delay-1" id="n4"><div class="n-icon">💎</div><div class="n-title">核心價值</div></div>
-        <div class="mm-node anim-right delay-2" id="n5"><div class="n-icon">🌍</div><div class="n-title">我們的理念</div></div>
+        <div class="mm-node anim-fade" id="n0"><div class="n-icon">🌱</div><div class="n-title">核心背景</div></div>
+        <div class="mm-node anim-fade delay-1" id="n1"><div class="n-icon">🏭</div><div class="n-title">責任生產</div></div>
+        <div class="mm-node anim-fade delay-2" id="n2"><div class="n-icon">🛒</div><div class="n-title">責任消費</div></div>
+        <div class="mm-node anim-fade delay-1" id="n3"><div class="n-icon">💡</div><div class="n-title">網站特色</div></div>
+        <div class="mm-node anim-fade delay-2" id="n4"><div class="n-icon">💎</div><div class="n-title">核心價值</div></div>
+        <div class="mm-node anim-fade delay-3" id="n5"><div class="n-icon">🌍</div><div class="n-title">我們的理念</div></div>
 
         <div class="mm-tooltip" id="mmTooltip">
           <div class="tt-title" id="ttTitle"></div>
@@ -477,7 +484,7 @@
     }, { threshold: 0.15 });
 
     document.querySelectorAll(
-      '.anim-title, .anim-up, .anim-left, .anim-right, .anim-scale'
+      '.anim-title, .anim-up, .anim-left, .anim-right, .anim-scale, .anim-fade'
     ).forEach(el => animObs.observe(el));
 
     window.addEventListener('load',   positionNodes);
