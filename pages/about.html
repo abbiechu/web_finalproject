@@ -20,21 +20,21 @@
     }
     .anim-up.visible { opacity: 1; transform: translateY(0); }
 
-    /* 從左滑入 */
+    /* 從左滑入（非 absolute 元素用） */
     .anim-left {
       opacity: 0; transform: translateX(-40px);
       transition: opacity 0.65s ease, transform 0.65s ease;
     }
     .anim-left.visible { opacity: 1; transform: translateX(0); }
 
-    /* 從右滑入 */
+    /* 從右滑入（非 absolute 元素用） */
     .anim-right {
       opacity: 0; transform: translateX(40px);
       transition: opacity 0.65s ease, transform 0.65s ease;
     }
     .anim-right.visible { opacity: 1; transform: translateX(0); }
 
-    /* absolute 定位元素專用：只淡入 */
+    /* absolute 定位元素專用：只淡入，不移動 */
     .anim-fade {
       opacity: 0;
       transition: opacity 0.6s ease;
@@ -54,46 +54,39 @@
     .delay-3 { transition-delay: 0.3s; }
     .delay-4 { transition-delay: 0.4s; }
 
-    /* 全網頁基本設定（為背景漣漪做準備） */
-    body {
-      position: relative;
-      overflow-x: hidden;
+    .page-hero {
+      background: linear-gradient(160deg, #D4E4D0 0%, var(--clr-bg) 70%);
+      padding: var(--sp-2xl) 0 var(--sp-xl);
     }
 
-    /* ── 全網頁滑鼠跟隨漣漪特效（顏色加深、半徑加大） ── */
-    .body-bg-glow {
-      position: fixed; /* 改用 fixed 確保滾動時也能完美跟隨 */
-      width: 800px;    /* 擴大漣漪範圍 */
-      height: 800px;
-      /* 稍微調深顏色，提高存在感 */
-      background: radial-gradient(circle, rgba(90,154,90,0.14) 0%, rgba(212,228,208,0.06) 45%, rgba(255,255,255,0) 70%);
+    /* ── 優化後的心智圖區塊背景 ── */
+    .mindmap-section { 
+      background: var(--clr-surface); 
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 隨滑鼠移動的微光漸層背景（初始隱藏，由 JS 控制） */
+    .mm-bg-glow {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(90,154,90,0.08) 0%, rgba(212,228,208,0.04) 50%, rgba(255,255,255,0) 70%);
       top: 0;
       left: 0;
       transform: translate(-50%, -50%);
       pointer-events: none;
-      z-index: 0;      /* 置於最底層 */
+      z-index: 1;
       opacity: 0;
       transition: opacity 0.5s ease;
     }
-    body:hover .body-bg-glow {
+    .mindmap-section:hover .mm-bg-glow {
       opacity: 1;
-    }
-
-    /* 讓所有主內容區塊的背景變透明，才看得到全網頁的背景微光 */
-    .page-hero, .section {
-      position: relative;
-      z-index: 1;
-      background: transparent !important; 
-    }
-
-    /* 為了維持原本版面的層次感，可以給大區塊加淡淡的底色基底 */
-    .mindmap-section {
-      background: rgba(255, 255, 255, 0.4) !important;
     }
 
     .mm-wrap {
       position: relative; width: 100%; height: 560px; user-select: none;
-      z-index: 2;
+      z-index: 2; /* 確保內容在漸層微光上方 */
     }
 
     .mm-svg {
@@ -113,30 +106,21 @@
       font-family: var(--ff-body); font-size: 0.7rem; opacity: 0.75; margin-top: 4px;
     }
 
-    /* ── 優化：調整子項目外框大小至中等完美的 155px ── */
+    /* 確保節點有固定高度，防止 JS 計算不準 */
     .mm-node {
-      position: absolute; 
-      width: 155px; /* 從 130px 放大至 155px，更顯大氣 */
-      height: 56px; 
-      box-sizing: border-box;
-      background: #ffffff; 
-      border: 1.5px solid var(--clr-border);
-      border-radius: var(--radius-md); 
-      padding: 0 16px; 
-      cursor: default;
-      display: flex; 
-      align-items: center;  /* 改為水平置中排列，視覺上更好看 */
-      gap: 10px;            /* 圖標與文字的間距 */
-      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s; 
-      z-index: 10;
+      position: absolute; width: 130px; height: 52px; box-sizing: border-box;
+      background: var(--clr-surface); border: 1.5px solid var(--clr-border);
+      border-radius: var(--radius-md); padding: 0 14px; cursor: default;
+      display: flex; flex-direction: column; justify-content: center;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s; z-index: 10;
     }
     .mm-node:hover {
       border-color: var(--clr-primary);
       box-shadow: 0 0 0 4px rgba(58,107,58,0.10);
       transform: scale(1.04); z-index: 20;
     }
-    .mm-node .n-icon  { font-size: 1.2rem; display: flex; align-items: center; }
-    .mm-node .n-title { font-size: 0.88rem; font-weight: 600; color: var(--clr-dark); line-height: 1; }
+    .mm-node .n-icon  { font-size: 1.1rem; margin-bottom: 1px; display: inline-block; }
+    .mm-node .n-title { font-size: 0.85rem; font-weight: 600; color: var(--clr-dark); line-height: 1.2; }
 
     /* 主幹曲線（常駐） */
     .main-curve {
@@ -144,11 +128,11 @@
       stroke-width: 1.5; stroke-opacity: 0.35; stroke-dasharray: 6 4;
     }
 
-    /* hover 字卡 */
+    /* hover 字卡（HTML 元素，不是 SVG） */
     .mm-tooltip {
       position: absolute;
       width: 200px;
-      background: #ffffff;
+      background: var(--clr-surface);
       border: 1.5px solid var(--clr-primary);
       border-radius: var(--radius-md);
       padding: var(--sp-md) var(--sp-lg);
@@ -196,7 +180,7 @@
     /* Design Principles */
     .principles-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: var(--sp-lg); }
     .principle-card {
-      background: #ffffff; border-radius: var(--radius-lg);
+      background: var(--clr-surface); border-radius: var(--radius-lg);
       border: 1px solid var(--clr-border); padding: var(--sp-xl);
       position: relative; overflow: hidden;
       cursor: default;
@@ -227,7 +211,6 @@
     .footer {
       background: var(--clr-dark); color: rgba(255,255,255,0.6);
       padding: var(--sp-xl) 0; text-align: center; font-size: 0.85rem;
-      position: relative; z-index: 10;
     }
 
     @media (max-width: 900px) {
@@ -238,8 +221,6 @@
   </style>
 </head>
 <body>
-  <div class="body-bg-glow" id="bodyGlow"></div>
-
   <script src="../js/navbar.js"></script>
 
   <section class="page-hero">
@@ -252,7 +233,9 @@
     </div>
   </section>
 
-  <section class="section mindmap-section">
+  <section class="section mindmap-section" id="mmSection">
+    <div class="mm-bg-glow" id="mmGlow"></div>
+    
     <div class="container">
       <h2 class="section-title anim-title">互動心智圖</h2>
       <p class="section-subtitle anim-up delay-1">Hover 各節點展開說明</p>
@@ -277,7 +260,7 @@
     </div>
   </section>
 
-  <section class="section">
+  <section class="section" style="background:var(--clr-surface)">
     <div class="container">
       <h2 class="section-title anim-title">設計原則</h2>
       <p class="section-subtitle">讓複雜的環境資訊變得簡單、直覺、可行動</p>
@@ -319,7 +302,7 @@
   <script>
     Navbar.init('about');
 
-    /* ── 節點資料 ── */
+    /* ── 節點資料：列點式 ── */
     const NODE_DATA = [
       {
         title: '核心背景', side: 'left',
@@ -347,12 +330,11 @@
       },
     ];
 
-    // 更新為 155px
-    const CARD_W = 155; 
+    const CARD_W = 130;
     const GAP    = 14;
     const TT_W   = 200;
 
-    /* ── 節點與連線定位 ── */
+    /* ── 修正後的節點與連線定位（加入高度微調確保精準對齊中心） ── */
     function positionNodes() {
       const wrap = document.getElementById('mmWrap');
       if (!wrap) return;
@@ -360,9 +342,8 @@
       const H = wrap.offsetHeight;
       const cx = W / 2, cy = H / 2;
 
-      // 配合 155px 的寬度，微調左右間隔使其完美平衡
-      const lx = cx - 250 - CARD_W / 2;
-      const rx = cx + 250 - CARD_W / 2;
+      const lx = cx - 240 - CARD_W / 2;
+      const rx = cx + 240 - CARD_W / 2;
       const ys = [cy - 170, cy, cy + 170];
 
       const positions = [
@@ -378,7 +359,8 @@
         const node = document.getElementById('n' + i);
         if (node) {
           node.style.left = p.x + 'px';
-          const nodeH = node.offsetHeight || 56;
+          // 使用固定或已渲染的高度進行精準 Y 軸置中
+          const nodeH = node.offsetHeight || 52;
           node.style.top  = (p.cy - nodeH / 2) + 'px';
           node.dataset.side = p.side;
         }
@@ -387,7 +369,7 @@
       drawCurves(cx, cy);
     }
 
-    /* ── 主幹：二次貝茲曲線 ── */
+    /* ── 主幹：二次貝茲曲線（中心 → 節點） ── */
     function drawCurves(cx, cy) {
       const svg  = document.getElementById('mmSvg');
       if (!svg) return;
@@ -399,7 +381,7 @@
         const isLeft = NODE_DATA[i].side === 'left';
         const nodeL  = parseFloat(node.style.left);
         const nodeT  = parseFloat(node.style.top);
-        const nodeH  = node.offsetHeight || 56;
+        const nodeH  = node.offsetHeight || 52;
         const nodeCy = nodeT + nodeH / 2;
 
         const ex = isLeft ? nodeL + CARD_W : nodeL;
@@ -415,17 +397,21 @@
       }
     }
 
-    /* ── 全網頁滑鼠漣漪跟隨效果 ── */
-    const bodyGlow = document.getElementById('bodyGlow');
-    if (bodyGlow) {
-      window.addEventListener('mousemove', (e) => {
-        // 使用 e.clientX/Y 配合 fixed 定位，達到流暢的全頁面跟隨
-        bodyGlow.style.left = e.clientX + 'px';
-        bodyGlow.style.top = e.clientY + 'px';
+    /* ── 滑鼠移動：漸層微光跟隨效果 ── */
+    const mmSection = document.getElementById('mmSection');
+    const mmGlow = document.getElementById('mmGlow');
+    
+    if (mmSection && mmGlow) {
+      mmSection.addEventListener('mousemove', (e) => {
+        const rect = mmSection.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        mmGlow.style.left = x + 'px';
+        mmGlow.style.top = y + 'px';
       });
     }
 
-    /* ── Hover Tooltip ── */
+    /* ── Hover Tooltip（HTML 字卡，列點式） ── */
     const tooltip = document.getElementById('mmTooltip');
 
     document.querySelectorAll('.mm-node').forEach((node, i) => {
@@ -442,7 +428,7 @@
         const wrap    = document.getElementById('mmWrap');
         const nodeL   = parseFloat(node.style.left);
         const nodeT   = parseFloat(node.style.top);
-        const nodeH   = node.offsetHeight || 56;
+        const nodeH   = node.offsetHeight || 52;
         const isLeft  = data.side === 'left';
         const wW = wrap.offsetWidth;
         const wH = wrap.offsetHeight;
@@ -503,7 +489,7 @@
             </linearGradient>`;
           svgEl.insertBefore(defs, svgEl.firstChild);
         }
-        rectEl.setAttribute('stroke', `url(#(#${gradId})`);
+        rectEl.setAttribute('stroke', `url(#${gradId})`);
 
         const perimeter = Math.round(2 * (W + H) - (8 - 2 * Math.PI) * r);
 
@@ -543,6 +529,7 @@
       }, 200);
     });
     window.addEventListener('resize', positionNodes);
+    // 額外加上多重定時器，防止因字體延遲載入產生的計算偏差
     setTimeout(positionNodes, 50);
     setTimeout(positionNodes, 300);
   </script>
