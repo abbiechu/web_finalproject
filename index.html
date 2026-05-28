@@ -6,231 +6,220 @@
   <title>EcoPulse — SDG 12 責任消費與生產</title>
   <link rel="stylesheet" href="css/base.css" />
   <style>
-    /* ── 終極高級感：動態微光漸層背景 ── */
+    /* ── Hero ── */
     .hero {
       min-height: calc(100vh - var(--nav-h));
-      display: flex; 
-      align-items: center;
-      position: relative; 
-      overflow: hidden;
-      /* 基礎優雅微綠底色 */
-      background-color: #F3F7F2; 
+      display: flex; align-items: center;
+      position: relative; overflow: hidden;
+      background: #F3F7F2;
     }
-
-    /* 緩慢流動的環境光圈 (Aura Background) - 徹底消除死白 */
-    .hero::before, .hero::after {
-      content: '';
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(80px);
-      z-index: 0;
-      opacity: 0.6;
-    }
-    /* 左側漂浮微光：填補左側視覺空白 */
     .hero::before {
-      top: -10%;
-      left: -10%;
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(90, 154, 90, 0.15) 0%, transparent 70%);
+      content: ''; position: absolute;
+      top: -10%; left: -10%;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(90,154,90,0.15) 0%, transparent 70%);
+      filter: blur(80px);
       animation: floatLight 12s infinite alternate ease-in-out;
     }
-    /* 右下側對比微光 */
     .hero::after {
-      bottom: -10%;
-      right: 10%;
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, rgba(200, 220, 195, 0.2) 0%, transparent 70%);
+      content: ''; position: absolute;
+      bottom: -10%; right: 10%;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(200,220,195,0.2) 0%, transparent 70%);
+      filter: blur(80px);
       animation: floatLight 8s infinite alternate-reverse ease-in-out;
     }
-
     @keyframes floatLight {
-      0% { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(40px, 30px) scale(1.1); }
+      0%   { transform: translate(0,0) scale(1); }
+      100% { transform: translate(40px,30px) scale(1.1); }
     }
-
-    /* 裝飾性極簡線條：利用幾何線條壓住最左邊的留白，營造科技高級感 */
     .hero-decor-line {
-      position: absolute;
-      left: 0;
-      top: 25%;
-      width: 120px;
-      height: 1px;
-      background: linear-gradient(90deg, rgba(58,107,58,0.3) 0%, transparent 100%);
+      position: absolute; left: 0; top: 25%;
+      width: 120px; height: 1px;
+      background: linear-gradient(90deg, rgba(58,107,58,0.3), transparent);
       z-index: 1;
     }
-
-    /* 橫向展延容器：放寬到 720px，讓左側與中間連成一氣 */
-    .hero-content {
-      position: relative;
-      z-index: 1;
-      max-width: 720px; 
-      padding-left: 20px; /* 稍微往右推，跟左邊裝飾線產生層次 */
-    }
-
-    /* 中文品牌口號：字距拉開、低調內斂 */
+    .hero-content { position: relative; z-index: 1; max-width: 720px; padding-left: 20px; }
     .hero-slogan {
-      font-size: 0.88rem;
-      font-weight: 700;
-      color: var(--clr-primary);
-      letter-spacing: 4px; /* 拉開字距建立進階質感 */
-      margin-bottom: 14px;
-      text-transform: uppercase;
-      opacity: 0.9;
-      animation: fadeUp .5s ease forwards;
+      font-size: 0.88rem; font-weight: 700; color: var(--clr-primary);
+      letter-spacing: 4px; margin-bottom: 14px; text-transform: uppercase;
+      opacity: 0.9; animation: fadeUp .5s ease forwards;
     }
-
     .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: .4rem;
-      background: rgba(215, 233, 210, 0.7);
-      backdrop-filter: blur(4px);
-      color: var(--clr-primary);
-      border: 1px solid rgba(58,107,58,0.15);
-      border-radius: var(--radius-xl);
-      padding: .35rem .9rem;
-      font-size: .8rem;
-      font-weight: 600;
-      letter-spacing: .05em;
-      margin-bottom: var(--sp-xl);
-      animation: fadeUp .5s ease forwards;
+      display: inline-flex; align-items: center; gap: .4rem;
+      background: rgba(215,233,210,0.7); backdrop-filter: blur(4px);
+      color: var(--clr-primary); border: 1px solid rgba(58,107,58,0.15);
+      border-radius: var(--radius-xl); padding: .35rem .9rem;
+      font-size: .8rem; font-weight: 600; letter-spacing: .05em;
+      margin-bottom: var(--sp-xl); animation: fadeUp .5s ease forwards;
     }
-
-    /* 主標題：融入生產與消費雙主題，橫向加寬拉長 */
     .hero h1 {
-      font-size: 3.4rem; 
-      line-height: 1.25;
-      margin-bottom: var(--sp-lg);
-      letter-spacing: -0.5px;
-      color: #222;
-      animation: fadeUp .6s .1s ease both;
+      font-size: 3.4rem; line-height: 1.25; margin-bottom: var(--sp-lg);
+      letter-spacing: -0.5px; color: #222; animation: fadeUp .6s .1s ease both;
     }
-    .hero h1 em {
-      font-style: normal;
-      color: var(--clr-primary);
-    }
-    
-    /* 介紹文字：放寬到 560px，並調整內文強調兩端平衡 */
+    .hero h1 em { font-style: normal; color: var(--clr-primary); }
     .hero p {
-      font-size: 1.05rem;
-      color: var(--clr-muted);
-      max-width: 560px; 
-      line-height: 1.7;
-      margin-bottom: var(--sp-2xl);
+      font-size: 1.05rem; color: var(--clr-muted); max-width: 560px;
+      line-height: 1.7; margin-bottom: var(--sp-2xl);
       animation: fadeUp .6s .2s ease both;
     }
+    .hero-actions { display: flex; gap: var(--sp-md); flex-wrap: wrap; animation: fadeUp .6s .3s ease both; }
 
-    .hero-actions {
-      display: flex;
-      gap: var(--sp-md);
-      flex-wrap: wrap;
-      animation: fadeUp .6s .3s ease both;
-    }
-
-    /* 右側數據卡樣式 */
     .hero-stats {
-      position: absolute;
-      right: 5%;
-      top: 50%;
-      transform: translateY(-50%);
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-md);
-      animation: fadeUp .8s .4s ease both;
-      z-index: 1;
+      position: absolute; right: 5%; top: 50%; transform: translateY(-50%);
+      display: flex; flex-direction: column; gap: var(--sp-md);
+      animation: fadeUp .8s .4s ease both; z-index: 1;
     }
     .stat-card {
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(10px); /* 磨砂玻璃質感 */
-      border: 1px solid rgba(255, 255, 255, 0.6);
-      border-radius: var(--radius-md);
+      background: rgba(255,255,255,0.85); backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.6); border-radius: var(--radius-md);
       padding: var(--sp-md) var(--sp-lg);
       box-shadow: 0 10px 30px rgba(0,0,0,0.04);
-      text-align: center;
-      min-width: 160px;
+      text-align: center; min-width: 160px;
     }
-    .stat-number {
-      font-family: var(--ff-display);
-      font-size: 2rem;
-      font-weight: 900;
-      color: var(--clr-primary);
-      line-height: 1;
-    }
-    .stat-label {
-      font-size: .78rem;
-      color: var(--clr-muted);
-      margin-top: 4px;
-    }
+    .stat-number { font-family: var(--ff-display); font-size: 2rem; font-weight: 900; color: var(--clr-primary); line-height: 1; }
+    .stat-label  { font-size: .78rem; color: var(--clr-muted); margin-top: 4px; }
+
+    /* 向下箭頭：可點擊 */
     .scroll-hint {
-      position: absolute;
-      bottom: var(--sp-xl);
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      color: var(--clr-muted);
-      font-size: .78rem;
-      animation: fadeUp 1s .8s ease both;
-      z-index: 1;
+      position: absolute; bottom: var(--sp-xl); left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      color: var(--clr-muted); font-size: .78rem;
+      animation: fadeUp 1s .8s ease both; z-index: 1;
+      cursor: pointer; text-decoration: none;
+      transition: color var(--t-fast);
     }
+    .scroll-hint:hover { color: var(--clr-primary); }
     .scroll-arrow {
-      width: 24px;
-      height: 24px;
-      border-right: 2px solid var(--clr-muted);
-      border-bottom: 2px solid var(--clr-muted);
+      width: 24px; height: 24px;
+      border-right: 2px solid currentColor;
+      border-bottom: 2px solid currentColor;
       transform: rotate(45deg);
       animation: bounce 1.5s ease infinite;
     }
     @keyframes bounce {
-      0%, 100% { transform: rotate(45deg) translateY(0); }
-      50% { transform: rotate(45deg) translateY(6px); }
+      0%,100% { transform: rotate(45deg) translateY(0); }
+      50%      { transform: rotate(45deg) translateY(6px); }
     }
 
-    /* 其他下方區塊樣式完全保留 */
-    .sdg-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-xl);align-items:center}
-    .sdg-text h2{margin-bottom:var(--sp-md)}
-    .sdg-text p{color:var(--clr-muted);margin-bottom:var(--sp-md)}
-    .sdg-goals{display:flex;flex-direction:column;gap:var(--sp-sm)}
-    .sdg-goal-item{display:flex;align-items:flex-start;gap:var(--sp-md);padding:var(--sp-md);background:var(--clr-surface);border-radius:var(--radius-md);border:1px solid var(--clr-border)}
-    .sdg-icon{font-size:1.5rem;flex-shrink:0;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:#DFF0DF;border-radius:var(--radius-sm)}
-    .sdg-goal-item strong{display:block;margin-bottom:2px;font-size:.92rem}
-    .sdg-goal-item span{font-size:.83rem;color:var(--clr-muted)}
-    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--sp-xl);text-align:center}
-    .big-num{font-family:var(--ff-display);font-size:2.8rem;font-weight:900;color:#fff;line-height:1;margin-bottom:var(--sp-sm)}
-    .num-divider{width:32px;height:2px;background:rgba(255,255,255,.3);margin:var(--sp-sm) auto;border-radius:2px}
-    .num-desc{font-size:.85rem;color:rgba(255,255,255,.75);line-height:1.5}
-    .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--sp-lg)}
-    .feature-card{text-align:center;padding:var(--sp-xl) var(--sp-lg)}
-    .feature-icon{font-size:2.2rem;margin-bottom:var(--sp-md);display:block}
-    .feature-card h3{font-size:1.05rem;margin-bottom:var(--sp-sm)}
-    .feature-card p{font-size:.87rem;color:var(--clr-muted)}
-    .steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp-xl)}
-    .step-num{width:56px;height:56px;border-radius:50%;background:var(--clr-primary);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--ff-display);font-size:1.3rem;font-weight:700;margin:0 auto var(--sp-lg);box-shadow:0 4px 16px rgba(58,107,58,.3)}
-    .step-card{text-align:center;padding:var(--sp-2xl) var(--sp-lg)}
-    .step-card h3{font-size:1rem;margin-bottom:var(--sp-sm)}
-    .step-card p{font-size:.86rem;color:var(--clr-muted);line-height:1.7}
-    .step-link{display:inline-block;margin-top:var(--sp-md);font-size:.82rem;color:var(--clr-primary);font-weight:600}
-    .footer{background:var(--clr-dark);color:rgba(255,255,255,.6);padding:var(--sp-xl) 0;text-align:center;font-size:.85rem}
-    .footer a{color:rgba(255,255,255,.8)}
-    .footer a:hover{color:#fff}
-    @media(max-width:900px){.hero-stats{display:none}.stats-grid{grid-template-columns:repeat(2,1fr)}.steps-grid{grid-template-columns:1fr}}
-    @media(max-width:640px){.sdg-grid{grid-template-columns:1fr}}
+    /* ── 統一背景：交替用白底和極淡米色，不再用深綠 ── */
+    .sec-white { background: #fff; }
+    .sec-tint  { background: var(--clr-bg); } /* 極淡米色 */
+
+    /* ── SDG 說明 ── */
+    .sdg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-xl); align-items: center; }
+    .sdg-text h2 { margin-bottom: var(--sp-md); }
+    .sdg-text p  { color: var(--clr-muted); margin-bottom: var(--sp-md); }
+    .sdg-goals   { display: flex; flex-direction: column; gap: var(--sp-sm); }
+    .sdg-goal-item {
+      display: flex; align-items: flex-start; gap: var(--sp-md);
+      padding: var(--sp-md); background: var(--clr-surface);
+      border-radius: var(--radius-md); border: 1px solid var(--clr-border);
+    }
+    .sdg-icon {
+      font-size: 1.5rem; flex-shrink: 0; width: 44px; height: 44px;
+      display: flex; align-items: center; justify-content: center;
+      background: #DFF0DF; border-radius: var(--radius-sm);
+    }
+    .sdg-goal-item strong { display: block; margin-bottom: 2px; font-size: .92rem; }
+    .sdg-goal-item span   { font-size: .83rem; color: var(--clr-muted); }
+
+    /* ── 數據統計（唯一深色區塊，作為視覺錨點） ── */
+    .stats-section { background: var(--clr-primary); }
+    .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: var(--sp-xl); text-align: center; }
+    .big-num { font-family: var(--ff-display); font-size: 2.8rem; font-weight: 900; color: #fff; line-height: 1; margin-bottom: var(--sp-sm); }
+    .num-divider { width: 32px; height: 2px; background: rgba(255,255,255,.3); margin: var(--sp-sm) auto; border-radius: 2px; }
+    .num-desc { font-size: .85rem; color: rgba(255,255,255,.75); line-height: 1.5; }
+
+    /* ── 網站功能：可點擊的有 hover，純展示的沒有 ── */
+    .features-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: var(--sp-lg); }
+
+    /* 純展示卡（首頁介紹）—— 無 hover，低調 */
+    .feature-static {
+      text-align: center; padding: var(--sp-xl) var(--sp-lg);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--clr-border);
+      background: var(--clr-surface);
+      opacity: 0.7; /* 視覺上稍暗，暗示不可點 */
+    }
+
+    /* 可點擊卡 —— 明顯 hover 效果 */
+    .feature-link {
+      display: block; text-align: center;
+      padding: var(--sp-xl) var(--sp-lg);
+      border-radius: var(--radius-lg);
+      border: 1.5px solid var(--clr-border);
+      background: var(--clr-surface);
+      transition: border-color .2s, box-shadow .2s, transform .2s;
+      text-decoration: none; color: inherit;
+    }
+    .feature-link:hover {
+      border-color: var(--clr-primary);
+      box-shadow: 0 6px 24px rgba(58,107,58,0.12);
+      transform: translateY(-4px);
+    }
+    .feature-link:hover .feature-icon { transform: scale(1.15); }
+
+    .feature-icon {
+      font-size: 2.2rem; margin-bottom: var(--sp-md); display: block;
+      transition: transform .2s;
+    }
+    .feature-card-title { font-size: 1rem; font-weight: 600; margin-bottom: var(--sp-sm); color: var(--clr-dark); }
+    .feature-card-desc  { font-size: .85rem; color: var(--clr-muted); }
+
+    /* 可點擊卡右下角的箭頭提示 */
+    .feature-link .go-hint {
+      display: inline-block; margin-top: var(--sp-md);
+      font-size: .78rem; color: var(--clr-primary); font-weight: 600;
+      opacity: 0; transition: opacity .2s;
+    }
+    .feature-link:hover .go-hint { opacity: 1; }
+
+    /* ── 使用步驟 ── */
+    .steps-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: var(--sp-xl); }
+    .step-num {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--clr-primary); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--ff-display); font-size: 1.3rem; font-weight: 700;
+      margin: 0 auto var(--sp-lg);
+      box-shadow: 0 4px 16px rgba(58,107,58,.3);
+    }
+    .step-card { text-align: center; padding: var(--sp-2xl) var(--sp-lg); }
+    .step-card h3 { font-size: 1rem; margin-bottom: var(--sp-sm); }
+    .step-card p  { font-size: .86rem; color: var(--clr-muted); line-height: 1.7; }
+    .step-link {
+      display: inline-block; margin-top: var(--sp-md);
+      font-size: .82rem; color: var(--clr-primary); font-weight: 600;
+    }
+
+    .footer { background: var(--clr-dark); color: rgba(255,255,255,.6); padding: var(--sp-xl) 0; text-align: center; font-size: .85rem; }
+    .footer a { color: rgba(255,255,255,.8); }
+    .footer a:hover { color: #fff; }
+
+    @media(max-width:900px) {
+      .hero-stats  { display: none; }
+      .stats-grid  { grid-template-columns: repeat(2,1fr); }
+      .steps-grid  { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: repeat(2,1fr); }
+    }
+    @media(max-width:640px) {
+      .sdg-grid { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
   <script src="js/navbar.js"></script>
 
-  <section class="hero">
+  <!-- HERO -->
+  <section class="hero" id="heroSection">
     <div class="hero-decor-line"></div>
-    
     <div class="container">
       <div class="hero-content">
         <div class="hero-slogan">ECOPULSE — 用數據把關地球心跳</div>
-        
         <div class="hero-badge">🌱 SDG 12 · 責任消費與生產</div>
         <h1>連結<em>永續生產</em>與<br/><em>責任消費</em>的綠色脈動</h1>
         <p>EcoPulse 透過數據視覺化與互動測驗，帶你從源頭了解綠色供應鏈的生產轉型，並引導消費者做出有意識的購買選擇，共同翻轉地球的未來環境。</p>
@@ -240,16 +229,20 @@
         </div>
       </div>
     </div>
-    
     <div class="hero-stats">
       <div class="stat-card"><div class="stat-number">1/3</div><div class="stat-label">全球食物生產遭到浪費</div></div>
       <div class="stat-card"><div class="stat-number">800萬</div><div class="stat-label">公噸塑膠每年流入海洋</div></div>
       <div class="stat-card"><div class="stat-number">SDG<br/>12</div><div class="stat-label">永續發展目標</div></div>
     </div>
-    <div class="scroll-hint"><span>向下瀏覽</span><div class="scroll-arrow"></div></div>
+    <!-- 點擊往下滾動到第一個 section -->
+    <a class="scroll-hint" id="scrollDown">
+      <span>向下瀏覽</span>
+      <div class="scroll-arrow"></div>
+    </a>
   </section>
 
-  <section class="section" style="background:var(--clr-surface)">
+  <!-- SDG 說明 -->
+  <section class="section sec-white" id="sdgSection">
     <div class="container">
       <div class="sdg-grid">
         <div class="sdg-text fade-up">
@@ -269,7 +262,8 @@
     </div>
   </section>
 
-  <section class="section" style="background:var(--clr-primary)" id="statsSection">
+  <!-- 數據統計（唯一深色區，視覺錨點） -->
+  <section class="section stats-section" id="statsSection">
     <div class="container">
       <h2 class="section-title fade-up" style="color:#fff;text-align:center;margin-bottom:var(--sp-2xl)">SDG 12 關鍵數據</h2>
       <div class="stats-grid">
@@ -281,22 +275,45 @@
     </div>
   </section>
 
-  <section class="section">
+  <!-- 網站功能 -->
+  <section class="section sec-tint">
     <div class="container">
       <div style="text-align:center;margin-bottom:var(--sp-2xl)">
         <h2 class="section-title fade-up">網站功能一覽</h2>
-        <p class="section-subtitle fade-up" style="margin:0 auto">四個互動功能，帶你全方位了解責任消費與生產</p>
+        <p class="section-subtitle fade-up" style="margin:0 auto">點擊下方卡片直接前往各功能頁面</p>
       </div>
       <div class="features-grid">
-        <div class="card feature-card"><span class="feature-icon">🏠</span><h3>首頁介紹</h3><p>快速了解 SDG 12 核心概念與本站宗旨</p></div>
-        <a href="pages/about.html" class="card feature-card" style="display:block"><span class="feature-icon">🗺️</span><h3>關於我們</h3><p>互動心智圖，探索 EcoPulse 的背景與核心價值</p></a>
-        <a href="pages/issues.html" class="card feature-card" style="display:block"><span class="feature-icon">⚠️</span><h3>問題與解方</h3><p>翻牌卡片互動，深入瞭解六大環境問題與對策</p></a>
-        <a href="pages/quiz.html" class="card feature-card" style="display:block"><span class="feature-icon">📊</span><h3>環保測驗</h3><p>20 題專業測驗，量化你的環保指數並給出個人化建議</p></a>
+        <!-- 首頁：純展示，不可點 -->
+        <div class="feature-static fade-up">
+          <span class="feature-icon">🏠</span>
+          <div class="feature-card-title">首頁介紹</div>
+          <div class="feature-card-desc">你現在就在這裡！快速了解 SDG 12 核心概念</div>
+        </div>
+        <!-- 以下三個：可點擊 -->
+        <a href="pages/about.html" class="feature-link fade-up">
+          <span class="feature-icon">🗺️</span>
+          <div class="feature-card-title">關於我們</div>
+          <div class="feature-card-desc">互動心智圖，探索 EcoPulse 的背景與核心價值</div>
+          <span class="go-hint">前往 →</span>
+        </a>
+        <a href="pages/issues.html" class="feature-link fade-up">
+          <span class="feature-icon">⚠️</span>
+          <div class="feature-card-title">問題與解方</div>
+          <div class="feature-card-desc">翻牌卡片互動，深入瞭解六大環境問題與對策</div>
+          <span class="go-hint">前往 →</span>
+        </a>
+        <a href="pages/quiz.html" class="feature-link fade-up">
+          <span class="feature-icon">📊</span>
+          <div class="feature-card-title">環保測驗</div>
+          <div class="feature-card-desc">20 題測驗，量化你的環保指數並給出個人化建議</div>
+          <span class="go-hint">前往 →</span>
+        </a>
       </div>
     </div>
   </section>
 
-  <section class="section" style="background:var(--clr-surface)">
+  <!-- 使用步驟 -->
+  <section class="section sec-white">
     <div class="container">
       <div style="text-align:center;margin-bottom:var(--sp-2xl)">
         <h2 class="section-title fade-up">如何使用 EcoPulse？</h2>
@@ -314,7 +331,7 @@
           <div class="step-num">2</div>
           <div style="font-size:2rem;margin-bottom:var(--sp-md)">📝</div>
           <h3>完成測驗</h3>
-          <p>回答 20 道日常生活問題，系統 automatic 計算你在四大面向的環保指數。</p>
+          <p>回答 20 道日常生活問題，系統自動計算你在四大面向的環保指數。</p>
           <a href="pages/quiz.html" class="step-link">開始測驗 →</a>
         </div>
         <div class="card step-card fade-up">
@@ -344,6 +361,12 @@
   <script>
     Navbar.init('home', true);
 
+    // 向下箭頭：點擊滾到第一個 section
+    document.getElementById('scrollDown').addEventListener('click', () => {
+      document.getElementById('sdgSection').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // Fade-up 動畫
     const observer = new IntersectionObserver(entries => {
       entries.forEach(e => {
         if (e.isIntersecting) {
@@ -355,6 +378,7 @@
     }, { threshold: 0.15 });
     document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
+    // 數字滾動動畫
     function animateCount(el) {
       const target = parseInt(el.dataset.target);
       const dur = 1800, step = 16;
@@ -366,7 +390,6 @@
         else { el.textContent = Math.floor(current); }
       }, step);
     }
-
     const statsObs = new IntersectionObserver(entries => {
       entries.forEach(e => {
         if (e.isIntersecting) {
@@ -375,7 +398,6 @@
         }
       });
     }, { threshold: 0.3 });
-
     statsObs.observe(document.getElementById('statsSection'));
   </script>
 </body>
