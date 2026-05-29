@@ -17,6 +17,7 @@
       --clr-text: #1a2a3a;
       --clr-muted: #5a7090;
       --clr-dark: #0a1520;
+      --clr-error: #c0392b;
       --nav-h: 64px;
       --sp-xs: 4px; --sp-sm: 8px; --sp-md: 16px;
       --sp-lg: 24px; --sp-xl: 32px; --sp-2xl: 48px; --sp-3xl: 64px;
@@ -28,354 +29,85 @@
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    body {
-      font-family: var(--ff-body);
-      color: var(--clr-text);
-      background: #edf2f8;
-      min-height: 100vh;
-    }
-
+    body { font-family: var(--ff-body); color: var(--clr-text); background: #edf2f8; min-height: 100vh; }
     .container { max-width: 960px; margin: 0 auto; padding: 0 var(--sp-lg); }
     .section { padding: var(--sp-2xl) 0; }
 
-    .badge-blue {
-      display: inline-block;
-      padding: 0.3rem 0.9rem;
-      background: #cce0f5;
-      color: var(--clr-primary-dark);
-      border-radius: var(--radius-xl);
-      font-size: 0.8rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-    }
+    .badge-blue { display: inline-block; padding: 0.3rem 0.9rem; background: #cce0f5; color: var(--clr-primary-dark); border-radius: var(--radius-xl); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.05em; }
 
-    h1 {
-      font-family: var(--ff-display);
-      font-size: clamp(2rem, 5vw, 3.2rem);
-      font-weight: 800;
-      color: var(--clr-dark);
-      line-height: 1.15;
-    }
+    h1 { font-family: var(--ff-display); font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; color: var(--clr-dark); line-height: 1.15; }
 
-    /* ===== 介紹頁面 ===== */
-    #introPanel {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-    }
-
-    .intro-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--sp-2xl);
-      align-items: center;
-    }
-
-    .intro-badges {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--sp-sm);
-      margin: var(--sp-lg) 0;
-    }
-
-    .category-badge {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 0.4rem 0.9rem;
-      border-radius: var(--radius-xl);
-      border: 1px solid var(--clr-border);
-      background: white;
-      font-size: 0.83rem;
-      font-weight: 500;
-    }
-
-    .tier-list {
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-md);
-    }
-
-    .tier-item {
-      display: flex;
-      align-items: center;
-      gap: var(--sp-md);
-      padding: var(--sp-md);
-      border-radius: var(--radius-md);
-      border: 1px solid var(--clr-border);
-      background: white;
-    }
-
+    #introPanel { min-height: 100vh; display: flex; align-items: center; }
+    .intro-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-2xl); align-items: center; }
+    .intro-badges { display: flex; flex-wrap: wrap; gap: var(--sp-sm); margin: var(--sp-lg) 0; }
+    .category-badge { display: flex; align-items: center; gap: 6px; padding: 0.4rem 0.9rem; border-radius: var(--radius-xl); border: 1px solid var(--clr-border); background: white; font-size: 0.83rem; font-weight: 500; }
+    .tier-list { display: flex; flex-direction: column; gap: var(--sp-md); }
+    .tier-item { display: flex; align-items: center; gap: var(--sp-md); padding: var(--sp-md); border-radius: var(--radius-md); border: 1px solid var(--clr-border); background: white; }
     .tier-icon { font-size: 1.5rem; width: 40px; text-align: center; }
     .tier-item strong { display: block; font-size: 0.9rem; }
     .tier-item span { font-size: 0.8rem; color: var(--clr-muted); }
 
-    /* ===== 測驗頁面 ===== */
-    #quizPanel {
-      display: none;
-      min-height: 100vh;
-      padding: var(--sp-2xl) 0;
-    }
-
+    #quizPanel { display: none; min-height: 100vh; padding: var(--sp-2xl) 0; }
     #quizPanel.active { display: block; }
 
-    .quiz-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: var(--sp-2xl);
-      padding-bottom: var(--sp-lg);
-      border-bottom: 2px solid var(--clr-border);
-    }
+    .quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--sp-2xl); padding-bottom: var(--sp-lg); border-bottom: 2px solid var(--clr-border); }
+    .quiz-header h2 { font-family: var(--ff-display); font-size: 1.5rem; color: var(--clr-dark); display: flex; align-items: center; gap: var(--sp-md); }
+    .quiz-progress { display: flex; align-items: center; gap: var(--sp-sm); font-size: 0.9rem; color: var(--clr-muted); }
+    .progress-bar-container { width: 200px; height: 6px; background: var(--clr-border); border-radius: 3px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--clr-primary), var(--clr-primary-lt)); transition: width 0.5s ease; }
 
-    .quiz-header h2 {
-      font-family: var(--ff-display);
-      font-size: 1.5rem;
-      color: var(--clr-dark);
-      display: flex;
-      align-items: center;
-      gap: var(--sp-md);
-    }
+    .questions-container { display: flex; flex-direction: column; gap: var(--sp-xl); margin-bottom: var(--sp-2xl); }
 
-    .quiz-progress {
-      display: flex;
-      align-items: center;
-      gap: var(--sp-sm);
-      font-size: 0.9rem;
-      color: var(--clr-muted);
-    }
+    .question-item { background: white; border-radius: var(--radius-lg); border: 1px solid var(--clr-border); padding: var(--sp-xl); transition: all var(--t-normal); }
+    .question-item:hover { border-color: var(--clr-primary); box-shadow: 0 4px 12px rgba(26, 58, 92, 0.1); }
 
-    .progress-bar-container {
-      width: 200px; height: 6px;
-      background: var(--clr-border);
-      border-radius: 3px;
-      overflow: hidden;
-    }
+    /* ── 未回答警示 ── */
+    .question-item.unanswered { border-color: var(--clr-error); box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.15); }
+    .question-item.unanswered .question-number { background: var(--clr-error); }
+    .unanswered-hint { font-size: 0.8rem; color: var(--clr-error); margin-top: var(--sp-sm); display: none; }
+    .question-item.unanswered .unanswered-hint { display: block; }
 
-    .progress-bar-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--clr-primary), var(--clr-primary-lt));
-      transition: width 0.5s ease;
-    }
+    .question-number { width: 32px; height: 32px; background: var(--clr-primary); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; margin-bottom: var(--sp-md); transition: background var(--t-fast); }
+    .question-text { font-size: 1.05rem; font-weight: 700; color: var(--clr-dark); margin-bottom: var(--sp-lg); line-height: 1.6; }
+    .options-list { display: flex; flex-direction: column; gap: var(--sp-md); }
 
-    .questions-container {
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-xl);
-      margin-bottom: var(--sp-2xl);
-    }
+    .option-btn { display: flex; align-items: center; gap: var(--sp-md); padding: var(--sp-md) var(--sp-lg); border-radius: var(--radius-md); border: 2px solid var(--clr-border); background: var(--clr-surface); text-align: left; cursor: pointer; transition: all var(--t-fast); font-family: var(--ff-body); font-size: 0.95rem; color: var(--clr-text); width: 100%; }
+    .option-btn:hover { border-color: var(--clr-primary); background: #e8f0f8; transform: translateX(4px); }
+    .option-btn.selected { border-color: var(--clr-primary); background: #e8f0f8; }
+    .option-letter { width: 28px; height: 28px; border-radius: 50%; background: var(--clr-border); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; flex-shrink: 0; transition: all var(--t-fast); }
+    .option-btn.selected .option-letter, .option-btn:hover .option-letter { background: var(--clr-primary); color: #fff; }
 
-    .question-item {
-      background: white;
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--clr-border);
-      padding: var(--sp-xl);
-      transition: all var(--t-normal);
-    }
-
-    .question-item:hover {
-      border-color: var(--clr-primary);
-      box-shadow: 0 4px 12px rgba(26, 58, 92, 0.1);
-    }
-
-    .question-number {
-      width: 32px; height: 32px;
-      background: var(--clr-primary);
-      color: #fff;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 0.9rem;
-      margin-bottom: var(--sp-md);
-    }
-
-    .question-text {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--clr-dark);
-      margin-bottom: var(--sp-lg);
-      line-height: 1.6;
-    }
-
-    .options-list {
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-md);
-    }
-
-    .option-btn {
-      display: flex;
-      align-items: center;
-      gap: var(--sp-md);
-      padding: var(--sp-md) var(--sp-lg);
-      border-radius: var(--radius-md);
-      border: 2px solid var(--clr-border);
-      background: var(--clr-surface);
-      text-align: left;
-      cursor: pointer;
-      transition: all var(--t-fast);
-      font-family: var(--ff-body);
-      font-size: 0.95rem;
-      color: var(--clr-text);
-      width: 100%;
-    }
-
-    .option-btn:hover {
-      border-color: var(--clr-primary);
-      background: #e8f0f8;
-      transform: translateX(4px);
-    }
-
-    .option-btn.selected {
-      border-color: var(--clr-primary);
-      background: #e8f0f8;
-    }
-
-    .option-letter {
-      width: 28px; height: 28px;
-      border-radius: 50%;
-      background: var(--clr-border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.8rem;
-      font-weight: 700;
-      flex-shrink: 0;
-      transition: all var(--t-fast);
-    }
-
-    .option-btn.selected .option-letter,
-    .option-btn:hover .option-letter {
-      background: var(--clr-primary);
-      color: #fff;
-    }
-
-    .quiz-nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: var(--sp-lg);
-      margin-top: var(--sp-2xl);
-    }
-
-    .btn {
-      padding: 0.8rem 1.5rem;
-      border-radius: var(--radius-md);
-      border: none;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all var(--t-fast);
-      font-family: var(--ff-body);
-    }
-
+    .quiz-nav { display: flex; justify-content: space-between; align-items: center; gap: var(--sp-lg); margin-top: var(--sp-2xl); }
+    .btn { padding: 0.8rem 1.5rem; border-radius: var(--radius-md); border: none; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all var(--t-fast); font-family: var(--ff-body); }
     .btn-primary { background: var(--clr-primary); color: #fff; }
-    .btn-primary:hover:not(:disabled) {
-      background: var(--clr-primary-dark);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(26, 58, 92, 0.3);
-    }
-
+    .btn-primary:hover:not(:disabled) { background: var(--clr-primary-dark); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(26, 58, 92, 0.3); }
     .btn-secondary { background: var(--clr-border); color: var(--clr-text); }
     .btn-secondary:hover:not(:disabled) { background: var(--clr-muted); color: #fff; }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
     .quiz-page-info { text-align: center; font-size: 0.9rem; color: var(--clr-muted); }
 
-    /* ===== 結果頁面 ===== */
-    #resultPanel {
-      display: none;
-      min-height: 100vh;
-      padding: var(--sp-2xl) 0;
-    }
-
+    #resultPanel { display: none; min-height: 100vh; padding: var(--sp-2xl) 0; }
     #resultPanel.active { display: block; }
-
     .result-header { text-align: center; padding: var(--sp-3xl) 0 var(--sp-2xl); }
-
-    .tier-badge-large {
-      display: inline-flex;
-      flex-direction: column;
-      align-items: center;
-      gap: var(--sp-sm);
-      padding: var(--sp-xl) var(--sp-2xl);
-      border-radius: var(--radius-xl);
-      margin-bottom: var(--sp-lg);
-      color: #fff;
-    }
-
+    .tier-badge-large { display: inline-flex; flex-direction: column; align-items: center; gap: var(--sp-sm); padding: var(--sp-xl) var(--sp-2xl); border-radius: var(--radius-xl); margin-bottom: var(--sp-lg); color: #fff; }
     .tier-badge-large .tier-emoji { font-size: 3.5rem; }
     .tier-badge-large .tier-name { font-family: var(--ff-display); font-size: 1.8rem; }
     .tier-badge-large .tier-score { font-size: 1rem; opacity: 0.85; }
 
-    .result-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--sp-xl);
-      align-items: start;
-      margin: var(--sp-2xl) 0;
-    }
-
-    .radar-wrap {
-      background: white;
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--clr-border);
-      padding: var(--sp-xl);
-    }
-
+    .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-xl); align-items: start; margin: var(--sp-2xl) 0; }
+    .radar-wrap { background: white; border-radius: var(--radius-lg); border: 1px solid var(--clr-border); padding: var(--sp-xl); }
     .radar-wrap h3 { font-size: 1rem; margin-bottom: var(--sp-md); text-align: center; }
+    .diagnosis-card { background: white; border-radius: var(--radius-lg); border: 1px solid var(--clr-border); padding: var(--sp-xl); }
+    .diagnosis-card h3 { font-size: 1rem; margin-bottom: var(--sp-lg); display: flex; align-items: center; gap: var(--sp-sm); }
 
-    .diagnosis-card {
-      background: white;
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--clr-border);
-      padding: var(--sp-xl);
-    }
-
-    .diagnosis-card h3 {
-      font-size: 1rem;
-      margin-bottom: var(--sp-lg);
-      display: flex;
-      align-items: center;
-      gap: var(--sp-sm);
-    }
-
-    .diag-block {
-      padding: var(--sp-md);
-      border-radius: var(--radius-md);
-      margin-bottom: var(--sp-md);
-      font-size: 0.93rem;
-      line-height: 1.7;
-    }
-
-    .diag-block.tip { background: #e4f0f8; border-left: 4px solid var(--clr-primary); }
+    .diag-block { padding: var(--sp-md); border-radius: var(--radius-md); margin-bottom: var(--sp-md); font-size: 0.93rem; line-height: 1.7; }
+    .diag-block.tip  { background: #e4f0f8; border-left: 4px solid var(--clr-primary); }
     .diag-block.warn { background: #fff8e8; border-left: 4px solid #d4a017; }
     .diag-block strong { display: block; margin-bottom: 6px; font-size: 0.95rem; }
 
-    .breakdown-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--sp-md);
-      margin: var(--sp-xl) 0;
-    }
-
-    .breakdown-card {
-      background: white;
-      border: 1px solid var(--clr-border);
-      border-radius: var(--radius-md);
-      padding: var(--sp-lg);
-      text-align: center;
-    }
-
-    .breakdown-score {
-      font-family: var(--ff-display);
-      font-size: 2rem;
-      font-weight: 900;
-      color: var(--clr-primary);
-    }
-
+    .breakdown-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-md); margin: var(--sp-xl) 0; }
+    .breakdown-card { background: white; border: 1px solid var(--clr-border); border-radius: var(--radius-md); padding: var(--sp-lg); text-align: center; }
+    .breakdown-score { font-family: var(--ff-display); font-size: 2rem; font-weight: 900; color: var(--clr-primary); }
     .breakdown-label { font-size: 0.8rem; color: var(--clr-muted); margin-top: 4px; }
 
     @media (max-width: 768px) {
@@ -384,7 +116,6 @@
       .progress-bar-container { width: 100%; }
       .quiz-progress { width: 100%; }
     }
-
     @media (max-width: 480px) {
       .quiz-nav { flex-direction: column; }
       .btn { width: 100%; }
@@ -394,80 +125,41 @@
 </head>
 <body>
 
-  <!-- ===== 介紹頁面 ===== -->
   <section class="section" id="introPanel">
     <div class="container">
       <div class="intro-grid">
         <div>
           <span class="badge-blue" style="margin-bottom: var(--sp-md)">🏭 生產者版 · 永續測驗</span>
           <h1>你的生意<br/>有多永續？</h1>
-          <p style="color: var(--clr-muted); margin: var(--sp-md) 0; font-size: 1.05rem; line-height: 1.8;">
-            針對企業主、品牌、工廠和生產端設計的 20 題自評測驗。<br/>
-            從材料採購到廢棄物管理，幫你找出供應鏈裡的改善空間。
-          </p>
+          <p style="color: var(--clr-muted); margin: var(--sp-md) 0; font-size: 1.05rem; line-height: 1.8;">針對企業主、品牌、工廠和生產端設計的 20 題自評測驗。<br/>從材料採購到廢棄物管理，幫你找出供應鏈裡的改善空間。</p>
           <div class="intro-badges">
             <span class="category-badge">🌾 原料與採購 × 5</span>
             <span class="category-badge">🏗️ 生產製程 × 5</span>
             <span class="category-badge">📦 包裝與物流 × 5</span>
             <span class="category-badge">👥 勞工與透明度 × 5</span>
           </div>
-          <button class="btn btn-primary" onclick="startQuiz()" style="font-size: 1rem; padding: 0.9rem 2rem; margin-top: var(--sp-md)">
-            🚀 開始自評
-          </button>
+          <button class="btn btn-primary" onclick="startQuiz()" style="font-size: 1rem; padding: 0.9rem 2rem; margin-top: var(--sp-md)">🚀 開始自評</button>
         </div>
-
         <div class="tier-list">
-          <div class="tier-item">
-            <div class="tier-icon">🏆</div>
-            <div>
-              <strong>90+　永續領導品牌</strong>
-              <span>供應鏈透明，是同業學習的標準</span>
-            </div>
-          </div>
-          <div class="tier-item">
-            <div class="tier-icon">🥈</div>
-            <div>
-              <strong>70–89　積極轉型中</strong>
-              <span>方向正確，持續落實就能到頂</span>
-            </div>
-          </div>
-          <div class="tier-item">
-            <div class="tier-icon">🥉</div>
-            <div>
-              <strong>50–69　意識覺醒期</strong>
-              <span>知道要做，開始行動比什麼都重要</span>
-            </div>
-          </div>
-          <div class="tier-item">
-            <div class="tier-icon">🔧</div>
-            <div>
-              <strong>< 50　待改善</strong>
-              <span>還有很多機會，現在是最好的起點</span>
-            </div>
-          </div>
+          <div class="tier-item"><div class="tier-icon">🏆</div><div><strong>90+　永續領導品牌</strong><span>供應鏈透明，是同業學習的標準</span></div></div>
+          <div class="tier-item"><div class="tier-icon">🥈</div><div><strong>70–89　積極轉型中</strong><span>方向正確，持續落實就能到頂</span></div></div>
+          <div class="tier-item"><div class="tier-icon">🥉</div><div><strong>50–69　意識覺醒期</strong><span>知道要做，開始行動比什麼都重要</span></div></div>
+          <div class="tier-item"><div class="tier-icon">🔧</div><div><strong>&lt; 50　待改善</strong><span>還有很多機會，現在是最好的起點</span></div></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ===== 測驗頁面 ===== -->
   <section class="section" id="quizPanel">
     <div class="container">
       <div class="quiz-header">
-        <h2>
-          <span id="categoryIcon">🌾</span>
-          <span id="categoryTitle">原料與採購</span>
-        </h2>
+        <h2><span id="categoryIcon">🌾</span><span id="categoryTitle">原料與採購</span></h2>
         <div class="quiz-progress">
           <span id="pageInfo">第 1 / 4 主題</span>
-          <div class="progress-bar-container">
-            <div class="progress-bar-fill" id="progressFill" style="width: 25%"></div>
-          </div>
+          <div class="progress-bar-container"><div class="progress-bar-fill" id="progressFill" style="width: 25%"></div></div>
         </div>
       </div>
-
       <div class="questions-container" id="questionsContainer"></div>
-
       <div class="quiz-nav">
         <button class="btn btn-secondary" onclick="previousPage()" id="prevBtn" disabled>← 上一頁</button>
         <div class="quiz-page-info"><span id="currentPage">第 1 / 4 頁</span></div>
@@ -476,7 +168,6 @@
     </div>
   </section>
 
-  <!-- ===== 結果頁面 ===== -->
   <section class="section" id="resultPanel">
     <div class="container">
       <div class="result-header">
@@ -486,24 +177,13 @@
           <div class="tier-score" id="tierScore">90 分</div>
         </div>
       </div>
-
       <div class="result-grid">
-        <div class="radar-wrap">
-          <h3>永續指數雷達圖</h3>
-          <canvas id="radarChart"></canvas>
-        </div>
-        <div class="diagnosis-card">
-          <h3>📋 給你企業的建議</h3>
-          <div id="diagnosisContent"></div>
-        </div>
+        <div class="radar-wrap"><h3>永續指數雷達圖</h3><canvas id="radarChart"></canvas></div>
+        <div class="diagnosis-card"><h3>📋 給你企業的建議</h3><div id="diagnosisContent"></div></div>
       </div>
-
       <div class="breakdown-grid" id="breakdownGrid"></div>
-
       <div style="text-align: center; margin-top: var(--sp-2xl)">
-        <button class="btn btn-primary" onclick="resetQuiz()" style="font-size: 1rem; padding: 0.9rem 2rem">
-          🔄 重新自評
-        </button>
+        <button class="btn btn-primary" onclick="resetQuiz()" style="font-size: 1rem; padding: 0.9rem 2rem">🔄 重新自評</button>
       </div>
     </div>
   </section>
@@ -511,220 +191,40 @@
   <script>
     const QUIZ_DATA = {
       categories: [
-        { id: 'material',  name: '原料與採購',  icon: '🌾', color: '#2d6b3a' },
-        { id: 'process',   name: '生產製程',    icon: '🏗️', color: '#1a3a5c' },
-        { id: 'packaging', name: '包裝與物流',  icon: '📦', color: '#5a4a2a' },
+        { id: 'material',  name: '原料與採購',   icon: '🌾', color: '#2d6b3a' },
+        { id: 'process',   name: '生產製程',     icon: '🏗️', color: '#1a3a5c' },
+        { id: 'packaging', name: '包裝與物流',   icon: '📦', color: '#5a4a2a' },
         { id: 'labor',     name: '勞工與透明度', icon: '👥', color: '#5a2a5a' }
       ],
       questions: [
-        // 原料與採購
-        {
-          category: 'material',
-          text: '你的主要原料，你知道它們從哪裡來、怎麼被採集或種植的嗎？',
-          options: [
-            { text: '不太清楚，都交給採購部門處理', score: 0 },
-            { text: '知道主要供應商，但沒有深入了解', score: 33 },
-            { text: '有做供應商審核，大致了解來源', score: 66 },
-            { text: '有完整的供應鏈溯源，能追蹤到原產地', score: 100 }
-          ]
-        },
-        {
-          category: 'material',
-          text: '你們採購的原料中，有多少比例是認證的永續或再生來源（如 FSC、有機、回收料）？',
-          options: [
-            { text: '幾乎沒有，成本優先', score: 0 },
-            { text: '不到 20%，偶爾有幾款產品用', score: 33 },
-            { text: '20–60%，正在擴大', score: 66 },
-            { text: '超過 60%，這是採購的核心標準', score: 100 }
-          ]
-        },
-        {
-          category: 'material',
-          text: '你們在選擇新供應商時，有沒有把環境表現列為評分條件？',
-          options: [
-            { text: '沒有，只看價格和品質', score: 0 },
-            { text: '有時候會問，但不是硬性要求', score: 33 },
-            { text: '有，是評分項目之一', score: 66 },
-            { text: '有，不符合環境標準的供應商不會入選', score: 100 }
-          ]
-        },
-        {
-          category: 'material',
-          text: '你的原料採購是否盡量優先選擇在地（台灣或區域）供應商以減少運輸碳排？',
-          options: [
-            { text: '沒有，哪裡便宜從哪裡買', score: 0 },
-            { text: '有考慮，但實際執行比例不高', score: 33 },
-            { text: '有，非關鍵原料盡量在地採購', score: 66 },
-            { text: '有系統地優先在地採購，並追蹤運輸碳排', score: 100 }
-          ]
-        },
-        {
-          category: 'material',
-          text: '你們有沒有在積極尋找或試驗替代材料，以減少對不可再生資源的依賴？',
-          options: [
-            { text: '沒有，用慣了不想換', score: 0 },
-            { text: '偶爾看新聞，但沒有主動研究', score: 33 },
-            { text: '有在評估，部分產品已開始試用', score: 66 },
-            { text: '有研發預算專門做材料替代，已有成果', score: 100 }
-          ]
-        },
-
-        // 生產製程
-        {
-          category: 'process',
-          text: '你知道你們工廠或生產線每年用了多少電、排了多少碳嗎？',
-          options: [
-            { text: '不知道，也沒有量測', score: 0 },
-            { text: '有基本的電費紀錄，但沒換算成碳排', score: 33 },
-            { text: '有碳盤查，知道大概的數字', score: 66 },
-            { text: '有完整的溫室氣體盤查報告，並設有減碳目標', score: 100 }
-          ]
-        },
-        {
-          category: 'process',
-          text: '你的生產過程中，廢料和邊料怎麼處理？',
-          options: [
-            { text: '大部分直接當一般廢棄物丟掉', score: 0 },
-            { text: '有部分回收，但比例不高', score: 33 },
-            { text: '大多數有回收或再利用', score: 66 },
-            { text: '廢料率極低，且幾乎全部循環再用或變成副產品', score: 100 }
-          ]
-        },
-        {
-          category: 'process',
-          text: '你們的生產用水有沒有回收再利用的系統？',
-          options: [
-            { text: '沒有，用完就排放', score: 0 },
-            { text: '有基本處理後排放，但沒有循環使用', score: 33 },
-            { text: '有部分回收再利用', score: 66 },
-            { text: '有完整的水循環系統，廢水排放量極低', score: 100 }
-          ]
-        },
-        {
-          category: 'process',
-          text: '你們廠房或辦公室有使用再生能源（太陽能、購買綠電）嗎？',
-          options: [
-            { text: '沒有，全用台電標準電力', score: 0 },
-            { text: '有考慮過，還沒行動', score: 33 },
-            { text: '有部分設施使用再生能源或綠電憑證', score: 66 },
-            { text: '大比例使用再生能源，有明確的 RE100 目標', score: 100 }
-          ]
-        },
-        {
-          category: 'process',
-          text: '你們有沒有製程改善或技術升級計畫，目的是降低能耗或污染？',
-          options: [
-            { text: '沒有，設備用到壞才換', score: 0 },
-            { text: '有零星的改善，但沒有計畫性推進', score: 33 },
-            { text: '有年度改善目標，並追蹤成效', score: 66 },
-            { text: '有多年期的減排路線圖，並定期對外報告進度', score: 100 }
-          ]
-        },
-
-        // 包裝與物流
-        {
-          category: 'packaging',
-          text: '你的產品包裝，現在的材料可以回收或堆肥嗎？',
-          options: [
-            { text: '不太清楚，用什麼包裝是設計部門決定的', score: 0 },
-            { text: '有一部分可以，但大多數還是塑膠', score: 33 },
-            { text: '大多數包裝可以回收，有在逐步替換', score: 66 },
-            { text: '已全面使用可回收、可堆肥或無包裝設計', score: 100 }
-          ]
-        },
-        {
-          category: 'packaging',
-          text: '你們有沒有主動減少包裝用量，例如拿掉不必要的內箱或改小包裝體積？',
-          options: [
-            { text: '沒有，包裝設計以保護和美觀優先', score: 0 },
-            { text: '有討論過，還沒落實', score: 33 },
-            { text: '有做過調整，減少了一些材料用量', score: 66 },
-            { text: '定期做包裝減量審查，並追蹤材料節省量', score: 100 }
-          ]
-        },
-        {
-          category: 'packaging',
-          text: '你的物流合作夥伴，有沒有考慮他們的碳排表現？',
-          options: [
-            { text: '沒有，選物流只看價格和速度', score: 0 },
-            { text: '偶爾會問，但不是主要考量', score: 33 },
-            { text: '有將碳排列入評選條件', score: 66 },
-            { text: '有，且優先選擇有減碳計畫的物流夥伴，並合作優化路線', score: 100 }
-          ]
-        },
-        {
-          category: 'packaging',
-          text: '你們有沒有提供消費者產品回收或回購的機制（如空罐換折扣、舊機回收）？',
-          options: [
-            { text: '沒有，售出後就不管了', score: 0 },
-            { text: '有想過，但覺得複雜沒推', score: 33 },
-            { text: '有部分產品有回收方案', score: 66 },
-            { text: '有完整的回收或延伸生產者責任方案', score: 100 }
-          ]
-        },
-        {
-          category: 'packaging',
-          text: '你們的產品是否設計為容易維修、升級或拆解，以延長使用壽命？',
-          options: [
-            { text: '沒有，設計以外觀和功能為主', score: 0 },
-            { text: '有考慮過，但還沒實作', score: 33 },
-            { text: '部分產品有模組化或易修設計', score: 66 },
-            { text: '產品設計核心就是耐用、可修、可拆解回收', score: 100 }
-          ]
-        },
-
-        // 勞工與透明度
-        {
-          category: 'labor',
-          text: '你的工廠或合作工廠有沒有通過任何勞工保護認證（如 SA8000、WRAP）？',
-          options: [
-            { text: '沒有，也沒特別要求', score: 0 },
-            { text: '有做過基本稽核，但沒有正式認證', score: 33 },
-            { text: '有部分廠區有認證', score: 66 },
-            { text: '主要廠區都有認證，且定期接受第三方查廠', score: 100 }
-          ]
-        },
-        {
-          category: 'labor',
-          text: '你們有沒有定期向消費者或投資人公開你們的環境與社會表現（ESG 報告、永續報告）？',
-          options: [
-            { text: '沒有，這些是內部資料', score: 0 },
-            { text: '有局部揭露，例如官網有一些描述', score: 33 },
-            { text: '有年度永續報告，但細節不多', score: 66 },
-            { text: '有完整的 GRI 或 SASB 標準報告，並接受外部驗證', score: 100 }
-          ]
-        },
-        {
-          category: 'labor',
-          text: '你的供應鏈中，有沒有可能存在強迫勞動或童工的風險，你有沒有主動調查？',
-          options: [
-            { text: '沒有調查，相信供應商不會這樣', score: 0 },
-            { text: '有在合約裡要求，但沒有查驗', score: 33 },
-            { text: '有做問卷調查或部分稽核', score: 66 },
-            { text: '有定期的供應鏈人權盡職調查，並公開結果', score: 100 }
-          ]
-        },
-        {
-          category: 'labor',
-          text: '你有沒有為員工提供永續相關的教育訓練，讓全員都理解公司的環境政策？',
-          options: [
-            { text: '沒有，永續是管理層的事', score: 0 },
-            { text: '偶爾有宣導，但沒有系統性訓練', score: 33 },
-            { text: '有納入新人訓練或年度教育計畫', score: 66 },
-            { text: '有完整的永續培訓體系，並和員工績效掛鉤', score: 100 }
-          ]
-        },
-        {
-          category: 'labor',
-          text: '你有沒有為你的產品設定科學基礎的碳減排目標（如 SBTi），而不只是口頭承諾？',
-          options: [
-            { text: '沒有，「努力環保」就是我們的立場', score: 0 },
-            { text: '有設目標，但沒有量化基準', score: 33 },
-            { text: '有量化目標，但還沒提交國際驗證', score: 66 },
-            { text: '有，已通過 SBTi 或同等第三方認可的科學基礎目標', score: 100 }
-          ]
-        }
+        { category: 'material',  text: '你的主要原料，你知道它們從哪裡來、怎麼被採集或種植的嗎？', options: [{ text: '不太清楚，都交給採購部門處理', score: 0 }, { text: '知道主要供應商，但沒有深入了解', score: 33 }, { text: '有做供應商審核，大致了解來源', score: 66 }, { text: '有完整的供應鏈溯源，能追蹤到原產地', score: 100 }] },
+        { category: 'material',  text: '你們採購的原料中，有多少比例是認證的永續或再生來源（如 FSC、有機、回收料）？', options: [{ text: '幾乎沒有，成本優先', score: 0 }, { text: '不到 20%，偶爾有幾款產品用', score: 33 }, { text: '20–60%，正在擴大', score: 66 }, { text: '超過 60%，這是採購的核心標準', score: 100 }] },
+        { category: 'material',  text: '你們在選擇新供應商時，有沒有把環境表現列為評分條件？', options: [{ text: '沒有，只看價格和品質', score: 0 }, { text: '有時候會問，但不是硬性要求', score: 33 }, { text: '有，是評分項目之一', score: 66 }, { text: '有，不符合環境標準的供應商不會入選', score: 100 }] },
+        { category: 'material',  text: '你的原料採購是否盡量優先選擇在地（台灣或區域）供應商以減少運輸碳排？', options: [{ text: '沒有，哪裡便宜從哪裡買', score: 0 }, { text: '有考慮，但實際執行比例不高', score: 33 }, { text: '有，非關鍵原料盡量在地採購', score: 66 }, { text: '有系統地優先在地採購，並追蹤運輸碳排', score: 100 }] },
+        { category: 'material',  text: '你們有沒有在積極尋找或試驗替代材料，以減少對不可再生資源的依賴？', options: [{ text: '沒有，用慣了不想換', score: 0 }, { text: '偶爾看新聞，但沒有主動研究', score: 33 }, { text: '有在評估，部分產品已開始試用', score: 66 }, { text: '有研發預算專門做材料替代，已有成果', score: 100 }] },
+        { category: 'process',   text: '你知道你們工廠或生產線每年用了多少電、排了多少碳嗎？', options: [{ text: '不知道，也沒有量測', score: 0 }, { text: '有基本的電費紀錄，但沒換算成碳排', score: 33 }, { text: '有碳盤查，知道大概的數字', score: 66 }, { text: '有完整的溫室氣體盤查報告，並設有減碳目標', score: 100 }] },
+        { category: 'process',   text: '你的生產過程中，廢料和邊料怎麼處理？', options: [{ text: '大部分直接當一般廢棄物丟掉', score: 0 }, { text: '有部分回收，但比例不高', score: 33 }, { text: '大多數有回收或再利用', score: 66 }, { text: '廢料率極低，且幾乎全部循環再用或變成副產品', score: 100 }] },
+        { category: 'process',   text: '你們的生產用水有沒有回收再利用的系統？', options: [{ text: '沒有，用完就排放', score: 0 }, { text: '有基本處理後排放，但沒有循環使用', score: 33 }, { text: '有部分回收再利用', score: 66 }, { text: '有完整的水循環系統，廢水排放量極低', score: 100 }] },
+        { category: 'process',   text: '你們廠房或辦公室有使用再生能源（太陽能、購買綠電）嗎？', options: [{ text: '沒有，全用台電標準電力', score: 0 }, { text: '有考慮過，還沒行動', score: 33 }, { text: '有部分設施使用再生能源或綠電憑證', score: 66 }, { text: '大比例使用再生能源，有明確的 RE100 目標', score: 100 }] },
+        { category: 'process',   text: '你們有沒有製程改善或技術升級計畫，目的是降低能耗或污染？', options: [{ text: '沒有，設備用到壞才換', score: 0 }, { text: '有零星的改善，但沒有計畫性推進', score: 33 }, { text: '有年度改善目標，並追蹤成效', score: 66 }, { text: '有多年期的減排路線圖，並定期對外報告進度', score: 100 }] },
+        { category: 'packaging', text: '你的產品包裝，現在的材料可以回收或堆肥嗎？', options: [{ text: '不太清楚，用什麼包裝是設計部門決定的', score: 0 }, { text: '有一部分可以，但大多數還是塑膠', score: 33 }, { text: '大多數包裝可以回收，有在逐步替換', score: 66 }, { text: '已全面使用可回收、可堆肥或無包裝設計', score: 100 }] },
+        { category: 'packaging', text: '你們有沒有主動減少包裝用量，例如拿掉不必要的內箱或改小包裝體積？', options: [{ text: '沒有，包裝設計以保護和美觀優先', score: 0 }, { text: '有討論過，還沒落實', score: 33 }, { text: '有做過調整，減少了一些材料用量', score: 66 }, { text: '定期做包裝減量審查，並追蹤材料節省量', score: 100 }] },
+        { category: 'packaging', text: '你的物流合作夥伴，有沒有考慮他們的碳排表現？', options: [{ text: '沒有，選物流只看價格和速度', score: 0 }, { text: '偶爾會問，但不是主要考量', score: 33 }, { text: '有將碳排列入評選條件', score: 66 }, { text: '有，且優先選擇有減碳計畫的物流夥伴，並合作優化路線', score: 100 }] },
+        { category: 'packaging', text: '你們有沒有提供消費者產品回收或回購的機制（如空罐換折扣、舊機回收）？', options: [{ text: '沒有，售出後就不管了', score: 0 }, { text: '有想過，但覺得複雜沒推', score: 33 }, { text: '有部分產品有回收方案', score: 66 }, { text: '有完整的回收或延伸生產者責任方案', score: 100 }] },
+        { category: 'packaging', text: '你們的產品是否設計為容易維修、升級或拆解，以延長使用壽命？', options: [{ text: '沒有，設計以外觀和功能為主', score: 0 }, { text: '有考慮過，但還沒實作', score: 33 }, { text: '部分產品有模組化或易修設計', score: 66 }, { text: '產品設計核心就是耐用、可修、可拆解回收', score: 100 }] },
+        { category: 'labor',     text: '你的工廠或合作工廠有沒有通過任何勞工保護認證（如 SA8000、WRAP）？', options: [{ text: '沒有，也沒特別要求', score: 0 }, { text: '有做過基本稽核，但沒有正式認證', score: 33 }, { text: '有部分廠區有認證', score: 66 }, { text: '主要廠區都有認證，且定期接受第三方查廠', score: 100 }] },
+        { category: 'labor',     text: '你們有沒有定期向消費者或投資人公開你們的環境與社會表現（ESG 報告、永續報告）？', options: [{ text: '沒有，這些是內部資料', score: 0 }, { text: '有局部揭露，例如官網有一些描述', score: 33 }, { text: '有年度永續報告，但細節不多', score: 66 }, { text: '有完整的 GRI 或 SASB 標準報告，並接受外部驗證', score: 100 }] },
+        { category: 'labor',     text: '你的供應鏈中，有沒有可能存在強迫勞動或童工的風險，你有沒有主動調查？', options: [{ text: '沒有調查，相信供應商不會這樣', score: 0 }, { text: '有在合約裡要求，但沒有查驗', score: 33 }, { text: '有做問卷調查或部分稽核', score: 66 }, { text: '有定期的供應鏈人權盡職調查，並公開結果', score: 100 }] },
+        { category: 'labor',     text: '你有沒有為員工提供永續相關的教育訓練，讓全員都理解公司的環境政策？', options: [{ text: '沒有，永續是管理層的事', score: 0 }, { text: '偶爾有宣導，但沒有系統性訓練', score: 33 }, { text: '有納入新人訓練或年度教育計畫', score: 66 }, { text: '有完整的永續培訓體系，並和員工績效掛鉤', score: 100 }] },
+        { category: 'labor',     text: '你有沒有為你的產品設定科學基礎的碳減排目標（如 SBTi），而不只是口頭承諾？', options: [{ text: '沒有，「努力環保」就是我們的立場', score: 0 }, { text: '有設目標，但沒有量化基準', score: 33 }, { text: '有量化目標，但還沒提交國際驗證', score: 66 }, { text: '有，已通過 SBTi 或同等第三方認可的科學基礎目標', score: 100 }] }
       ]
+    };
+
+    const CATEGORY_TIPS = {
+      material:  { low: '從供應商審核開始。先盤點你前五大原料供應商，要求他們提供基本的環境政策文件。這一步不需要花錢，但能幫你建立供應鏈透明度的基礎。', high: '你在原料端已有很好的基礎。可以進一步考慮加入產業原料溯源聯盟，或取得第三方認證，讓你的採購標準對外可見、可信。' },
+      process:   { low: '先做碳盤查——很多認證機構或顧問可以協助你量測。知道自己排了多少，才知道從哪裡減。第一年的目標不用太大，記錄數字就是進步。', high: '你的製程管理很有系統。下一步可以考慮加入 SBTi（科學基礎減碳目標），用國際標準來驗證你的減排路線圖，讓利害關係人更信任你的承諾。' },
+      packaging: { low: '先從最大用量的包裝材料下手，看看哪一種能換成可回收版本。很多供應商已有現成的替代方案，切換成本比你想像的低。同時考慮減少不必要的填充物。', high: '你在包裝端很有意識。可以進一步建立消費端回收閉環，例如與回收平台合作推出「空瓶寄回換折扣」方案，把你的永續投入變成消費者互動的機會。' },
+      labor:     { low: '先從公開承諾開始。在官網上清楚說明你們對勞工、環境的基本立場，哪怕只有一頁也好。透明度不是弱點，它是建立信任的起點。', high: '你在透明度和勞工保護上表現出色。考慮發布符合 GRI 準則的永續報告，並提交 CDP 問卷——這能讓更多投資人和採購商看見你的努力。' }
     };
 
     let currentPage = 0;
@@ -757,7 +257,7 @@
         const savedAnswer = userAnswers[questionId];
 
         container.innerHTML += `
-          <div class="question-item">
+          <div class="question-item" id="q-${questionId}">
             <div class="question-number">${index + 1}</div>
             <div class="question-text">${question.text}</div>
             <div class="options-list">
@@ -769,6 +269,7 @@
                 </button>
               `).join('')}
             </div>
+            <p class="unanswered-hint">⚠️ 請回答這題才能繼續</p>
           </div>
         `;
       });
@@ -779,9 +280,10 @@
 
     function selectAnswer(questionId, optionIndex) {
       userAnswers[questionId] = optionIndex;
-      const questionElement = event.target.closest('.question-item');
-      questionElement.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+      const questionEl = document.getElementById(`q-${questionId}`);
+      questionEl.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
       event.target.closest('.option-btn').classList.add('selected');
+      questionEl.classList.remove('unanswered');
     }
 
     function previousPage() {
@@ -791,9 +293,19 @@
     function nextPage() {
       const category = QUIZ_DATA.categories[currentPage];
       const categoryQuestions = QUIZ_DATA.questions.filter(q => q.category === category.id);
-      const allAnswered = categoryQuestions.every(q => userAnswers[QUIZ_DATA.questions.indexOf(q)] !== undefined);
 
-      if (!allAnswered) { alert('⚠️ 請完成這一頁的所有題目後再繼續'); return; }
+      const unanswered = categoryQuestions.filter(q => userAnswers[QUIZ_DATA.questions.indexOf(q)] === undefined);
+
+      if (unanswered.length > 0) {
+        unanswered.forEach(q => {
+          const id = QUIZ_DATA.questions.indexOf(q);
+          document.getElementById(`q-${id}`)?.classList.add('unanswered');
+        });
+        const firstId = QUIZ_DATA.questions.indexOf(unanswered[0]);
+        const firstEl = document.getElementById(`q-${firstId}`);
+        if (firstEl) firstEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
 
       if (currentPage < 3) { currentPage++; renderPage(); window.scrollTo(0, 0); }
       else showResults();
@@ -802,7 +314,7 @@
     function showResults() {
       let totalScore = 0;
       let categoryScores = { material: 0, process: 0, packaging: 0, labor: 0 };
-      let categoryCounts = { material: 0, process: 0, packaging: 0, labor: 0 };
+      let categoryCounts  = { material: 0, process: 0, packaging: 0, labor: 0 };
 
       for (let questionId in userAnswers) {
         const question = QUIZ_DATA.questions[questionId];
@@ -818,7 +330,7 @@
       }
 
       let tier, emoji, tierName;
-      if (totalScore >= 90)      { tier = 'gold';   emoji = '🏆'; tierName = '永續領導品牌'; }
+      if      (totalScore >= 90) { tier = 'gold';   emoji = '🏆'; tierName = '永續領導品牌'; }
       else if (totalScore >= 70) { tier = 'silver'; emoji = '🥈'; tierName = '積極轉型中'; }
       else if (totalScore >= 50) { tier = 'bronze'; emoji = '🥉'; tierName = '意識覺醒期'; }
       else                       { tier = 'wrench'; emoji = '🔧'; tierName = '待改善'; }
@@ -828,7 +340,6 @@
       document.getElementById('tierEmoji').textContent = emoji;
       document.getElementById('tierName').textContent = tierName;
       document.getElementById('tierScore').textContent = `${totalScore} / 100 分`;
-
       const tierColors = { gold: '#8a6a10', silver: '#3a5a7a', bronze: '#7a4a2a', wrench: '#3a2a5a' };
       document.getElementById('tierBadge').style.background = tierColors[tier];
 
@@ -859,64 +370,59 @@
           datasets: [{
             label: '你的永續指數',
             data: [categoryScores.material, categoryScores.process, categoryScores.packaging, categoryScores.labor],
-            borderColor: '#1a3a5c',
-            backgroundColor: 'rgba(26, 58, 92, 0.18)',
-            borderWidth: 2,
-            pointRadius: 5,
-            pointBackgroundColor: '#1a3a5c'
+            borderColor: '#1a3a5c', backgroundColor: 'rgba(26, 58, 92, 0.18)',
+            borderWidth: 2, pointRadius: 5, pointBackgroundColor: '#1a3a5c'
           }]
         },
-        options: {
-          responsive: true,
-          maintainAspectRatio: true,
-          scales: { r: { beginAtZero: true, max: 100, ticks: { stepSize: 20 } } }
-        }
+        options: { responsive: true, maintainAspectRatio: true, scales: { r: { beginAtZero: true, max: 100, ticks: { stepSize: 20 } } } }
       });
     }
 
-    const CATEGORY_TIPS = {
-      material: {
-        low: '從供應商審核開始。先盤點你前五大原料供應商，要求他們提供基本的環境政策文件。這一步不需要花錢，但能幫你建立供應鏈透明度的基礎。',
-        high: '你在原料端已有很好的基礎。可以進一步考慮加入產業原料溯源聯盟，或取得第三方認證，讓你的採購標準對外可見、可信。'
-      },
-      process: {
-        low: '先做碳盤查——很多認證機構或顧問可以協助你量測。知道自己排了多少，才知道從哪裡減。第一年的目標不用太大，記錄數字就是進步。',
-        high: '你的製程管理很有系統。下一步可以考慮加入 SBTi（科學基礎減碳目標），用國際標準來驗證你的減排路線圖，讓利害關係人更信任你的承諾。'
-      },
-      packaging: {
-        low: '先從最大用量的包裝材料下手，看看哪一種能換成可回收版本。很多供應商已有現成的替代方案，切換成本比你想像的低。同時考慮減少不必要的填充物。',
-        high: '你在包裝端很有意識。可以進一步建立消費端回收閉環，例如與回收平台合作推出「空瓶寄回換折扣」方案，把你的永續投入變成消費者互動的機會。'
-      },
-      labor: {
-        low: '先從公開承諾開始。在官網上清楚說明你們對勞工、環境的基本立場，哪怕只有一頁也好。透明度不是弱點，它是建立信任的起點。',
-        high: '你在透明度和勞工保護上表現出色。考慮發布符合 GRI 準則的永續報告，並提交 CDP 問卷——這能讓更多投資人和採購商看見你的努力。'
-      }
-    };
-
     function renderDiagnosis(totalScore, categoryScores) {
       const content = document.getElementById('diagnosisContent');
-      const lowest = QUIZ_DATA.categories.reduce((l, c) =>
-        categoryScores[c.id] < categoryScores[l.id] ? c : l
-      );
-      const highest = QUIZ_DATA.categories.reduce((h, c) =>
-        categoryScores[c.id] > categoryScores[h.id] ? c : h
-      );
 
+      // ── 找出最高分與最低分（支援並列）──
+      const scores = QUIZ_DATA.categories.map(c => categoryScores[c.id]);
+      const maxScore = Math.max(...scores);
+      const minScore = Math.min(...scores);
+
+      const highest = QUIZ_DATA.categories.filter(c => categoryScores[c.id] === maxScore);
+      const lowest  = QUIZ_DATA.categories.filter(c => categoryScores[c.id] === minScore);
+      const allSame = maxScore === minScore;
+
+      // 總評
       let intro = '';
-      if (totalScore >= 90) {
-        intro = `<div class="diag-block tip"><strong>🌟 你的企業已是同業標竿</strong>供應鏈透明、製程減排、勞工保護——你在做的事正在改變整個產業的標準。下一步是影響你的上下游。</div>`;
-      } else if (totalScore >= 70) {
-        intro = `<div class="diag-block tip"><strong>✅ 方向正確，落差不大</strong>你已在多個面向有具體行動，但部分地方還停在「有想到但還沒做」的階段。把計畫變成數字和時程，就能往前一大步。</div>`;
-      } else if (totalScore >= 50) {
-        intro = `<div class="diag-block tip"><strong>💡 意識已有，行動需跟上</strong>你知道永續的重要，有些地方已在動，但整體系統性還不夠。選一個最弱的環節，今年專注改善它。</div>`;
+      if      (totalScore >= 90) intro = `<div class="diag-block tip"><strong>🌟 你的企業已是同業標竿</strong>供應鏈透明、製程減排、勞工保護——你在做的事正在改變整個產業的標準。下一步是影響你的上下游。</div>`;
+      else if (totalScore >= 70) intro = `<div class="diag-block tip"><strong>✅ 方向正確，落差不大</strong>你已在多個面向有具體行動，但部分地方還停在「有想到但還沒做」的階段。把計畫變成數字和時程，就能往前一大步。</div>`;
+      else if (totalScore >= 50) intro = `<div class="diag-block tip"><strong>💡 意識已有，行動需跟上</strong>你知道永續的重要，有些地方已在動，但整體系統性還不夠。選一個最弱的環節，今年專注改善它。</div>`;
+      else                       intro = `<div class="diag-block warn"><strong>⚠️ 還有很大的改善空間</strong>現在是最好的起點。永續轉型不是一夜的事，但每延遲一年，追趕的成本就更高。從建立量測機制開始吧。</div>`;
+
+      let strengthHTML = '';
+      let improveHTML  = '';
+
+      if (allSame) {
+        // 四項全同分：給整體建議
+        strengthHTML = `<div class="diag-block tip"><strong>📊 四個面向均衡發展（各 ${maxScore} 分）</strong>你的企業在原料採購、生產製程、包裝物流和勞工透明度上表現相當一致。這表示你有全面的永續意識，下一步是在每個面向都選一個具體行動來深化落實。</div>`;
+        improveHTML  = QUIZ_DATA.categories.map(c =>
+          `<div class="diag-block warn"><strong>${c.icon} ${c.name}</strong>${CATEGORY_TIPS[c.id][totalScore >= 70 ? 'high' : 'low']}</div>`
+        ).join('');
       } else {
-        intro = `<div class="diag-block warn"><strong>⚠️ 還有很大的改善空間</strong>現在是最好的起點。永續轉型不是一夜的事，但每延遲一年，追趕的成本就更高。從建立量測機制開始吧。</div>`;
+        // 強項（可能並列）
+        const highLabel = highest.map(c => `${c.icon} ${c.name}`).join('、');
+        const highTips  = highest.map(c =>
+          `<div style="margin-top:8px"><strong style="font-size:0.88rem">${c.icon} ${c.name}</strong><br/>${CATEGORY_TIPS[c.id].high}</div>`
+        ).join('');
+        strengthHTML = `<div class="diag-block tip"><strong>💪 你的強項：${highLabel}（${maxScore} 分）</strong>${highTips}</div>`;
+
+        // 待改善（可能並列）
+        const lowLabel = lowest.map(c => `${c.icon} ${c.name}`).join('、');
+        const lowTips  = lowest.map(c =>
+          `<div style="margin-top:8px"><strong style="font-size:0.88rem">${c.icon} ${c.name}</strong><br/>${CATEGORY_TIPS[c.id].low}</div>`
+        ).join('');
+        improveHTML = `<div class="diag-block warn"><strong>🎯 最優先改善：${lowLabel}（${minScore} 分）</strong>${lowTips}</div>`;
       }
 
-      const strengthTip = `<div class="diag-block tip"><strong>${highest.icon} 你的強項：${highest.name}（${categoryScores[highest.id]} 分）</strong>${CATEGORY_TIPS[highest.id].high}</div>`;
-      const improveTip = `<div class="diag-block warn"><strong>${lowest.icon} 最優先改善：${lowest.name}（${categoryScores[lowest.id]} 分）</strong>${CATEGORY_TIPS[lowest.id].low}</div>`;
-
-      content.innerHTML = intro + strengthTip + improveTip;
+      content.innerHTML = intro + strengthHTML + improveHTML;
     }
 
     function resetQuiz() {
