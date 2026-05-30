@@ -357,6 +357,27 @@
       opacity: 1;
       transform: translateY(0);
     }
+
+    /* --- Flip Card Glow Ring --- */
+.flip-ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 5;
+  border-radius: var(--radius-lg);
+}
+.flip-ring rect {
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.85s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.flip-wrap {
+  position: relative; /* 確保 SVG absolute 定位正確 */
+}
     
   </style>
 </head>
@@ -370,8 +391,8 @@
       <!-- 左：標題 -->
     <div>
         <h1 class="fade-up" style="transition-delay: 0.12s">
-          從了解開始改變<br/>六大環境危機<br/><i>你認識幾個？</i>
-        </h1>
+  從了解開始改變<br/><i style="color: var(--clr-primary);">六大環境危機<br/>你認識幾個？</i>
+</h1>
     </div>
       <!-- 右：影片輪播 -->
       <div style="align-self:flex-start; margin-top:0;">
@@ -645,15 +666,26 @@
           })
           .on('mouseleave',()=>{tt.style.display='none';})
           .on('click',(event,f)=>{
-            const n=ISO_R[String(f.id)];
-            if(!n)return;
-            selCty=n;
-            tt.style.display='none';
-            document.getElementById('ew-cty').value=n;
-            const tag=document.getElementById('ew-seltag');
-            tag.style.display='flex'; tag.textContent='📍 '+n;
-            renderAll();
-          });
+  const n=ISO_R[String(f.id)];
+  if(!n)return;
+  tt.style.display='none';
+
+  // 再點一次同一國家 → 取消選擇
+  if(selCty===n){
+    selCty=null;
+    document.getElementById('ew-cty').value='';
+    document.getElementById('ew-cty-input').value='';
+    const tag=document.getElementById('ew-seltag');
+    tag.style.display='none'; tag.textContent='';
+  } else {
+    selCty=n;
+    document.getElementById('ew-cty').value=n;
+    document.getElementById('ew-cty-input').value=n;
+    const tag=document.getElementById('ew-seltag');
+    tag.style.display='flex'; tag.textContent='📍 '+n;
+  }
+  renderAll();
+});
       }
 
       function renderJoin(){
@@ -697,11 +729,11 @@
       }
 
       ctyInput.addEventListener('click',()=>{
-        ctyInput.removeAttribute('readonly');
-        ctyInput.select();
-        buildDropdown(ctyInput.value==='搜尋國家...'?'':ctyInput.value);
-        ctyDrop.classList.add('open');
-      });
+  ctyInput.removeAttribute('readonly');
+  ctyInput.select();
+  buildDropdown('');
+  ctyDrop.classList.add('open');
+});
 
       ctyInput.addEventListener('input',()=>{
         buildDropdown(ctyInput.value);
@@ -730,9 +762,16 @@ buildDropdown();
       });
 
       window._ew2={
-        setAct:id=>{curAct=id;renderAll();},
-        toggleAct:id=>{selActs.has(id)?selActs.delete(id):selActs.add(id);renderJoin();}
-      };
+ setAct:id=>{
+  curAct=id;
+  // 切換類別時，清空並只選取該類別
+  selActs.clear();
+  selActs.add(id);
+  renderAll();
+  renderJoin();
+},
+  toggleAct:id=>{selActs.has(id)?selActs.delete(id):selActs.add(id);renderJoin();}
+};
 
       renderJoin();
       d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json').then(t=>{
@@ -1139,12 +1178,18 @@ buildDropdown();
       if (!btn) return;
       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      renderCards(btn.dataset.filter);
+renderCards(btn.dataset.filter);
+initFlipRings();
     });
 
     // Init
     buildCarousel();
-    renderCards();
+renderCards();
+initFlipRings();
+window.addEventListener('resize', () => {
+  document.querySelectorAll('.flip-ring').forEach(el => el.remove());
+  initFlipRings();
+});
 
     const fadeObs = new IntersectionObserver(entries => {
       entries.forEach(e => {
@@ -1156,6 +1201,59 @@ buildDropdown();
     }, { threshold: 0.15 });
 
     document.querySelectorAll('.fade-up').forEach(el => fadeObs.observe(el));
+
+    /* ── 翻牌卡片外框發光動畫 ── */
+function initFlipRings() {
+  document.querySelectorAll('.flip-wrap').forEach((wrap, idx) => {
+    // 避免重複建立
+    if (wrap.querySelector('.flip-ring')) return;
+
+    const W = wrap.offsetWidth;
+    const H = wrap.offsetHeight;
+    const r = 20;
+
+    const svgEl  = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const rectEl = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+
+    svgEl.setAttribute('class', 'flip-ring');
+    svgEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+    rectEl.setAttribute('x', 1.5);
+    rectEl.setAttribute('y', 1.5);
+    rectEl.setAttribute('width',  W - 3);
+    rectEl.setAttribute('height', H - 3);
+    rectEl.setAttribute('rx', r);
+    rectEl.setAttribute('ry', r);
+
+    // 漸層：正面用綠色，背面用白色
+    const gradId = `flipGrad${idx}`;
+    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+    defs.innerHTML = `
+      <linearGradient id="${gradId}" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%"   stop-color="#3A6B3A" stop-opacity="0"/>
+        <stop offset="30%"  stop-color="#5A9A5A" stop-opacity="0.9"/>
+        <stop offset="70%"  stop-color="#5A9A5A" stop-opacity="0.9"/>
+        <stop offset="100%" stop-color="#3A6B3A" stop-opacity="0"/>
+      </linearGradient>`;
+    svgEl.appendChild(defs);
+
+    rectEl.setAttribute('stroke', `url(#${gradId})`);
+
+    const perimeter = Math.round(2 * (W + H) - (8 - 2 * Math.PI) * r);
+    rectEl.style.strokeDasharray  = perimeter;
+    rectEl.style.strokeDashoffset = perimeter;
+
+    svgEl.appendChild(rectEl);
+    wrap.appendChild(svgEl);
+
+    wrap.addEventListener('mouseenter', () => {
+      rectEl.style.strokeDashoffset = 0;
+    });
+    wrap.addEventListener('mouseleave', () => {
+      rectEl.style.strokeDashoffset = perimeter;
+    });
+  });
+}
 
     
   </script>
