@@ -20,7 +20,7 @@
       content: '';
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.05);
+      background: rgba(0, 0, 0, 0.03);
       z-index: 0;
       pointer-events: none;
     }
@@ -377,6 +377,37 @@
 }
 .flip-wrap {
   position: relative; /* 確保 SVG absolute 定位正確 */
+}
+
+    /* --- Flip Back 雙視角 --- */
+.flip-back-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-md);
+  margin-bottom: var(--sp-md);
+}
+.flip-perspective {
+  border-radius: var(--radius-md);
+  padding: var(--sp-sm) var(--sp-md);
+}
+.flip-perspective--consumer {
+  background: rgba(255,255,255,0.15);
+}
+.flip-perspective--producer {
+  background: rgba(0,0,0,0.12);
+}
+.flip-perspective-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.75;
+  margin-bottom: 6px;
+}
+.flip-perspective-text {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.9);
+  line-height: 1.6;
 }
     
   </style>
@@ -914,6 +945,9 @@ buildDropdown();
         backIcon: '✅',
         backTitle: '永續消費模式',
         backSummary: '解方：建立永續消費模式，區分想要與需要。',
+        consumerAction: '等待 24 小時再購買，優先選二手或租借',
+        producerAction: '減少過度包裝，提供租賃與回收服務',
+
       },
       {
         id: 2, tag: 'pollution',
@@ -945,6 +979,8 @@ buildDropdown();
         backIcon: '♻️',
         backTitle: '減塑行動',
         backSummary: '解方：減少使用一次性塑膠製品的次數，降低塑膠污染。',
+        consumerAction: '自備購物袋餐具，拒絕一次性塑膠',
+        producerAction: '改用可分解包材，建立空容器回收機制',
       },
       {
         id: 3, tag: 'waste',
@@ -976,6 +1012,9 @@ buildDropdown();
         backIcon: '🍴',
         backTitle: '量力而為',
         backSummary: '解方：適量購買食材及點餐，減少食物浪費。',
+        consumerAction: '制定菜單再採購，學習食物保存技巧',
+        producerAction: '縮短供應鏈、開發醜蔬果產品線',
+      
       },
       {
         id: 4, tag: 'consumption',
@@ -1007,6 +1046,8 @@ buildDropdown();
         backIcon: '🌿',
         backTitle: '慢時尚',
         backSummary: '解方：選擇高品質耐穿衣物，參與二手交換。',
+        consumerAction: '選高品質經典款，嘗試二手衣交換',
+        producerAction: '使用環保布料，提供修補與回收服務',
       },
       {
         id: 5, tag: 'waste',
@@ -1038,6 +1079,8 @@ buildDropdown();
         backIcon: '🔧',
         backTitle: '正確回收電子產品',
         backSummary: '解方：透過維修與專業回收管道再利用電子資源。',
+        consumerAction: '先維修再換新，送至合格回收點',
+        producerAction: '設計可維修產品，建立以舊換新方案',
       },
       {
         id: 6, tag: 'energy',
@@ -1069,6 +1112,8 @@ buildDropdown();
         backIcon: '💡',
         backTitle: '節能行動',
         backSummary: '解方：隨手關燈、使用節能家電，培養低碳習慣。',
+        consumerAction: '隨手關燈拔插頭，換用節能家電',
+        producerAction: '導入再生能源，公開碳排放數據',
       },
     ];
 
@@ -1096,18 +1141,27 @@ buildDropdown();
               >深入了解 →</button>
             </div>
             <!-- Back -->
-              <div class="flip-back">
-                <div>
-                  <div style="font-size:2.5rem; margin-bottom:var(--sp-sm)">${issue.backIcon}</div>
-                  <div style="font-family:var(--ff-body); font-size:1.2rem; color:#fff; font-weight:700; margin-bottom:var(--sp-sm)">${issue.backTitle}</div>
-                  <p style="font-size:0.87rem; color:rgba(255,255,255,0.85);margin-bottom:var(--sp-md)">${issue.backSummary}</p>
-                </div>
-                <button
-                  onclick="openModal(${issue.id}, 'back'); event.stopPropagation();"
-                  class="btn btn-outline"
-                  style="background:#fff; color:var(--clr-primary); width:100%;justify-content:center;font-size:0.82rem;margin-top:var(--sp-lg);height:44px"
-                >深入了解</button>
-              </div>
+<div class="flip-back">
+  <div>
+    <div style="font-size:1.8rem; margin-bottom:var(--sp-xs)">${issue.backIcon}</div>
+    <div style="font-family:var(--ff-body); font-size:1rem; color:#fff; font-weight:700; margin-bottom:var(--sp-sm)">${issue.backTitle}</div>
+  </div>
+  <div class="flip-back-inner">
+    <div class="flip-perspective flip-perspective--consumer">
+      <div class="flip-perspective-label">🛍️ 消費者</div>
+      <div class="flip-perspective-text">${issue.consumerAction}</div>
+    </div>
+    <div class="flip-perspective flip-perspective--producer">
+      <div class="flip-perspective-label">🏭 生產者</div>
+      <div class="flip-perspective-text">${issue.producerAction}</div>
+    </div>
+  </div>
+  <button
+    onclick="openModal(${issue.id}, 'back'); event.stopPropagation();"
+    class="btn btn-outline"
+    style="background:#fff; color:var(--clr-primary); width:100%;justify-content:center;font-size:0.82rem;height:40px"
+  >深入了解</button>
+</div>
             </div>
           </div>
       `  ).join('');
