@@ -337,6 +337,27 @@
     @media (max-width: 768px) {
       .hero-grid { grid-template-columns: 1fr !important; }
     }
+
+    
+    .cty-wrap{position:relative}
+    .cty-input{width:100%;padding:0.5rem 0.75rem;border:1px solid var(--clr-border);border-radius:var(--radius-sm);background:var(--clr-bg);font-family:var(--ff-body);font-size:0.88rem;box-sizing:border-box;cursor:pointer}
+    .cty-input:focus{outline:none;border-color:var(--clr-primary)}
+    .cty-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--clr-surface);border:1px solid var(--clr-border);border-radius:var(--radius-md);max-height:200px;overflow-y:auto;z-index:100;display:none;box-shadow:0 4px 16px rgba(0,0,0,0.12)}
+    .cty-dropdown.open{display:block}
+    .cty-option{padding:8px 12px;font-size:0.88rem;cursor:pointer;color:var(--clr-text)}
+    .cty-option:hover,.cty-option.focused{background:#DFF0DF;color:var(--clr-primary)}
+    .cty-option.selected{font-weight:600;color:var(--clr-primary)}
+
+    .fade-up {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
   </style>
 </head>
 <body>
@@ -347,10 +368,11 @@
   <div class="container">
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:var(--sp-2xl); align-items:flex-start">
       <!-- 左：標題 -->
-      <div>
-        <span class="badge badge-brown" style="margin-bottom:var(--sp-md)">問題區</span>
-        <h1>六大環境問題<br/>你了解幾個？</h1>
-      </div>
+    <div>
+        <h1 class="fade-up" style="transition-delay: 0.12s">
+          從了解開始改變<br/>六大環境危機<br/><i>你認識幾個？</i>
+        </h1>
+    </div>
       <!-- 右：影片輪播 -->
       <div style="align-self:flex-start; margin-top:0;">
         <div id="videoCarouselWrap" style="position:relative; overflow: hidden; padding-right: 60px;">
@@ -417,6 +439,308 @@
       </div>
     </div>
   </div>
+
+  <!-- ===== ECO ACTION MAP ===== -->
+    <section class="section" style="background:rgba(245,242,234,0.92)">
+      <div class="container">
+        <span class="badge badge-green" style="margin-bottom:var(--sp-md)">全球行動地圖</span>
+        <h2 class="section-title">各國環保競賽</h2>
+        <p style="color:var(--clr-muted);margin-bottom:var(--sp-xl)">
+          選擇行動類別，點擊國家查看人數，並登記加入競賽！
+        </p>
+
+        <div id="ew-pills" style="display:flex;flex-wrap:wrap;gap:var(--sp-sm);margin-bottom:var(--sp-lg)"></div>
+
+        <!-- tooltip 固定放這裡，不隨 renderMap 重建 -->
+
+        <div style="position:relative">
+  <div id="ew-map" style="width:100%;border-radius:var(--radius-lg);border:1px solid var(--clr-border);background:#EAF3E6;overflow:hidden;cursor:pointer"></div>
+  <div id="ew-tt" style="pointer-events:none;padding:5px 10px;background:#fff;border:1px solid #D6D0C0;border-radius:8px;font-size:12px;color:#3D3D2E;white-space:nowrap;position:absolute;display:none;z-index:10"></div>
+
+  <div style="position:absolute;top:12px;left:12px;display:flex;flex-direction:column;gap:6px;z-index:5">
+    <div style="background:rgba(253,250,243,0.88);border:1px solid var(--clr-border);border-radius:var(--radius-md);padding:6px 14px;text-align:center;min-width:100px">
+      <div id="ew-tot" style="font-family:var(--ff-display);font-size:1.4rem;font-weight:900;color:var(--clr-primary);line-height:1.2">0</div>
+      <div style="font-size:0.72rem;color:var(--clr-muted)">全球參與行動總人次</div>
+    </div>
+    <div style="background:rgba(253,250,243,0.88);border:1px solid var(--clr-border);border-radius:var(--radius-md);padding:6px 14px;text-align:center;min-width:100px">
+      <div id="ew-nat" style="font-family:var(--ff-display);font-size:1.4rem;font-weight:900;color:var(--clr-primary);line-height:1.2">0</div>
+      <div style="font-size:0.72rem;color:var(--clr-muted)">參與國家</div>
+    </div>
+    <div style="background:rgba(253,250,243,0.88);border:1px solid var(--clr-border);border-radius:var(--radius-md);padding:6px 14px;text-align:center;min-width:100px">
+      <div id="ew-lead" style="font-family:var(--ff-display);font-size:1.1rem;font-weight:900;color:var(--clr-primary);line-height:1.3">—</div>
+      <div style="font-size:0.72rem;color:var(--clr-muted)">領先國家</div>
+    </div>
+  </div>
+</div>
+
+        <div style="display:flex;flex-wrap:wrap;gap:var(--sp-md);margin-top:var(--sp-sm);font-size:0.78rem;color:var(--clr-muted)">
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#C0DD97;margin-right:4px;vertical-align:middle"></span>1–20 人</span>
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#97C459;margin-right:4px;vertical-align:middle"></span>21–60 人</span>
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#5A9A3A;margin-right:4px;vertical-align:middle"></span>61–120 人</span>
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#2C5A1C;margin-right:4px;vertical-align:middle"></span>121+ 人</span>
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#D6D0C0;margin-right:4px;vertical-align:middle"></span>尚無資料</span>
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#FFD700;border:1.5px solid #B8860B;margin-right:4px;vertical-align:middle"></span>已選取</span>
+        </div>
+
+        
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-xl)">
+          <div style="background:var(--clr-surface);border:1px solid var(--clr-border);border-radius:var(--radius-lg);padding:var(--sp-xl)">
+            <h3 style="font-size:1rem;margin-bottom:var(--sp-md)">🏆 國家排行榜</h3>
+            <div id="ew-rank"></div>
+          </div>
+          <div style="background:var(--clr-surface);border:1px solid var(--clr-border);border-radius:var(--radius-lg);padding:var(--sp-xl)">
+            <h3 style="font-size:1rem;margin-bottom:var(--sp-md)">📍 加入行動</h3>
+            <div id="ew-seltag" style="display:none;align-items:center;gap:6px;margin-bottom:8px;padding:4px 12px;background:#DFF0DF;border-radius:var(--radius-xl);color:var(--clr-primary);font-size:0.82rem;font-weight:600;width:fit-content"></div>
+            <label style="font-size:0.82rem;color:var(--clr-muted);display:block;margin-bottom:4px">選擇你的國家</label>
+            <div class="cty-wrap" style="margin-bottom:var(--sp-md)">
+              <input id="ew-cty-input" class="cty-input" placeholder="搜尋國家..." autocomplete="off" readonly />
+              <div id="ew-cty-dropdown" class="cty-dropdown"></div>
+              <input type="hidden" id="ew-cty" />
+            </div>
+            <label style="font-size:0.82rem;color:var(--clr-muted);display:block;margin-bottom:var(--sp-sm)">選擇你正在進行的行動（可複選）</label>
+            <div id="ew-ja" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:var(--sp-md)"></div>
+            <button id="ew-sub" class="btn btn-primary" style="width:100%;justify-content:center">登記我的行動</button>
+            <p id="ew-toast" style="font-size:0.82rem;color:var(--clr-primary);text-align:center;margin-top:var(--sp-sm);min-height:20px"></p>
+          </div>
+        </div>
+    </div>
+  </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+    <script>
+    (function(){
+      /* ── Firebase 設定 ── */
+      const DB_URL = 'https://final-project-for-html-default-rtdb.asia-southeast1.firebasedatabase.app/';
+      firebase.initializeApp({ databaseURL: DB_URL });
+      const db = firebase.database();
+
+      const ACTS=[
+        {id:'consumption',label:'減少過度消費',icon:'🛒'},
+        {id:'plastic',label:'拒絕一次性塑膠',icon:'♻️'},
+        {id:'food',label:'避免食物浪費',icon:'🍱'},
+        {id:'fashion',label:'拒絕快時尚',icon:'👕'},
+        {id:'ewaste',label:'正確回收電子',icon:'💻'},
+        {id:'energy',label:'節能減碳',icon:'⚡'},
+      ];
+      const CTYS=[
+      '台灣','日本','南韓','中國','香港','澳門','新加坡','泰國','印尼','馬來西亞',
+      '菲律賓','越南','緬甸','柬埔寨','寮國','孟加拉','斯里蘭卡','尼泊爾','巴基斯坦','印度',
+      '美國','加拿大','墨西哥','巴西','阿根廷','智利','哥倫比亞','祕魯','委內瑞拉','厄瓜多',
+      '英國','德國','法國','義大利','西班牙','荷蘭','瑞典','丹麥','挪威','芬蘭',
+      '瑞士','奧地利','比利時','葡萄牙','波蘭','捷克','匈牙利','羅馬尼亞','希臘','土耳其',
+      '俄羅斯','烏克蘭','以色列','沙烏地阿拉伯','阿聯酋','伊朗','埃及','南非','奈及利亞','肯亞',
+      '衣索比亞','摩洛哥','坦尚尼亞','迦納','喀麥隆','澳洲','紐西蘭',
+    ];
+      const ISO={
+      '台灣':158,'日本':392,'南韓':410,'中國':156,'香港':344,'澳門':446,
+      '新加坡':702,'泰國':764,'印尼':360,'馬來西亞':458,'菲律賓':608,'越南':704,
+      '緬甸':104,'柬埔寨':116,'寮國':418,'孟加拉':50,'斯里蘭卡':144,'尼泊爾':524,
+      '巴基斯坦':586,'印度':356,'美國':840,'加拿大':124,'墨西哥':484,'巴西':76,
+      '阿根廷':32,'智利':152,'哥倫比亞':170,'祕魯':604,'委內瑞拉':862,'厄瓜多':218,
+      '英國':826,'德國':276,'法國':250,'義大利':380,'西班牙':724,'荷蘭':528,
+      '瑞典':752,'丹麥':208,'挪威':578,'芬蘭':246,'瑞士':756,'奧地利':40,
+      '比利時':56,'葡萄牙':620,'波蘭':616,'捷克':203,'匈牙利':348,'羅馬尼亞':642,
+      '希臘':300,'土耳其':792,'俄羅斯':643,'烏克蘭':804,'以色列':376,
+      '沙烏地阿拉伯':682,'阿聯酋':784,'伊朗':364,'埃及':818,'南非':710,
+      '奈及利亞':566,'肯亞':404,'衣索比亞':231,'摩洛哥':504,'坦尚尼亞':834,
+      '迦納':288,'喀麥隆':120,'澳洲':36,'紐西蘭':554,
+    };
+      const ISO_R={};
+      Object.entries(ISO).forEach(([n,v])=>ISO_R[String(v)]=n);
+
+      /* ── 初始 seed 資料（只在資料庫完全空白時寫入一次）── */
+      function seedIfEmpty(snapshot){
+    
+      }
+
+      let data={}, curAct='consumption', selActs=new Set(['consumption']), selCty=null, topo=null, svgNode=null;
+      const tt=document.getElementById('ew-tt');
+      const mapWrap=document.getElementById('ew-map');
+
+      /* ── 監聽資料庫，有變動就自動更新畫面 ── */
+      db.ref('ecoActions').on('value', snapshot=>{
+        seedIfEmpty(snapshot);
+        if(snapshot.exists()) data = snapshot.val();
+        renderAll();
+      });
+
+      function ecoClr(v){
+        if(!v)return'#D6D0C0';
+        if(v<=20)return'#C0DD97'; if(v<=60)return'#97C459';
+        if(v<=120)return'#5A9A3A'; return'#2C5A1C';
+      }
+
+      function renderPills(){
+        document.getElementById('ew-pills').innerHTML=ACTS.map(a=>`
+          <button onclick="_ew2.setAct('${a.id}')" style="
+            display:inline-flex;align-items:center;gap:6px;padding:0.4rem 1rem;
+            border-radius:var(--radius-xl);font-family:var(--ff-body);cursor:pointer;
+            border:2px solid ${a.id===curAct?'var(--clr-primary)':'var(--clr-border)'};
+            background:${a.id===curAct?'#DFF0DF':'var(--clr-surface)'};
+            color:${a.id===curAct?'var(--clr-primary)':'var(--clr-muted)'};
+            font-size:0.82rem;font-weight:${a.id===curAct?'600':'400'};
+            box-shadow:0 2px 8px rgba(0,0,0,0.12)
+          ">${a.icon} ${a.label}</button>
+        `).join('');
+      }
+
+      function renderStats(){
+        const d=data[curAct]||{};
+        const tot=Object.values(d).reduce((s,v)=>s+v,0);
+        document.getElementById('ew-tot').textContent=tot;
+        document.getElementById('ew-nat').textContent=Object.keys(d).length;
+        document.getElementById('ew-lead').textContent=Object.entries(d).sort((a,b)=>b[1]-a[1])[0]?.[0]||'—';
+      }
+
+      function renderRank(){
+        const d=data[curAct]||{};
+        const sorted=Object.entries(d).sort((a,b)=>b[1]-a[1]).slice(0,9);
+        const max=sorted[0]?.[1]||1;
+        document.getElementById('ew-rank').innerHTML=sorted.map(([c,v],i)=>`
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:0.83rem">
+            <span style="width:16px;text-align:right;color:var(--clr-muted);font-size:0.75rem">${i+1}</span>
+            <span style="flex:2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;${c===selCty?'font-weight:600;color:var(--clr-primary)':''}">${c===selCty?'→ ':''}${c}</span>
+            <div style="flex:3;height:5px;background:var(--clr-border);border-radius:3px;overflow:hidden">
+              <div style="height:100%;width:${Math.round(v/max*100)}%;background:${c===selCty?'var(--clr-accent)':'var(--clr-primary)'};border-radius:3px;transition:width .5s"></div>
+            </div>
+            <span style="font-size:0.75rem;color:var(--clr-muted);min-width:24px;text-align:right">${v}</span>
+          </div>
+        `).join('');
+      }
+
+      function renderMap(){
+        if(!topo)return;
+        if(svgNode){svgNode.remove(); svgNode=null;}
+        tt.style.display='none';
+        const W=mapWrap.clientWidth||500;
+        const H=Math.round(W*0.5);
+        const svg=d3.select(mapWrap).insert('svg','*')
+          .attr('viewBox',`0 0 ${W} ${H}`)
+          .attr('width','100%').attr('height',H).style('display','block');
+        svgNode=svg.node();
+        const proj=d3.geoNaturalEarth1().scale(W/6.3).translate([W/2,H/2]);
+        const pathGen=d3.geoPath(proj);
+        const d=data[curAct]||{};
+        svg.selectAll('path')
+          .data(topojson.feature(topo,topo.objects.countries).features)
+          .join('path')
+          .attr('d',pathGen)
+          .attr('fill',f=>{const n=ISO_R[String(f.id)];return n===selCty?'#FFD700':ecoClr(n?d[n]||0:0);})
+          .attr('stroke','#fff').attr('stroke-width',0.4)
+          .style('cursor',f=>ISO_R[String(f.id)]?'pointer':'default')
+          .on('mousemove',function(event,f){
+            const n=ISO_R[String(f.id)];
+            if(!n){tt.style.display='none';return;}
+            const r=mapWrap.parentElement.getBoundingClientRect();
+            tt.textContent=`${n}：${d[n]||0} 人`;
+            tt.style.display='block';
+            let lx=event.clientX-r.left+12, ly=event.clientY-r.top+12;
+            if(lx+tt.offsetWidth>r.width-8) lx=event.clientX-r.left-tt.offsetWidth-8;
+            tt.style.left=lx+'px'; tt.style.top=ly+'px';
+          })
+          .on('mouseleave',()=>{tt.style.display='none';})
+          .on('click',(event,f)=>{
+            const n=ISO_R[String(f.id)];
+            if(!n)return;
+            selCty=n;
+            tt.style.display='none';
+            document.getElementById('ew-cty').value=n;
+            const tag=document.getElementById('ew-seltag');
+            tag.style.display='flex'; tag.textContent='📍 '+n;
+            renderAll();
+          });
+      }
+
+      function renderJoin(){
+        document.getElementById('ew-ja').innerHTML=ACTS.map(a=>`
+          <button onclick="_ew2.toggleAct('${a.id}')" style="
+            padding:7px 4px;font-size:0.75rem;border-radius:var(--radius-sm);text-align:center;
+            border:1.5px solid ${selActs.has(a.id)?'var(--clr-primary)':'var(--clr-border)'};
+            background:${selActs.has(a.id)?'#DFF0DF':'var(--clr-surface)'};
+            color:${selActs.has(a.id)?'var(--clr-primary)':'var(--clr-muted)'};
+            cursor:pointer;font-family:var(--ff-body);line-height:1.4
+          ">${a.icon}<br/>${a.label.length>5?a.label.slice(0,5)+'…':a.label}</button>
+        `).join('');
+      }
+
+      function renderAll(){ renderPills(); renderStats(); renderRank(); renderMap(); }
+
+      const ctyEl      = document.getElementById('ew-cty');
+      const ctyInput   = document.getElementById('ew-cty-input');
+      const ctyDrop    = document.getElementById('ew-cty-dropdown');
+
+      function setCty(name){
+        selCty = name;
+        ctyEl.value = name;
+        ctyInput.value = name;
+        ctyDrop.classList.remove('open');
+        const tag = document.getElementById('ew-seltag');
+        tag.style.display = 'flex';
+        tag.textContent = '📍 ' + name;
+        renderAll();
+      }
+
+      function buildDropdown(filter=''){
+        const kw = filter.toLowerCase();
+        const matched = CTYS.filter(c => c.includes(kw) || c.toLowerCase().includes(kw));
+        ctyDrop.innerHTML = matched.length
+           ? matched.map(c=>`<div class="cty-option ${c===selCty?'selected':''}" data-name="${c}">${c}</div>`).join('')
+          : '<div style="padding:10px 12px;font-size:0.85rem;color:var(--clr-muted)">找不到符合的國家</div>';
+        ctyDrop.querySelectorAll('.cty-option').forEach(el=>{
+          el.addEventListener('click',()=>setCty(el.dataset.name));
+        });
+      }
+
+      ctyInput.addEventListener('click',()=>{
+        ctyInput.removeAttribute('readonly');
+        ctyInput.select();
+        buildDropdown(ctyInput.value==='搜尋國家...'?'':ctyInput.value);
+        ctyDrop.classList.add('open');
+      });
+
+      ctyInput.addEventListener('input',()=>{
+        buildDropdown(ctyInput.value);
+        ctyDrop.classList.add('open');
+      });
+
+      document.addEventListener('click',e=>{
+          if(!e.target.closest('.cty-wrap')){
+            ctyDrop.classList.remove('open');
+          if(!selCty) ctyInput.value='';
+        }
+      });
+
+buildDropdown();
+
+      /* ── 登記按鈕：寫入 Firebase（用 transaction 防止同時寫入衝突）── */
+      document.getElementById('ew-sub').addEventListener('click',()=>{
+        const c=ctyEl.value, t=document.getElementById('ew-toast');
+        if(selActs.size===0){t.textContent='請選擇至少一項行動！';return;}
+        selActs.forEach(aid=>{
+          const ref=db.ref(`ecoActions/${aid}/${c}`);
+          ref.transaction(cur=>(cur||0)+1);
+        });
+        t.textContent=`✅ ${c} 已登記 ${selActs.size} 項行動！`;
+        setTimeout(()=>{t.textContent='';},3000);
+      });
+
+      window._ew2={
+        setAct:id=>{curAct=id;renderAll();},
+        toggleAct:id=>{selActs.has(id)?selActs.delete(id):selActs.add(id);renderJoin();}
+      };
+
+      renderJoin();
+      d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json').then(t=>{
+        topo=t; renderMap();
+      });
+      window.addEventListener('resize',()=>renderMap());
+    })();
+    </script>
 
   <!-- Footer -->
   <footer style="background:var(--clr-dark);color:rgba(255,255,255,0.6);padding:var(--sp-xl) 0;text-align:center;font-size:0.85rem">
@@ -821,6 +1145,19 @@
     // Init
     buildCarousel();
     renderCards();
+
+    const fadeObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          fadeObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.fade-up').forEach(el => fadeObs.observe(el));
+
+    
   </script>
 </body>
 </html>
