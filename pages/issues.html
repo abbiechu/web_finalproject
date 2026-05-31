@@ -782,8 +782,11 @@ buildDropdown();
 
       /* ── 登記按鈕：寫入 Firebase（用 transaction 防止同時寫入衝突）── */
       document.getElementById('ew-sub').addEventListener('click',()=>{
-        const c=ctyEl.value, t=document.getElementById('ew-toast');
-        if(selActs.size===0){t.textContent='請選擇至少一項行動！';return;}
+  const c = ctyEl.value;
+  const t = document.getElementById('ew-toast');
+  if(selActs.size === 0){ t.textContent='請選擇至少一項行動！'; return; }
+  if(!c){ t.textContent='請選擇你的國家！'; return; }  // ← 加這行
+  // ...其餘邏輯不變
         selActs.forEach(aid=>{
           const ref=db.ref(`ecoActions/${aid}/${c}`);
           ref.transaction(cur=>(cur||0)+1);
