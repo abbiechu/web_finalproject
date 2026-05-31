@@ -782,18 +782,16 @@ buildDropdown();
 
       /* ── 登記按鈕：寫入 Firebase（用 transaction 防止同時寫入衝突）── */
       document.getElementById('ew-sub').addEventListener('click',()=>{
-  const c = ctyEl.value;
-  const t = document.getElementById('ew-toast');
-  if(selActs.size === 0){ t.textContent='請選擇至少一項行動！'; return; }
-  if(!c){ t.textContent='請選擇你的國家！'; return; }  // ← 加這行
-  // ...其餘邏輯不變
-        selActs.forEach(aid=>{
-          const ref=db.ref(`ecoActions/${aid}/${c}`);
-          ref.transaction(cur=>(cur||0)+1);
-        });
-        t.textContent=`✅ ${c} 已登記 ${selActs.size} 項行動！`;
-        setTimeout(()=>{t.textContent='';},3000);
-      });
+  const c=ctyEl.value, t=document.getElementById('ew-toast');
+  if(selActs.size===0){t.textContent='請選擇至少一項行動！';return;}
+  if(!c){t.textContent='請先選擇你的國家！';return;}
+  selActs.forEach(aid=>{
+    const ref=db.ref(`ecoActions/${aid}/${c}`);
+    ref.transaction(cur=>(cur||0)+1);
+  });
+  t.textContent='';
+  showEcoModal(c, selActs.size);
+});
 
       window._ew2={
  setAct:id=>{
@@ -814,6 +812,29 @@ buildDropdown();
       window.addEventListener('resize',()=>renderMap());
     })();
     </script>
+
+  <!-- ===== 參與成功動畫 Modal ===== -->
+<div id="eco-modal-overlay" style="
+  display:none;position:fixed;inset:0;z-index:9999;
+  background:rgba(0,0,0,0.65);backdrop-filter:blur(4px);
+  align-items:center;justify-content:center;
+">
+  <div id="eco-modal-box" style="
+    background:#F5F2EA;border-radius:20px;padding:40px 36px 32px;
+    max-width:460px;width:90%;text-align:center;position:relative;
+    box-shadow:0 20px 60px rgba(0,0,0,0.3);
+    transform:scale(0.8);opacity:0;transition:transform 0.35s cubic-bezier(.34,1.56,.64,1),opacity 0.3s;
+  ">
+    <canvas id="eco-canvas" width="380" height="200" style="width:100%;border-radius:12px;background:#EAF3E6;display:block;margin-bottom:20px"></canvas>
+    <h3 id="eco-modal-title" style="font-size:1.4rem;font-weight:800;color:#3A6B3A;margin-bottom:8px">感謝你的參與！🌿</h3>
+    <p id="eco-modal-msg" style="color:#666;font-size:0.92rem;margin-bottom:24px;line-height:1.6"></p>
+    <button onclick="closeEcoModal()" style="
+      background:#3A6B3A;color:#fff;border:none;padding:12px 36px;
+      border-radius:50px;font-size:0.95rem;font-weight:700;cursor:pointer;
+      font-family:var(--ff-body);transition:background 0.2s;
+    " onmouseover="this.style.background='#2C5A1C'" onmouseout="this.style.background='#3A6B3A'">太好了，繼續加油！</button>
+  </div>
+</div>
 
   <!-- Footer -->
   <footer style="background:var(--clr-dark);color:rgba(255,255,255,0.6);padding:var(--sp-xl) 0;text-align:center;font-size:0.85rem">
@@ -1310,6 +1331,127 @@ function initFlipRings() {
       rectEl.style.strokeDashoffset = perimeter;
     });
   });
+}
+    /* ===== 參與成功動畫 Modal ===== */
+function showEcoModal(country, actCount){
+  const overlay = document.getElementById('eco-modal-overlay');
+  const box     = document.getElementById('eco-modal-box');
+  document.getElementById('eco-modal-msg').textContent =
+    `${country} 已成功登記 ${actCount} 項環保行動！你的每一個小行動，都讓地球更健康。`;
+  overlay.style.display='flex';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    box.style.transform='scale(1)';
+    box.style.opacity='1';
+  }));
+  startTrashAnimation();
+}
+
+function closeEcoModal(){
+  const overlay = document.getElementById('eco-modal-overlay');
+  const box     = document.getElementById('eco-modal-box');
+  box.style.transform='scale(0.8)';
+  box.style.opacity='0';
+  setTimeout(()=>{ overlay.style.display='none'; },300);
+}
+
+function startTrashAnimation(){
+  const canvas = document.getElementById('eco-canvas');
+  const ctx    = canvas.getContext('2d');
+  const W=380, H=200;
+  canvas.width=W; canvas.height=H;
+
+  // 垃圾堆的碎片
+  const TRASH_ITEMS = ['🗑️','🧴','🥤','📦','🧃','🛍️','🍶','📰'];
+  let pieces = [];
+  for(let i=0;i<28;i++){
+    pieces.push({
+      x: 30 + Math.random()*(W-60),
+      y: 60 + Math.random()*110,
+      emoji: TRASH_ITEMS[Math.floor(Math.random()*TRASH_ITEMS.length)],
+      size: 14+Math.random()*16,
+      opacity: 1,
+      vy: 0,
+      gone: false,
+    });
+  }
+
+  // 小植物（稍後長出來）
+  let plants = [
+    {x:60,  y:H-30, grow:0},
+    {x:190, y:H-30, grow:0},
+    {x:310, y:H-30, grow:0},
+  ];
+
+  let frame=0;
+  let animId;
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+
+    // 地面
+    ctx.fillStyle='#C8E6A0';
+    ctx.beginPath();
+    ctx.ellipse(W/2,H-10,W*0.48,22,0,0,Math.PI*2);
+    ctx.fill();
+
+    // 畫垃圾
+    pieces.forEach(p=>{
+      if(p.gone) return;
+      ctx.globalAlpha = p.opacity;
+      ctx.font = `${p.size}px serif`;
+      ctx.textAlign='center';
+      ctx.fillText(p.emoji, p.x, p.y);
+    });
+    ctx.globalAlpha=1;
+
+    // 畫植物
+    plants.forEach(pl=>{
+      if(pl.grow<=0) return;
+      const h = pl.grow * 40;
+      ctx.strokeStyle='#3A6B3A';
+      ctx.lineWidth=3;
+      ctx.lineCap='round';
+      ctx.beginPath();
+      ctx.moveTo(pl.x, H-20);
+      ctx.lineTo(pl.x, H-20-h);
+      ctx.stroke();
+      if(pl.grow>0.5){
+        ctx.fillStyle='#5A9A3A';
+        ctx.beginPath();
+        ctx.ellipse(pl.x-10, H-20-h*0.7, 10*pl.grow, 7*pl.grow, -0.5,0,Math.PI*2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(pl.x+10, H-20-h*0.8, 10*pl.grow, 7*pl.grow, 0.5,0,Math.PI*2);
+        ctx.fill();
+      }
+    });
+
+    // 階段1（0-60幀）：垃圾慢慢飛走消失
+    if(frame<80){
+      pieces.forEach((p,i)=>{
+        if(frame > i*2.5){
+          p.vy -= 0.15;
+          p.y  += p.vy;
+          p.opacity -= 0.018;
+          if(p.opacity<=0){ p.opacity=0; p.gone=true; }
+        }
+      });
+    }
+
+    // 階段2（60幀後）：植物長出來
+    if(frame>55){
+      plants.forEach(pl=>{
+        if(pl.grow<1) pl.grow=Math.min(1, pl.grow+0.025);
+      });
+    }
+
+    frame++;
+    if(frame < 160) animId=requestAnimationFrame(draw);
+  }
+
+  if(window._ecoAnimId) cancelAnimationFrame(window._ecoAnimId);
+  animId=requestAnimationFrame(draw);
+  window._ecoAnimId=animId;
 }
 
     
